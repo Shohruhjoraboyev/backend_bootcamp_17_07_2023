@@ -84,16 +84,16 @@ func main() {
 
 	//solution of quadratic equation
 
-	var num1, num2, num3 = 2, 3, 4
+	var num1, num2, num3 = 1, 1, -56
 
-	equation(num1, num2, num3)
+	fmt.Println(equation(num1, num2, num3))
 
 }
 
 func equation(a, b, c int) (float64, float64) {
 
 	var x1 float64 = float64(-(float64(b) + math.Sqrt(float64(b*b)-float64(4*a*c))) / float64(2*a))
-	var x2 float64 = float64((float64(b) + math.Sqrt(float64(b*b)-float64(4*a*c))) / float64(2*a))
+	var x2 float64 = float64(-(float64(b) - math.Sqrt(float64(b*b)-float64(4*a*c))) / float64(2*a))
 
 	return x1, x2
 
