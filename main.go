@@ -64,10 +64,11 @@ func distanceOfTwoPoints(x1, y1, x2, y2 float64) float64 {
 }
 
 // Task #5
-func distanceOfTwoPoints(x1, y1, x2, y2 float64) float64 {
-	x := math.Pow(x2-x1, 2)
-	y := math.Pow(y2-y1, 2)
-	return math.Sqrt(x + y)
+func quadraticEquation(a, b, c float64) (float64, float64) {
+	x1 := -float64(b) + math.Sqrt(math.Pow(b, 2)-4*a*c)/2*a
+	x2 := -float64(b) - math.Sqrt(math.Pow(b, 2)-4*a*c)/2*a
+
+	return x1, x2
 
 }
 
@@ -94,7 +95,9 @@ func main() {
 	// fmt.Println(sumMaxMin(1, 3, 2)) // 4
 	// fmt.Println(sumMaxMin(4, 5, 6)) // 10
 
-	// Task #4
-	fmt.Println(distanceOfTwoPoints(5, 4, 1, 1)) // 5
+	// // Task #4
+	// fmt.Println(distanceOfTwoPoints(5, 4, 1, 1)) // 5
 
+	// Task #5
+	fmt.Println(quadraticEquation(1, 4, -21)) // 1 -9
 }
