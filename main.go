@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"sort"
 )
 
@@ -10,7 +11,8 @@ func main() {
 	// swapTwoNumbers()
 	// sumOfMinAndMax()
 	// sumOfMinAndMax2()
-
+	// distanceTwoPoints()
+	solutionQuadraticEquation()
 }
 
 // odd or even
@@ -46,6 +48,7 @@ func swapTwoNumbers() {
 	fmt.Println("b =", b)
 }
 
+// summ of maximum and minimum of given 3 numbers
 func sumOfMinAndMax() {
 	// var nums [3]int
 	// fmt.Println("Enter a number for num 1: ")
@@ -64,6 +67,7 @@ func sumOfMinAndMax() {
 	fmt.Println("sum of min and max of three numbers is =>", sum)
 }
 
+// summ of maximum and minimum of given 3 numbers
 func sumOfMinAndMax2() {
 	var num1, num2, num3, min, max int
 
@@ -100,5 +104,38 @@ func sumOfMinAndMax2() {
 	sum := min + max
 
 	fmt.Println("sum of min and max of three numbers is =>", sum)
+}
 
+func distanceTwoPoints() {
+	var x1, y1, x2, y2 float64
+
+	fmt.Print("Enter x1 point: ")
+	fmt.Scanln(&x1)
+	fmt.Print("Enter y1 point: ")
+	fmt.Scanln(&y1)
+	fmt.Print("Enter x2 point: ")
+	fmt.Scanln(&x2)
+	fmt.Print("Enter y2 point: ")
+	fmt.Scanln(&y2)
+
+	// d=√((x2-x1)²+(y2-y1)²)
+	// distance^2 = (x2 - x1)^2 + (y2 - y1)^2
+	// Calculate x^y – Pow() in Go (Golang)
+	distance := math.Sqrt(math.Pow(x2-x1, 2) + math.Pow(y2-y1, 2))
+
+	fmt.Println(distance)
+}
+
+func solutionQuadraticEquation() {
+	var a, b, c float64
+	a, b, c = 1, 2, 3
+
+	// discriminant
+	discriminant := (math.Pow(b, 2) - (4 * a * c))
+
+	// x1 and x2  (-b -+ dis ) / 2*a
+	x1 := (-b - discriminant) / (2 * a)
+	x2 := (-b + discriminant) / (2 * a)
+
+	fmt.Println("x1 and x2: ", x1, x2)
 }
