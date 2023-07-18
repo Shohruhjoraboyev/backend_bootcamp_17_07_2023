@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 )
 
 // Task #1
@@ -54,27 +55,46 @@ func sumMaxMin(a, b, c float64) float64 {
 
 }
 
+// Task #4
+func distanceOfTwoPoints(x1, y1, x2, y2 float64) float64 {
+	x := math.Pow(x2-x1, 2)
+	y := math.Pow(y2-y1, 2)
+	return math.Sqrt(x + y)
+
+}
+
+// Task #5
+func distanceOfTwoPoints(x1, y1, x2, y2 float64) float64 {
+	x := math.Pow(x2-x1, 2)
+	y := math.Pow(y2-y1, 2)
+	return math.Sqrt(x + y)
+
+}
+
 func main() {
 	fmt.Println("Hello Go")
 
-	// Task #1
-	fmt.Println(oddOrEven(4)) // Even
-	fmt.Println(oddOrEven(5)) // Odd
+	// // Task #1
+	// fmt.Println(oddOrEven(4)) // Even
+	// fmt.Println(oddOrEven(5)) // Odd
 
-	// Task #2
-	num1 := 3
-	num2 := 5
+	// // Task #2
+	// num1 := 3
+	// num2 := 5
 
-	fmt.Println(num1)
-	fmt.Println(num2)
+	// fmt.Println(num1)
+	// fmt.Println(num2)
 
-	swapNums(&num1, &num2)
+	// swapNums(&num1, &num2)
 
-	fmt.Println(num1)
-	fmt.Println(num2)
+	// fmt.Println(num1)
+	// fmt.Println(num2)
 
-	// Task #3
-	fmt.Println(sumMaxMin(1, 3, 2)) // 4
-	fmt.Println(sumMaxMin(4, 5, 6)) // 10
+	// // Task #3
+	// fmt.Println(sumMaxMin(1, 3, 2)) // 4
+	// fmt.Println(sumMaxMin(4, 5, 6)) // 10
+
+	// Task #4
+	fmt.Println(distanceOfTwoPoints(5, 4, 1, 1)) // 5
 
 }
