@@ -94,7 +94,7 @@ func fib(n int) int {
 
 }
 
-// Task 6
+// Task #7
 func reverseNumbers(num int) int {
 	res := 0
 
@@ -108,8 +108,7 @@ func reverseNumbers(num int) int {
 
 }
 
-// Task 7
-
+// Task #8
 func birthdayCakeCandles(candles []int32) int32 {
 
 	count := 0
@@ -131,8 +130,29 @@ func birthdayCakeCandles(candles []int32) int32 {
 
 }
 
+// Task #9
+func compareTriplets(a []int32, b []int32) []int32 {
+	var x, y int32 = 0, 0
+
+	for i := 0; i < len(a); i++ {
+		if a[i] == b[i] {
+			x += 0
+		} else if a[i] > b[i] {
+			x++
+		} else {
+			y++
+		}
+
+	}
+
+	arr := []int32{x, y}
+
+	return arr
+
+}
+
 func main() {
-	// fmt.Println("Hello Go")
+	fmt.Println("Hello Go")
 
 	// // Task #1
 	// fmt.Println(oddOrEven(4)) // Even
@@ -166,8 +186,14 @@ func main() {
 	// // Task #7
 	// fmt.Println(reverseNumbers(81259))
 
-	// Task #8
-	candles := []int32{4, 2, 1, 4}
-	fmt.Println(birthdayCakeCandles(candles))
+	// // Task #8
+	// candles := []int32{4, 2, 1, 4}
+	// fmt.Println(birthdayCakeCandles(candles))
+
+	// Task #9
+
+	a := []int32{5, 6, 7}
+	b := []int32{3, 6, 10}
+	fmt.Println(compareTriplets(a, b))
 
 }
