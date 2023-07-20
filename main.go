@@ -94,8 +94,7 @@ func fib(n int) int {
 
 }
 
-// TASK 6
-
+// Task 6
 func reverseNumbers(num int) int {
 	res := 0
 
@@ -106,6 +105,29 @@ func reverseNumbers(num int) int {
 
 	}
 	return res
+
+}
+
+// Task 7
+
+func birthdayCakeCandles(candles []int32) int32 {
+
+	count := 0
+	max := candles[0]
+
+	for _, v := range candles {
+		if v > max {
+			max = v
+		}
+	}
+
+	for _, v := range candles {
+		if v == max {
+			count++
+		}
+	}
+
+	return int32(count)
 
 }
 
@@ -141,7 +163,11 @@ func main() {
 	// // Task #6
 	// fmt.Println(fib(8)) // 1 -9
 
-	// Task #7
-	fmt.Println(reverseNumbers(81259))
+	// // Task #7
+	// fmt.Println(reverseNumbers(81259))
+
+	// Task #8
+	candles := []int32{4, 2, 1, 4}
+	fmt.Println(birthdayCakeCandles(candles))
 
 }
