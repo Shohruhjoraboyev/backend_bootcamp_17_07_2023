@@ -1,9 +1,9 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"math"
+	"strings"
 )
 
 // Task #1
@@ -155,24 +155,30 @@ func compareTriplets(a []int32, b []int32) []int32 {
 // Task #10
 
 func staircase(n int32) {
-	var i, j int32
-
-	for i = 1; i <= n; i++ {
-		var b bytes.Buffer
-
-		for j = 1; j <= n; j++ {
-			str := "#"
-
-			if n-j >= i {
-				str = " "
-			}
-
-			b.WriteString(str)
-		}
-
-		fmt.Println(b.String())
+	for i := int32(1); i <= n; i++ {
+		fmt.Println(strings.Repeat(" ", int(n-i)) + strings.Repeat("#", int(i)))
 	}
 }
+
+// func staircase(n int32) {
+// 	var i, j int32
+
+// 	for i = 1; i <= n; i++ {
+// 		var b bytes.Buffer
+
+// 		for j = 1; j <= n; j++ {
+// 			str := "#"
+
+// 			if n-j >= i {
+// 				str = " "
+// 			}
+
+// 			b.WriteString(str)
+// 		}
+
+// 		fmt.Println(b.String())
+// 	}
+// }
 
 func main() {
 	fmt.Println("Hello Go")
@@ -220,6 +226,6 @@ func main() {
 
 	// Task #10
 
-	staircase(6)
+	staircase(10)
 
 }
