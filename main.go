@@ -74,31 +74,43 @@ func quadraticEquation(a, b, c float64) (float64, float64) {
 
 // Task #6
 func fib(n int) int {
-    if n == 0 {
-        return 0
-    }
+	if n == 0 {
+		return 0
+	}
 
-    if n == 1 && n == 2 {
-        return 1
-    }
+	if n == 1 || n == 2 {
+		return 1
+	}
 
-    a:=1
-    b:=1
+	a := 1
+	b := 1
 
+	for i := 3; i <= n; i++ {
+		c := a + b
+		a = b
+		b = c
+	}
+	return b
 
-    for i:=3; i <= n; i++ {
-        c := a+b
-        a = b
-        b = c
-    }
-    return b
-    
 }
 
+// TASK 6
 
+func reverseNumbers(num int) int {
+	res := 0
+
+	for num > 0 {
+		remainder := num % 10
+		res = (res * 10) + remainder
+		num = num / 10
+
+	}
+	return res
+
+}
 
 func main() {
-	fmt.Println("Hello Go")
+	// fmt.Println("Hello Go")
 
 	// // Task #1
 	// fmt.Println(oddOrEven(4)) // Even
@@ -123,6 +135,13 @@ func main() {
 	// // Task #4
 	// fmt.Println(distanceOfTwoPoints(5, 4, 1, 1)) // 5
 
-	// Task #5
-	fmt.Println(quadraticEquation(1, 4, -21)) // 1 -9
+	// // Task #5
+	// fmt.Println(quadraticEquation(1, 4, -21)) // 1 -9
+
+	// // Task #6
+	// fmt.Println(fib(8)) // 1 -9
+
+	// Task #7
+	fmt.Println(reverseNumbers(81259))
+
 }
