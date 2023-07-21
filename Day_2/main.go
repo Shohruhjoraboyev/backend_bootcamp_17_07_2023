@@ -16,6 +16,8 @@ func main() {
 
 	fmt.Println(reverseNumber(123))
 
+	fmt.Println(fib(9))
+
 }
 
 func compareTriplets(a []int, b []int) []int {
@@ -97,6 +99,30 @@ func reverseNumber(num int) int {
 		result = result*10 + dig
 
 		num = (num - dig) / 10
+
+	}
+
+	return result
+
+}
+
+func fib(num int) int {
+
+	if num == 0 {
+		return 0
+	}
+
+	if num < 3 {
+		return 1
+	}
+
+	var firstNumber, secondNumber, result = 1, 1, 0
+
+	for i := 3; i <= num; i++ {
+
+		result = firstNumber + secondNumber
+		firstNumber = secondNumber
+		secondNumber = result
 
 	}
 
