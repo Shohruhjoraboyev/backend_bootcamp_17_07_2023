@@ -27,7 +27,7 @@ func main() {
 	}
 
 	// gets all data
-	fmt.Println(getAll(containerMap))
+	fmt.Println(getAll())
 
 	// gets data by id
 	fmt.Println(getById(1))
@@ -67,12 +67,12 @@ func createPerson(p Person) string {
 	return "created"
 }
 
-func getAll(persons map[int]Person) (error, map[int]Person) {
+func getAll() (error, map[int]Person) {
 
-	if len(persons) != 0 {
-		return success, persons
+	if len(containerMap) != 0 {
+		return success, containerMap
 	} else {
-		return err, persons
+		return err, containerMap
 	}
 }
 
