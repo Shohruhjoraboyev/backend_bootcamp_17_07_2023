@@ -1,17 +1,8 @@
 package main
 
-func main() {
-
-}
-
-// 3. Hamma ma'lumot bor, endi har bitta userni qaysi categorydan nechta
-// favourite producti borligini topish kerak(loop,map,function,pointer .... ishlatib)
-
-type Product struct {
-	Id    int
-	name  string
-	price string
-}
+import (
+	"fmt"
+)
 
 type Category struct {
 	Id       int
@@ -19,64 +10,67 @@ type Category struct {
 	Products map[int]Product
 }
 
+type Product struct {
+	Id    int
+	Name  string
+	Price float64
+}
+
 type User struct {
-	Id                    int
-	Name                  string
-	favourite_products_id []int
+	Id                 int
+	Name               string
+	FavoriteProductIDs []int
 }
 
-var ProductMap = map[int]Product{
+var categories = map[int]Category{
 	1: {
-		Id:    1,
-		name:  "apple",
-		price: "$1",
+		Id:   1,
+		Name: "Fruits",
+		Products: map[int]Product{
+			1: {Id: 1, Name: "Apple", Price: 1.0},
+			2: {Id: 2, Name: "Banana", Price: 0.5},
+			3: {Id: 3, Name: "Orange", Price: 1.2},
+			4: {Id: 4, Name: "Melon", Price: 1.2},
+		},
 	},
+
 	2: {
-		Id:    2,
-		name:  "melon",
-		price: "$3",
-	},
-	3: {
-		Id:    3,
-		name:  "laptop",
-		price: "$2000",
-	},
-	4: {
-		Id:    4,
-		name:  "PC",
-		price: "$2300",
-	},
-	5: {
-		Id:    5,
-		name:  "shirt",
-		price: "$1",
-	},
-	6: {
-		Id:    6,
-		name:  "t-shirt",
-		price: "$1",
-	},
-	7: {
-		Id:    7,
-		name:  "sock",
-		price: "$1",
-	},
-	8: {
-		Id:    8,
-		name:  "air-cooler",
-		price: "$1",
-	},
-	9: {
-		Id:    9,
-		name:  "banana",
-		price: "$1",
+		Id:   2,
+		Name: "Technologies",
+		Products: map[int]Product{
+			5: {Id: 1, Name: "Laptop", Price: 1500.0},
+			6: {Id: 2, Name: "Smartphone", Price: 1000.0},
+			7: {Id: 3, Name: "Earphone", Price: 1000.0},
+			8: {Id: 3, Name: "Charger", Price: 1000.0},
+		},
 	},
 }
 
-var UserMap = map[int]User{
-	1: {
-		Id:                    1,
-		Name:                  "Omadbek",
-		favourite_products_id: []int{1, 2, 3},
-	},
+var users = []User{
+	{Id: 1, Name: "Omadbek", FavoriteProductIDs: []int{2, 3, 5, 6}},
+	{Id: 2, Name: "Mohira", FavoriteProductIDs: []int{1, 2, 3, 5, 6}},
+}
+
+func main() {
+
+	for _, user := range users {
+
+		fruitCount := 0
+		techCount := 0
+
+		for _, favoriteID := range user.FavoriteProductIDs {
+			for _, category := range categories {
+				if _, ok := category.Products[favoriteID]; ok {
+
+					if category.Name == "Fruits" {
+						fruitCount++
+					} else if category.Name == "Technologies" {
+						techCount++
+					}
+				}
+			}
+		}
+
+		fmt.Printf("%s: Fruits: %d, Technologies: %d\n", user.Name, fruitCount, techCount)
+	}
 }
