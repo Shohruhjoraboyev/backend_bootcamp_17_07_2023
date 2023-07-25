@@ -54,6 +54,13 @@ var containerMap = map[int]Person{
 		Job:       "Backend Developer",
 		Age:       21,
 	},
+	7: {
+		Id:        7,
+		FirstName: "Omadbek",
+		LastName:  "Jaloldinov",
+		Job:       "Backend Developer",
+		Age:       21,
+	},
 }
 
 type Person struct {
@@ -64,15 +71,17 @@ type Person struct {
 	Id        int
 }
 
-func getAll(age int, name string) map[int]Person {
+func getAll(age int, name string) (int, map[int]Person) {
 
 	var foundPersons = map[int]Person{}
+	count := 0
 
 	for key, person := range containerMap {
 		if person.Age == age && (strings.Contains(person.FirstName, name) || strings.Contains(person.LastName, name)) {
 			foundPersons[key] = person
+			count++
 		}
 	}
 
-	return foundPersons
+	return count, foundPersons
 }
