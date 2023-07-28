@@ -11,5 +11,27 @@ func main() {
 }
 
 func decodeMessage(key string, message string) string {
-	return "s"
+	mapString := make(map[rune]rune)
+	idx := 0
+	for _, v := range key {
+		if v == ' ' {
+			continue
+		}
+
+		if _, ok := mapString[v]; !ok {
+			mapString[v] = rune(idx) + 'a'
+			idx++
+		}
+	}
+
+	res := []rune{}
+	for _, v := range message {
+		if v == ' ' {
+			res = append(res, ' ')
+		} else {
+			res = append(res, mapString[v])
+		}
+	}
+
+	return string(res)
 }
