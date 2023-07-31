@@ -29,6 +29,11 @@ func main() {
 	// 	fmt.Println(res)
 	// }
 
+	staffTariffs := cruds.StaffTariffs{Data: make([]cruds.StaffTariff, 0)}
+	staffTariffs.Create(cruds.StaffTariff{ID: 1, Name: "percent-20", Type: 0, FoundedAt: "2002-10-12"})
+
+	fmt.Println(staffTariffs.GetByID(1))
+
 	products := []cruds.Product{}
 	products = append(products, cruds.Product{ID: 1, Name: "coca-cola", Sizes: []cruds.Size{{ID: 1, Name: "0.5L", Price: 6}, {ID: 2, Name: "1L", Price: 9}, {ID: 3, Name: "1.5L", Price: 12}}})
 	products = append(products, cruds.Product{ID: 2, Name: "dena", Sizes: []cruds.Size{{ID: 1, Name: "1L", Price: 13}}})

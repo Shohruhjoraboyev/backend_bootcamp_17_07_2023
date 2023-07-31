@@ -5,15 +5,19 @@ import (
 	"time"
 )
 
+const (
+	Fixed = iota
+	Percent
+)
+
 type StaffTariff struct {
 	ID            int
 	Name          string
-	Type          string // fixed, percent
+	Type          int // fixed, percent
 	AmountForCash float64
 	AmountForCard float64
 	CreatedAt     string
 	FoundedAt     string
-	Year          int
 }
 
 type StaffTariffs struct {
@@ -50,7 +54,7 @@ func (s *StaffTariffs) GetByID(id int) (StaffTariff, error) {
 	return StaffTariff{}, fmt.Errorf("tariff with ID %d not found", id)
 }
 
-func (s *StaffTariffs) GetAll(page, limit int, typ, name string) ([]StaffTariff, error) {
+func (s *StaffTariffs) GetAll(page, limit, typ int, name string) ([]StaffTariff, error) {
 	searched := []StaffTariff{}
 	for i, v := range s.Data {
 		if search(v.Name, name) && v.Type == typ {

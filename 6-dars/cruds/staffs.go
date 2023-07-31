@@ -6,11 +6,16 @@ import (
 	"time"
 )
 
+const (
+	Cashier = iota
+	ShopAssistant
+)
+
 type Staff struct {
 	ID        int
 	BranchID  int
 	TarifID   int
-	Type      string // cashier, shop_assistant
+	Type      int // cashier, shop_assistant
 	Name      string
 	Balance   float64
 	CreatedAt string
@@ -55,7 +60,7 @@ func (s *Staffs) GetByID(id int) (Staff, error) {
 	return Staff{}, fmt.Errorf("Staff with ID %d not found", id)
 }
 
-func (s *Staffs) GetAll(page, limit, branchId, tarifId int, typ, name string, balanceFrom, balanceTo float64) ([]Staff, error) {
+func (s *Staffs) GetAll(page, limit, branchId, tarifId, typ int, name string, balanceFrom, balanceTo float64) ([]Staff, error) {
 	searched := []Staff{}
 	for i, v := range s.Data {
 		if v.BranchID == branchId && v.TarifID == tarifId && v.Type == typ && search(v.Name, name) && v.Balance > balanceFrom && v.Balance < balanceTo {
