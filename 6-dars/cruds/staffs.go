@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	Cashier = iota
+	Cashier = iota + 1
 	ShopAssistant
 )
 
@@ -52,8 +52,8 @@ func (s *Staffs) Update(changedStaff Staff) error {
 func (s *Staffs) GetByID(id int) (Staff, error) {
 	for i := range s.Data {
 		if s.Data[i].ID == id {
-			brYear, _ := strconv.Atoi(s.Data[i].BirthDay[:4])
-			s.Data[i].Age = time.Now().Year() - brYear
+			brYear, _ := time.Parse("2006-01-02", s.Data[i].BirthDay)
+			s.Data[i].Age = time.Now().Year() - brYear.Year()
 			return s.Data[i], nil
 		}
 	}

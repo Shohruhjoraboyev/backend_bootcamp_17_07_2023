@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	Fixed = iota
+	Fixed = iota + 1
 	Percent
 )
 
