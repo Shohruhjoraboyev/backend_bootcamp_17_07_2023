@@ -2,6 +2,7 @@ package cruds
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -10,7 +11,9 @@ type Branch struct {
 	ID        int
 	Name      string
 	Address   string
-	CreatetAt string
+	CreatedAt string
+	FoundedAt string
+	Year      int
 }
 
 type Branches struct {
@@ -19,37 +22,9 @@ type Branches struct {
 
 var search = strings.Contains
 
-// func main() {
-// 	branches := Branches{Data: make([]Branch, 0)}
-// 	branches.Create(Branch{Name: "first", Address: "Yunusobod"})
-// 	branches.Create(Branch{Name: "second", Address: "Olmazor"})
-// 	branches.Create(Branch{Name: "third", Address: "Chilonzor"})
-
-// 	fmt.Println(branches.Update(Branch{ID: 1, Name: "thirddd", Address: "olmazor"}))
-
-// 	fmt.Println(branches)
-
-// 	br, err := branches.GetByID(2)
-// 	if err != nil {
-// 		fmt.Println(err)
-// 	} else {
-// 		fmt.Println(br)
-// 	}
-
-// 	res, err := branches.GetAll(1, 3, "i", "zor")
-// 	if err != nil {
-// 		fmt.Println(err)
-// 	} else {
-// 		fmt.Println(res)
-// 	}
-
-// 	fmt.Println(branches.Delete(3))
-// 	fmt.Println(branches)
-// }
-
 func (b *Branches) Create(newBranch Branch) string {
 	newBranch.ID = len(b.Data) + 1
-	newBranch.CreatetAt = time.Now().Format("2006-01-02 15:04:05")
+	newBranch.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
 	b.Data = append(b.Data, newBranch)
 	return "successfully created"
 }
@@ -59,15 +34,18 @@ func (b *Branches) Update(changedBranch Branch) error {
 		if v.ID == changedBranch.ID {
 			b.Data[i].Name = changedBranch.Name
 			b.Data[i].Address = changedBranch.Address
+			b.Data[i].FoundedAt = changedBranch.FoundedAt
 			return nil
 		}
 	}
-	return fmt.Errorf("Branch with ID %d not found", changedBranch.ID)
+	return fmt.Errorf("branch with ID %d not found", changedBranch.ID)
 }
 
 func (b *Branches) GetByID(id int) (Branch, error) {
 	for i := range b.Data {
 		if b.Data[i].ID == id {
+			foundedAt, _ := strconv.Atoi(b.Data[i].FoundedAt[:4])
+			b.Data[i].Year = time.Now().Year() - foundedAt
 			return b.Data[i], nil
 		}
 	}
@@ -78,6 +56,8 @@ func (b *Branches) GetAll(page, limit int, name, address string) ([]Branch, erro
 	searched := []Branch{}
 	for i, v := range b.Data {
 		if search(v.Name, name) || search(v.Address, address) {
+			foundedAt, _ := strconv.Atoi(b.Data[i].FoundedAt[:4])
+			b.Data[i].Year = time.Now().Year() - foundedAt
 			searched = append(searched, b.Data[i])
 		}
 	}
@@ -91,7 +71,8 @@ func (b *Branches) GetAll(page, limit int, name, address string) ([]Branch, erro
 	if end > len(searched) {
 		end = len(searched)
 	}
-	return searched[start:end], nil
+
+	return b.Reverse(searched[start:end]), nil
 }
 
 func (b *Branches) Delete(id int) string {
@@ -102,4 +83,11 @@ func (b *Branches) Delete(id int) string {
 		}
 	}
 	return fmt.Sprintf("Branch with ID %d not found", id)
+}
+
+func (b *Branches) Reverse([]Branch) []Branch {
+	for i, j := 0, len(b.Data)-1; i < j; i, j = i+1, j-1 {
+		b.Data[i], b.Data[j] = b.Data[j], b.Data[i]
+	}
+	return b.Data
 }
