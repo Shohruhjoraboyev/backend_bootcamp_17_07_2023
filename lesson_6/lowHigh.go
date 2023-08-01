@@ -12,7 +12,12 @@ func main() {
 }
 
 func lowAndHigh(arr []int, low, high int) []int {
-	result := []int{}
 
+	result := make([]int, 0)
+	for _, num := range arr {
+		if num >= low && num <= high {
+			result = append(result, num)
+		}
+	}
 	return result
 }
