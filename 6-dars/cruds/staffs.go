@@ -46,6 +46,7 @@ func (s *Staffs) Update(changedStaff Staff) error {
 			return nil
 		}
 	}
+
 	return fmt.Errorf("Staff with ID %d not found", changedStaff.ID)
 }
 
