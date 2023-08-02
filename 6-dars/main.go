@@ -46,7 +46,7 @@ func main() {
 	clients = append(clients, cruds.Client{ID: 1, Name: "Diyorbek", Card: cruds.Card{Products: []cruds.CardProducts{{ProductID: 1, SizeID: 3, Quantity: 2}, {ProductID: 2, SizeID: 1, Quantity: 2}}}})
 	clients = append(clients, cruds.Client{ID: 2, Name: "Sardor", Card: cruds.Card{Products: []cruds.CardProducts{{ProductID: 1, SizeID: 2, Quantity: 1}, {ProductID: 2, SizeID: 1, Quantity: 2}}}})
 
-	fmt.Printf("\n--------------------------------------------\n")
+	fmt.Printf("--------------------------------------------\n")
 	card := make(map[string]int)
 	var sum float64
 	for _, client := range clients {
@@ -66,7 +66,7 @@ func main() {
 		sum = 0
 	}
 
-	fmt.Printf("\n--------------------------------------------\n")
+	fmt.Printf("--------------------------------------------\n")
 
 	result := make([]string, 0, len(card))
 	for key := range card {
