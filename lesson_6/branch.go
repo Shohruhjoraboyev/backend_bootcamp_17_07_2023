@@ -44,20 +44,19 @@ func main() {
 	}
 
 	// GET ALL BRANCHES
-	// commentdan chiqarsam delelete ishlamay qolyapti. darsda ko'rib berarsiz xatoyimni )
-	// branches, err := branches.GetAllBranches("Sarvarbek", "City", 1, 1)
-	// if err != nil {
-	// 	fmt.Println(err.Error())
-	// } else {
-	// 	fmt.Println(branches)
-	// }
-
-	// DELETE BRANCH
-	res, err = branches.DeleteBranch(1)
+	allData, err := branches.GetAllBranches("Sarvarbek", "City", 1, 1)
 	if err != nil {
 		fmt.Println(err.Error())
 	} else {
-		fmt.Println(res)
+		fmt.Println(allData)
+	}
+
+	// DELETE BRANCH
+	r, err := branches.DeleteBranch(1)
+	if err != nil {
+		fmt.Println(err.Error())
+	} else {
+		fmt.Println(r)
 	}
 
 }
