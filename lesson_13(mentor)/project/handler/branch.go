@@ -34,7 +34,7 @@ func (h *handler) UpdateBranch(id int, name, adress string) {
 
 func (h *handler) GetBranch(id int) {
 	resp, err := h.strg.Branch().GetBranch(models.IdRequest{
-		Id: 1,
+		Id: id,
 	})
 
 	if err != nil {
