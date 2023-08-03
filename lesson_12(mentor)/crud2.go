@@ -1,8 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sort"
 
-type Questions struct {
+	"github.com/jedib0t/go-pretty/v6/table"
+)
+
+type Question struct {
 	ID      int
 	Text    string
 	Options []Variant
@@ -25,85 +30,73 @@ type StudentAnswer struct {
 	Answer     string
 }
 
-type Results struct {
-	StudentId      int
-	CorrectAnswers int
-}
-
 func main() {
-	// Create some questions
-	q1 := Questions{
-		ID:   1,
-		Text: "What is the capital of France?",
-		Options: []Variant{
-			{ID: 1, Answer: "London", Correct: false},
-			{ID: 2, Answer: "Paris", Correct: true},
-			{ID: 3, Answer: "Berlin", Correct: false},
-		},
-	}
-	q2 := Questions{
-		ID:   2,
-		Text: "What is the largest planet in the solar system?",
-		Options: []Variant{
-			{ID: 1, Answer: "Mars", Correct: false},
-			{ID: 2, Answer: "Jupiter", Correct: true},
-			{ID: 3, Answer: "Venus", Correct: false},
-		},
-	}
+	questions := []Question{}
+	questions = append(questions, Question{1, "1+2", []Variant{{1, "3", true}, {2, "4", false}, {3, "5", false}}})
+	questions = append(questions, Question{2, "4-3", []Variant{{1, "3", false}, {2, "2", false}, {3, "1", true}}})
+	questions = append(questions, Question{3, "7-3", []Variant{{1, "3", false}, {2, "4", true}, {3, "5", false}}})
+	questions = append(questions, Question{4, "4+4", []Variant{{1, "8", true}, {2, "4", false}, {3, "5", false}}})
+	questions = append(questions, Question{5, "9-3", []Variant{{1, "6", true}, {2, "4", false}, {3, "5", false}}})
 
-	// Create some students and their answers
-	s1 := Student{
-		ID:   1,
-		Name: "Alice",
-		Answers: []StudentAnswer{
-			{QuestionID: 1, Answer: "Paris"},
-			{QuestionID: 2, Answer: "Mars"},
-		},
-	}
-	s2 := Student{
-		ID:   2,
-		Name: "Bob",
-		Answers: []StudentAnswer{
-			{QuestionID: 1, Answer: "London"},
-			{QuestionID: 2, Answer: "Jupiter"},
-		},
-	}
+	students := []Student{}
+	students = append(students, Student{2, "Asadbek", []StudentAnswer{{1, "3"}, {2, "1"}, {3, "4"}, {4, "8"}, {5, "6"}}})
+	students = append(students, Student{1, "Sardor", []StudentAnswer{{1, "3"}, {2, "2"}, {3, "4"}, {4, "8"}, {5, "6"}}})
+	students = append(students, Student{3, "Odilbek", []StudentAnswer{{1, "1"}, {2, "1"}, {3, "1"}, {4, "2"}, {5, "2"}}})
+	students = append(students, Student{4, "Valijon", []StudentAnswer{{1, "3"}, {2, "1"}, {3, "4"}, {4, "3"}, {5, "6"}}})
+	students = append(students, Student{5, "Azamjon", []StudentAnswer{{1, "7"}, {2, "2"}, {3, "1"}, {4, "1"}, {5, "2"}}})
+	students = append(students, Student{6, "Otabek", []StudentAnswer{{1, "3"}, {2, "2"}, {3, "4"}, {4, "8"}, {5, "5"}}})
+	students = append(students, Student{7, "Oybek", []StudentAnswer{{1, "3"}, {2, "1"}, {3, "4"}, {4, "1"}, {5, "1"}}})
 
-	// Store the questions and students in a map
-	data := make(map[int]interface{})
-	data[q1.ID] = q1
-	data[q2.ID] = q2
-	data[s1.ID] = s1
-	data[s2.ID] = s2
-
-	// Calculate and print the number of correct answers found by each student
-	results := make(map[int]int)
-	for _, v := range data {
-		switch t := v.(type) {
-		case Student:
-			for _, a := range t.Answers {
-				q, ok := data[a.QuestionID].(Questions)
-				if !ok {
-					continue
-				}
-				if findCorrectAnswer(q.Options) == a.Answer {
-					results[t.ID]++
-				}
+	correctAnswers := make(map[int]string)
+	for _, question := range questions {
+		for _, variant := range question.Options {
+			if variant.Correct {
+				correctAnswers[question.ID] = variant.Answer
 			}
 		}
 	}
-	fmt.Println("Results:")
-	for k, v := range results {
-		fmt.Printf("Student %d found %d correct answers\n", k, v)
-	}
-}
 
-// Helper function to find the correct answer to a question
-func findCorrectAnswer(options []Variant) string {
-	for _, o := range options {
-		if o.Correct {
-			return o.Answer
+	studentsBall := make(map[string]int)
+	for _, student := range students {
+		for _, answer := range student.Answers {
+			if correctAnswers[answer.QuestionID] == answer.Answer {
+				studentsBall[student.Name] += 20
+			} else {
+				studentsBall[student.Name] += 0
+			}
 		}
 	}
-	return ""
+
+	stds := make([]string, 0, len(studentsBall))
+
+	for student := range studentsBall {
+		stds = append(stds, student)
+	}
+
+	sort.SliceStable(stds, func(i, j int) bool {
+		return studentsBall[stds[i]] > studentsBall[stds[j]]
+	})
+
+	t := table.NewWriter()
+	t.SetCaption("Natijalar")
+
+	t.AppendHeader(table.Row{"O'RIN", "ISM", "BALL", "DARAJA"})
+	for i, k := range stds {
+		t.AppendRow(table.Row{i + 1, k, studentsBall[k], Ball(studentsBall[k])})
+	}
+
+	fmt.Println(t.Render())
+
+}
+
+func Ball(ball int) string {
+	if ball < 55 {
+		return "Failed"
+	} else if ball < 71 {
+		return "C"
+	} else if ball < 86 {
+		return "B"
+	} else {
+		return "A"
+	}
 }
