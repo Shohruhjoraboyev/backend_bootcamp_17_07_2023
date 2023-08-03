@@ -1,9 +1,9 @@
 package main
 
 import (
+	"backend_bootcamp_17_07_2023/lesson_8/project/handler"
+	"backend_bootcamp_17_07_2023/lesson_8/project/storage/memory"
 	"fmt"
-	"playground/project/handler"
-	"playground/project/storage/memory"
 )
 
 func main() {

@@ -1,6 +1,6 @@
 package storage
 
-import "playground/project/models"
+import "backend_bootcamp_17_07_2023/lesson_8/project/models"
 
 type StorageI interface {
 	Branch() BranchesI

@@ -1,8 +1,8 @@
 package handler
 
 import (
+	"backend_bootcamp_17_07_2023/lesson_8/project/models"
 	"fmt"
-	"playground/project/models"
 )
 
 func (h *handler) CreateBranch(name, adress string) {
