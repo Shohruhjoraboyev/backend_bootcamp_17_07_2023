@@ -63,4 +63,14 @@ func main() {
 	// id := 0
 	// fmt.Scan(&id)
 	// h.GetCard(id)
+
+	// ================== SIZE ==================
+	// fmt.Println("Enter Name, Price and Created_at: ")
+	// price := 1002.
+	// name, created_at := "1litr", "04-07-2023"
+	// h.CreateSize(name, price, created_at)
+	// fmt.Print("To get Size enter ID: ")
+	// id := 0
+	// fmt.Scan(&id)
+	// h.GetSize(id)
 }
