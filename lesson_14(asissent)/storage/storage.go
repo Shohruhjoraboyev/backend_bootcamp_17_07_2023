@@ -7,6 +7,7 @@ type StorageI interface {
 	Staff() StaffesI
 	Product() ProductI
 	Client() ClientI
+	Card() CardI
 }
 
 type BranchesI interface {
@@ -39,4 +40,12 @@ type ClientI interface {
 	GetClient(models.IdRequest) (models.Client, error)
 	GetAllClient(models.GetAllClientRequest) (models.GetAllClientResponse, error)
 	DeleteClient(models.IdRequest) (string, error)
+}
+
+type CardI interface {
+	CreateCard(models.CreateCard) (int, error)
+	UpdateCard(models.Card) (string, error)
+	GetCard(models.IdRequest) (models.Card, error)
+	GetAllCard(models.GetAllCardRequest) (models.GetAllCardResponse, error)
+	DeleteCard(models.IdRequest) (string, error)
 }
