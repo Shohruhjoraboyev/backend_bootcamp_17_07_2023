@@ -49,6 +49,12 @@ func (h *handler) GetCard(id int) {
 }
 
 func (h *handler) GetAllCard(page, limit int, search string) {
+	if page < 1 {
+		page = h.cfg.Page
+	}
+	if limit < 1 {
+		limit = h.cfg.Limit
+	}
 	resp, err := h.strg.Card().GetAllCard(models.GetAllCardRequest{
 		Page:  page,
 		Limit: limit,

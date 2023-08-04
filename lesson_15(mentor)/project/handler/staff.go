@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"backend_bootcamp_17_07_2023/lesson_14/models"
+	"backend_bootcamp_17_07_2023/lesson_8/project/models"
 	"fmt"
 )
 
@@ -55,6 +55,7 @@ func (h *handler) GetAllStaff(page, limit int, search string) {
 	if limit < 1 {
 		limit = h.cfg.Limit
 	}
+
 	resp, err := h.strg.Staff().GetAllStaff(models.GetAllStaffRequest{
 		Page:  page,
 		Limit: limit,

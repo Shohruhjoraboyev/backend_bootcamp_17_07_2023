@@ -1,13 +1,37 @@
 package main
 
 import (
+	"backend_bootcamp_17_07_2023/lesson_14/config"
 	"backend_bootcamp_17_07_2023/lesson_14/handler"
 	"backend_bootcamp_17_07_2023/lesson_14/storage/memory"
+	"fmt"
 )
 
 func main() {
+
+	cfg := config.Load()
 	strg := memory.NewStorage()
-	h := handler.NewHandler(strg)
+	h := handler.NewHandler(strg, *cfg)
+
+	fmt.Println("Welcome to my Golang Project!")
+	fmt.Println("Available methods:")
+	for _, m := range cfg.Methods {
+		fmt.Println("- ", m)
+	}
+	fmt.Println("Available objects:")
+	for _, o := range cfg.Objects {
+		fmt.Println("- ", o)
+	}
+
+	for {
+		fmt.Print("enter methods and object: ")
+		method, object := "", ""
+		fmt.Scan(&method, &object)
+
+		if object == "branch" && method == "getAll" {
+			h.GetAllBranch(1, 10, "")
+		}
+	}
 	//================== BRANCH ==================
 	// fmt.Println("Enter name and adress: ")
 	// name, adress := "", ""

@@ -47,6 +47,12 @@ func (h *handler) GetSize(id int) {
 }
 
 func (h *handler) GetAllSize(page, limit int, search string) {
+	if page < 1 {
+		page = h.cfg.Page
+	}
+	if limit < 1 {
+		limit = h.cfg.Limit
+	}
 	resp, err := h.strg.Size().GetAllSize(models.GetAllSizeRequest{
 		Page:  page,
 		Limit: limit,

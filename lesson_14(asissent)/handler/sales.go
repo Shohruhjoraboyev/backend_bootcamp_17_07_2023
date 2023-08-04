@@ -58,6 +58,12 @@ func (h *handler) GetSales(id int) {
 }
 
 func (h *handler) GetAllSales(page, limit int, search string) {
+	if page < 1 {
+		page = h.cfg.Page
+	}
+	if limit < 1 {
+		limit = h.cfg.Limit
+	}
 	resp, err := h.strg.Sales().GetAllSales(models.GetAllSalesRequest{
 		Page:  page,
 		Limit: limit,

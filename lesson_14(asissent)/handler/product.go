@@ -47,6 +47,12 @@ func (h *handler) GetProduct(id int) {
 }
 
 func (h *handler) GetAllProduct(page, limit int, search string) {
+	if page < 1 {
+		page = h.cfg.Page
+	}
+	if limit < 1 {
+		limit = h.cfg.Limit
+	}
 	resp, err := h.strg.Product().GetAllProduct(models.GetAllProductRequest{
 		Page:  page,
 		Limit: limit,

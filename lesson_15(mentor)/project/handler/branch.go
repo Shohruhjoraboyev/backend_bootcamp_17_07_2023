@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"backend_bootcamp_17_07_2023/lesson_14/models"
+	"backend_bootcamp_17_07_2023/lesson_8/project/models"
 	"fmt"
 )
 
@@ -20,7 +20,7 @@ func (h *handler) CreateBranch(name, adress string) {
 
 func (h *handler) UpdateBranch(id int, name, adress string) {
 	resp, err := h.strg.Branch().UpdateBranch(models.Branch{
-		Id:     id,
+		Id:     1,
 		Name:   name,
 		Adress: adress,
 	})
@@ -51,6 +51,7 @@ func (h *handler) GetAllBranch(page, limit int, search string) {
 	if limit < 1 {
 		limit = h.cfg.Limit
 	}
+
 	resp, err := h.strg.Branch().GetAllBranch(models.GetAllBranchRequest{
 		Page:  page,
 		Limit: limit,
