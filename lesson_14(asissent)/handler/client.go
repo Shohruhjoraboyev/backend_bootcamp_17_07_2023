@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func (h *handler) CreateClient(name string, card_id, size_id int, created_at string) {
+func (h *handler) CreateClient(name string, card_id int, created_at string) {
 	resp, err := h.strg.Client().CreateClient(models.CreateClient{
 		Name:       name,
 		Card_Id:    card_id,
