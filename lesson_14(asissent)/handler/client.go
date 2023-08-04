@@ -18,7 +18,7 @@ func (h *handler) CreateClient(name string, card_id, size_id int, created_at str
 	fmt.Println("created new Client with id: ", resp)
 }
 
-func (h *handler) UpdateClient(name string, card_id, size_id int, created_at string) {
+func (h *handler) UpdateClient(name string, card_id int, created_at string) {
 	resp, err := h.strg.Client().UpdateClient(models.Client{
 		Name:       name,
 		Card_Id:    card_id,
