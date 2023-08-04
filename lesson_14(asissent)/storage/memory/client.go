@@ -3,7 +3,6 @@ package memory
 import (
 	"backend_bootcamp_17_07_2023/lesson_14/models"
 	"errors"
-	"fmt"
 )
 
 type clientRepo struct {
@@ -21,7 +20,6 @@ func (c *clientRepo) CreateClient(req models.CreateClient) (int, error) {
 	} else {
 		id = c.clients[len(c.clients)-1].Id + 1
 	}
-	fmt.Println(req)
 
 	c.clients = append(c.clients, models.Client{
 		Id:         id,
