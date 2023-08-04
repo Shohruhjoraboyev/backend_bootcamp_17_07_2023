@@ -3,7 +3,6 @@ package main
 import (
 	"backend_bootcamp_17_07_2023/lesson_14/handler"
 	"backend_bootcamp_17_07_2023/lesson_14/storage/memory"
-	"fmt"
 )
 
 func main() {
@@ -33,13 +32,24 @@ func main() {
 	// h.GetStaff(id)
 
 	//================== PRODUCT ==================
-	fmt.Println("Enter name, card_id, size_id, created_at: ")
-	card_id, size_id := 0, 0
-	name, created_at := "", ""
-	fmt.Scan(&name, &card_id, &size_id, &created_at)
-	h.CreateProduct(name, card_id, size_id, created_at)
-	fmt.Print("To get Product enter ID: ")
-	id := 0
-	fmt.Scan(&id)
-	h.GetProduct(id)
+	// fmt.Println("Enter name, card_id, size_id, created_at: ")
+	// card_id, size_id := 0, 0
+	// name, created_at := "", ""
+	// fmt.Scan(&name, &card_id, &size_id, &created_at)
+	// h.CreateProduct(name, card_id, size_id, created_at)
+	// fmt.Print("To get Product enter ID: ")
+	// id := 0
+	// fmt.Scan(&id)
+	// h.GetProduct(id)
+
+	//================== CLIENT ==================
+	// fmt.Println("Enter Name, Card_id and Created_at: ")
+	// card_id := 0
+	// name, created_at := "", ""
+	// fmt.Scan(&name, &card_id, &created_at)
+	// h.CreateClient(name, card_id, size_id, created_at)
+	// fmt.Print("To get Staff enter ID: ")
+	// id := 0
+	// fmt.Scan(&id)
+	// h.GetClient(id)
 }

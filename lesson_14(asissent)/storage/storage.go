@@ -6,6 +6,7 @@ type StorageI interface {
 	Branch() BranchesI
 	Staff() StaffesI
 	Product() ProductI
+	Client() ClientI
 }
 
 type BranchesI interface {
@@ -30,4 +31,12 @@ type ProductI interface {
 	GetProduct(models.IdRequest) (models.Product, error)
 	GetAllProduct(models.GetAllProductRequest) (models.GetAllProductResponse, error)
 	DeleteProduct(models.IdRequest) (string, error)
+}
+
+type ClientI interface {
+	CreateClient(models.CreateClient) (int, error)
+	UpdateClient(models.Client) (string, error)
+	GetClient(models.IdRequest) (models.Client, error)
+	GetAllClient(models.GetAllClientRequest) (models.GetAllClientResponse, error)
+	DeleteClient(models.IdRequest) (string, error)
 }

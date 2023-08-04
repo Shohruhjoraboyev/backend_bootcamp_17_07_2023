@@ -6,7 +6,12 @@ import (
 )
 
 func (h *handler) CreateProduct(name string, card_id, size_id int, created_at string) {
-	resp, err := h.strg.Product().CreateProduct(models.CreateProduct{})
+	resp, err := h.strg.Product().CreateProduct(models.CreateProduct{
+		Name:       name,
+		Card_Id:    card_id,
+		Size_Id:    size_id,
+		Created_at: created_at,
+	})
 	if err != nil {
 		fmt.Println("error from CreateProduct: ", err.Error())
 		return
