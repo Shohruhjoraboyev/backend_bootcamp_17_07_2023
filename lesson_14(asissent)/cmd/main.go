@@ -73,4 +73,22 @@ func main() {
 	// id := 0
 	// fmt.Scan(&id)
 	// h.GetSize(id)
+
+	// ================== SALES ==================
+	// fmt.Println("Enter Name, Price, payment_type, status, client_id, branch_id, shop_ass_id, cashier_id and Created_at: ")
+	// name := "nimadir"
+	// Price := 121.2
+	// Payment_Type := 1
+	// Status := 1
+	// Client_id := 1
+	// Branch_id := 1
+	// Shop_asissent_id := 1
+	// Cashier_id := 1
+	// Created_at := "2002-20-23"
+
+	// h.CreateSales(name, Price, Payment_Type, Status, Client_id, Branch_id, Shop_asissent_id, Cashier_id, Created_at)
+	// fmt.Print("To get sales enter ID: ")
+	// id := 0
+	// fmt.Scan(&id)
+	// h.GetSales(id)
 }
