@@ -7,6 +7,7 @@ type store struct {
 	staffes  *staffRepo
 	products *productRepo
 	clients  *clientRepo
+	cards    *cardRepo
 }
 
 func NewStorage() storage.StorageI {
@@ -15,6 +16,7 @@ func NewStorage() storage.StorageI {
 		staffes:  NewStaffRepo(),
 		products: NewProductRepo(),
 		clients:  NewClientRepo(),
+		cards:    NewCardRepo(),
 	}
 }
 
@@ -32,4 +34,8 @@ func (s *store) Product() storage.ProductI {
 
 func (s *store) Client() storage.ClientI {
 	return s.clients
+}
+
+func (s *store) Card() storage.CardI {
+	return s.cards
 }
