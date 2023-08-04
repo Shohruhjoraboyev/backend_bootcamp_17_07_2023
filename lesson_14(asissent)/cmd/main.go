@@ -47,9 +47,20 @@ func main() {
 	// card_id := 0
 	// name, created_at := "", ""
 	// fmt.Scan(&name, &card_id, &created_at)
-	// h.CreateClient(name, card_id, size_id, created_at)
+	// h.CreateClient(name, card_id, created_at)
 	// fmt.Print("To get Staff enter ID: ")
 	// id := 0
 	// fmt.Scan(&id)
 	// h.GetClient(id)
+
+	// ================== CARD ==================
+	// fmt.Println("Enter Name, Quantity, Product_Id and Created_at: ")
+	// quantity, product_id := 122, 2
+	// name, created_at := "apple", "04-07-2023"
+	// // fmt.Scan(&name, &quantity, &product_id, created_at)
+	// h.CreateCard(name, quantity, product_id, created_at)
+	// fmt.Print("To get Card enter ID: ")
+	// id := 0
+	// fmt.Scan(&id)
+	// h.GetCard(id)
 }
