@@ -91,4 +91,24 @@ func main() {
 	// id := 0
 	// fmt.Scan(&id)
 	// h.GetSales(id)
+
+	// Name             string
+	// Price            float64
+	// Payment_Type     int
+	// Status           int
+	// Client_id        int
+	// Branch_id        int
+	// Shop_asissent_id int
+	// Cashier_id       int
+	// Created_at       string
+
+	// ================== TRANSACTION ==================
+	// fmt.Println("Enter Name, Price, payment_type, status, client_id, branch_id, shop_ass_id, cashier_id and Created_at: ")
+	// // Type, Amount int, source_type, text string, sale_id float64, staff_id int, created_at string
+
+	// h.CreateSales(name, Price, Payment_Type, Status, Client_id, Branch_id, Shop_asissent_id, Cashier_id, Created_at)
+	// fmt.Print("To get sales enter ID: ")
+	// id := 0
+	// fmt.Scan(&id)
+	// h.GetSales(id)
 }

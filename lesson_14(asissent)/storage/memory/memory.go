@@ -3,24 +3,26 @@ package memory
 import "backend_bootcamp_17_07_2023/lesson_14/storage"
 
 type store struct {
-	branches *branchRepo
-	staffes  *staffRepo
-	products *productRepo
-	clients  *clientRepo
-	cards    *cardRepo
-	sizes    *sizeRepo
-	sales    *saleRepo
+	branches    *branchRepo
+	staffes     *staffRepo
+	products    *productRepo
+	clients     *clientRepo
+	cards       *cardRepo
+	sizes       *sizeRepo
+	sales       *saleRepo
+	transaction *transactionRepo
 }
 
 func NewStorage() storage.StorageI {
 	return &store{
-		branches: NewBranchRepo(),
-		staffes:  NewStaffRepo(),
-		products: NewProductRepo(),
-		clients:  NewClientRepo(),
-		cards:    NewCardRepo(),
-		sizes:    NewSizeRepo(),
-		sales:    NewSalesRepo(),
+		branches:    NewBranchRepo(),
+		staffes:     NewStaffRepo(),
+		products:    NewProductRepo(),
+		clients:     NewClientRepo(),
+		cards:       NewCardRepo(),
+		sizes:       NewSizeRepo(),
+		sales:       NewSalesRepo(),
+		transaction: NewTransactionRepo(),
 	}
 }
 
@@ -50,4 +52,8 @@ func (s *store) Size() storage.SizeI {
 
 func (s *store) Sales() storage.SalesI {
 	return s.sales
+}
+
+func (s *store) Transaction() storage.TransactionI {
+	return s.transaction
 }

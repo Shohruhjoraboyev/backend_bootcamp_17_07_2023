@@ -10,6 +10,7 @@ type StorageI interface {
 	Card() CardI
 	Size() SizeI
 	Sales() SalesI
+	Transaction() TransactionI
 }
 
 type BranchesI interface {
@@ -58,6 +59,14 @@ type SizeI interface {
 	GetSize(models.IdRequest) (models.Size, error)
 	GetAllSize(models.GetAllSizeRequest) (models.GetAllSizeResponse, error)
 	DeleteSize(models.IdRequest) (string, error)
+}
+
+type TransactionI interface {
+	CreateTransaction(models.CreateTransaction) (int, error)
+	UpdateTransaction(models.Transaction) (string, error)
+	GetTransaction(models.IdRequest) (models.Transaction, error)
+	GetAllTransaction(models.GetAllTransactionRequest) (models.GetAllTransaction, error)
+	DeleteTransaction(models.IdRequest) (string, error)
 }
 
 type SalesI interface {
