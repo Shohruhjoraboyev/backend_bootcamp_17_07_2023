@@ -20,7 +20,7 @@ func (h *handler) CreateBranch(name, adress string) {
 
 func (h *handler) UpdateBranch(id int, name, adress string) {
 	resp, err := h.strg.Branch().UpdateBranch(models.Branch{
-		Id:     1,
+		Id:     id,
 		Name:   name,
 		Adress: adress,
 	})
