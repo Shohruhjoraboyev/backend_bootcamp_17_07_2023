@@ -1,14 +1,18 @@
 package models
 
 type CreateBranch struct {
-	Name   string
-	Adress string
+	Name      string
+	Adress    string
+	FoundedAt string
 }
 
 type Branch struct {
-	Id     string
-	Name   string
-	Adress string
+	Id        string
+	Name      string
+	Adress    string
+	FoundedAt string
+	Year      int
+	CreatedAt string
 }
 
 type IdRequest struct {
