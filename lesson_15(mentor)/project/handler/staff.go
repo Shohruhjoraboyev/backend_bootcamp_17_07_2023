@@ -5,7 +5,7 @@ import (
 	"lesson_15/models"
 )
 
-func (h *handler) CreateStaff(BranchId, TariffId, TypeId int, Name string, Balance float64) {
+func (h *handler) CreateStaff(BranchId, TariffId int, TypeId models.StaffType, Name string, Balance float64) {
 	resp, err := h.strg.Staff().CreateStaff(models.CreateStaff{
 		BranchId: BranchId,
 		TariffId: TariffId,
@@ -20,7 +20,7 @@ func (h *handler) CreateStaff(BranchId, TariffId, TypeId int, Name string, Balan
 	fmt.Println("created new staff with id: ", resp)
 }
 
-func (h *handler) UpdateStaff(BranchId, TariffId, TypeId int, Name string, Balance float64) {
+func (h *handler) UpdateStaff(BranchId, TariffId int, TypeId models.StaffType, Name string, Balance float64) {
 	resp, err := h.strg.Staff().UpdateStaff(models.Staff{
 		BranchId: BranchId,
 		TariffId: TariffId,
@@ -36,7 +36,7 @@ func (h *handler) UpdateStaff(BranchId, TariffId, TypeId int, Name string, Balan
 	fmt.Println("Updated staff with id: ", resp)
 }
 
-func (h *handler) GetStaff(id int) {
+func (h *handler) GetStaff(id string) {
 	resp, err := h.strg.Staff().GetStaff(models.IdRequest{
 		Id: id,
 	})
@@ -48,18 +48,22 @@ func (h *handler) GetStaff(id int) {
 	fmt.Println("found staff with id: ", resp)
 }
 
-func (h *handler) GetAllStaff(page, limit int, search string) {
+func (h *handler) GetAllStaff(page, limit, branchId, tariffId int, staffType models.StaffType, name string, balanceFrom, balanceTo float64) {
 	if page < 1 {
 		page = h.cfg.Page
 	}
 	if limit < 1 {
 		limit = h.cfg.Limit
 	}
-
 	resp, err := h.strg.Staff().GetAllStaff(models.GetAllStaffRequest{
-		Page:  page,
-		Limit: limit,
-		Name:  search,
+		Page:        page,
+		Limit:       limit,
+		BranchId:    branchId,
+		TariffId:    tariffId,
+		Type:        staffType,
+		Name:        name,
+		BalanceFrom: balanceFrom,
+		BalanceTo:   balanceTo,
 	})
 
 	if err != nil {
@@ -69,7 +73,7 @@ func (h *handler) GetAllStaff(page, limit int, search string) {
 	fmt.Println("found all Staffes based on filter: ", resp)
 }
 
-func (h *handler) DeleteStaff(id int) {
+func (h *handler) DeleteStaff(id string) {
 	resp, err := h.strg.Staff().DeleteStaff(models.IdRequest{
 		Id: id,
 	})

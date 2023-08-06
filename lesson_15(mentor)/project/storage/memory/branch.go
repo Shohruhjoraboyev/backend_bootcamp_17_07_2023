@@ -3,6 +3,8 @@ package memory
 import (
 	"errors"
 	"lesson_15/models"
+
+	"github.com/google/uuid"
 )
 
 type branchRepo struct {
@@ -13,20 +15,15 @@ func NewBranchRepo() *branchRepo {
 	return &branchRepo{branches: make([]models.Branch, 0)}
 }
 
-func (b *branchRepo) CreateBranch(req models.CreateBranch) (int, error) {
-	var id int
-	if len(b.branches) == 0 {
-		id = 1
-	} else {
-		id = b.branches[len(b.branches)-1].Id + 1
-	}
+func (b *branchRepo) CreateBranch(req models.CreateBranch) (string, error) {
+	id := uuid.New()
 
 	b.branches = append(b.branches, models.Branch{
-		Id:     id,
+		Id:     id.String(),
 		Name:   req.Name,
 		Adress: req.Adress,
 	})
-	return id, nil
+	return id.String(), nil
 }
 
 func (b *branchRepo) UpdateBranch(req models.Branch) (string, error) {

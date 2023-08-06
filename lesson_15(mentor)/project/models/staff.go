@@ -3,24 +3,36 @@ package models
 type CreateStaff struct {
 	BranchId int
 	TariffId int
-	TypeId   int
+	TypeId   StaffType
 	Name     string
 	Balance  float64
 }
 
 type Staff struct {
-	Id       int
+	Id       string
 	BranchId int
 	TariffId int
-	TypeId   int
+	TypeId   StaffType
 	Name     string
 	Balance  float64
 }
 
+type StaffType string
+
+const (
+	Cashier       StaffType = "cashier"
+	ShopAssistant StaffType = "shop_assistant"
+)
+
 type GetAllStaffRequest struct {
-	Page  int
-	Limit int
-	Name  string
+	Page        int
+	Limit       int
+	BranchId    int
+	TariffId    int
+	Type        StaffType
+	Name        string
+	BalanceFrom float64
+	BalanceTo   float64
 }
 
 type GetAllStaff struct {

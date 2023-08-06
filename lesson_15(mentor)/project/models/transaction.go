@@ -11,7 +11,7 @@ type CreateTransaction struct {
 }
 
 type Transaction struct {
-	Id          int
+	Id          string
 	Amount      int
 	Source_type string
 	Text        string

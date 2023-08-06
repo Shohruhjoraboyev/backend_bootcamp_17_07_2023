@@ -18,9 +18,9 @@ func (h *handler) CreateBranch(name, adress string) {
 	fmt.Println("created new branch with id: ", resp)
 }
 
-func (h *handler) UpdateBranch(id int, name, adress string) {
+func (h *handler) UpdateBranch(id string, name, adress string) {
 	resp, err := h.strg.Branch().UpdateBranch(models.Branch{
-		Id:     1,
+		Id:     id,
 		Name:   name,
 		Adress: adress,
 	})
@@ -32,7 +32,7 @@ func (h *handler) UpdateBranch(id int, name, adress string) {
 	fmt.Println("Updated branch with id: ", resp)
 }
 
-func (h *handler) GetBranch(id int) {
+func (h *handler) GetBranch(id string) {
 	resp, err := h.strg.Branch().GetBranch(models.IdRequest{
 		Id: id,
 	})
@@ -65,7 +65,7 @@ func (h *handler) GetAllBranch(page, limit int, search string) {
 	fmt.Println("found all branchs based on filter: ", resp)
 }
 
-func (h *handler) DeleteBranch(id int) {
+func (h *handler) DeleteBranch(id string) {
 	resp, err := h.strg.Branch().DeleteBranch(models.IdRequest{
 		Id: id,
 	})

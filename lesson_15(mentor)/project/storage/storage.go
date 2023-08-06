@@ -1,6 +1,8 @@
 package storage
 
-import "lesson_15/models"
+import (
+	"lesson_15/models"
+)
 
 type StorageI interface {
 	Branch() BranchesI
@@ -10,7 +12,7 @@ type StorageI interface {
 }
 
 type BranchesI interface {
-	CreateBranch(models.CreateBranch) (int, error)
+	CreateBranch(models.CreateBranch) (string, error)
 	UpdateBranch(models.Branch) (string, error)
 	GetBranch(models.IdRequest) (models.Branch, error)
 	GetAllBranch(models.GetAllBranchRequest) (models.GetAllBranch, error)
@@ -18,7 +20,7 @@ type BranchesI interface {
 }
 
 type StaffesI interface {
-	CreateStaff(models.CreateStaff) (int, error)
+	CreateStaff(models.CreateStaff) (string, error)
 	UpdateStaff(models.Staff) (string, error)
 	GetStaff(models.IdRequest) (models.Staff, error)
 	GetAllStaff(models.GetAllStaffRequest) (models.GetAllStaff, error)
@@ -26,7 +28,7 @@ type StaffesI interface {
 }
 
 type TransactionI interface {
-	CreateTransaction(models.CreateTransaction) (int, error)
+	CreateTransaction(models.CreateTransaction) (string, error)
 	UpdateTransaction(models.Transaction) (string, error)
 	GetTransaction(models.IdRequest) (models.Transaction, error)
 	GetAllTransaction(models.GetAllTransactionRequest) (models.GetAllTransactionResponse, error)
@@ -34,7 +36,7 @@ type TransactionI interface {
 }
 
 type SalesI interface {
-	CreateSale(models.CreateSales) (int, error)
+	CreateSale(models.CreateSales) (string, error)
 	UpdateSale(models.Sales) (string, error)
 	GetSale(models.IdRequest) (models.Sales, error)
 	GetAllSale(models.GetAllSalesRequest) (models.GetAllSalesResponse, error)

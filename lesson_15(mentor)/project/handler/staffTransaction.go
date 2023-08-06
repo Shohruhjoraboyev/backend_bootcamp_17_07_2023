@@ -24,7 +24,7 @@ func (h *handler) UpdateTransaction(BranchId, TariffId, TypeId int, Name string,
 	fmt.Println("Updated transaction with id: ", resp)
 }
 
-func (h *handler) GetTransaction(id int) {
+func (h *handler) GetTransaction(id string) {
 	resp, err := h.strg.Transaction().GetTransaction(models.IdRequest{
 		Id: id,
 	})
@@ -57,7 +57,7 @@ func (h *handler) GetAllTransaction(page, limit int, search string) {
 	fmt.Println("found all Transactiones based on filter: ", resp)
 }
 
-func (h *handler) DeleteTransaction(id int) {
+func (h *handler) DeleteTransaction(id string) {
 	resp, err := h.strg.Transaction().DeleteTransaction(models.IdRequest{
 		Id: id,
 	})

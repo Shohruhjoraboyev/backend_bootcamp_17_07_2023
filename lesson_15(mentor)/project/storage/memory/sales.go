@@ -3,6 +3,8 @@ package memory
 import (
 	"errors"
 	"lesson_15/models"
+
+	"github.com/google/uuid"
 )
 
 type saleRepo struct {
@@ -13,16 +15,11 @@ func NewSaleRepo() *saleRepo {
 	return &saleRepo{sales: make([]models.Sales, 0)}
 }
 
-func (c *saleRepo) CreateSale(req models.CreateSales) (int, error) {
-	var id int
-	if len(c.sales) == 0 {
-		id = 1
-	} else {
-		id = c.sales[len(c.sales)-1].Id + 1
-	}
+func (c *saleRepo) CreateSale(req models.CreateSales) (string, error) {
+	id := uuid.New()
 
 	c.sales = append(c.sales, models.Sales{
-		Id:               id,
+		Id:               id.String(),
 		Name:             req.Name,
 		Price:            req.Price,
 		Payment_Type:     req.Payment_Type,
@@ -32,7 +29,7 @@ func (c *saleRepo) CreateSale(req models.CreateSales) (int, error) {
 		Cashier_id:       req.Cashier_id,
 		Created_at:       req.Created_at,
 	})
-	return id, nil
+	return id.String(), nil
 }
 
 func (c *saleRepo) UpdateSale(req models.Sales) (string, error) {

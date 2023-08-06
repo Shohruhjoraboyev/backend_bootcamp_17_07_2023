@@ -3,6 +3,8 @@ package memory
 import (
 	"errors"
 	"lesson_15/models"
+
+	"github.com/google/uuid"
 )
 
 type transactionRepo struct {
@@ -13,16 +15,11 @@ func NewTransactionRepo() *transactionRepo {
 	return &transactionRepo{transactions: make([]models.Transaction, 0)}
 }
 
-func (t *transactionRepo) CreateTransaction(req models.CreateTransaction) (int, error) {
-	var id int
-	if len(t.transactions) == 0 {
-		id = 1
-	} else {
-		id = t.transactions[len(t.transactions)-1].Id + 1
-	}
+func (t *transactionRepo) CreateTransaction(req models.CreateTransaction) (string, error) {
+	id := uuid.New()
 
 	t.transactions = append(t.transactions, models.Transaction{
-		Id:          id,
+		Id:          id.String(),
 		Amount:      req.Amount,
 		Source_type: req.Source_type,
 		Text:        req.Text,
@@ -31,7 +28,7 @@ func (t *transactionRepo) CreateTransaction(req models.CreateTransaction) (int, 
 		Created_at:  req.Created_at,
 	})
 
-	return id, nil
+	return id.String(), nil
 }
 
 func (p *transactionRepo) UpdateTransaction(req models.Transaction) (string, error) {

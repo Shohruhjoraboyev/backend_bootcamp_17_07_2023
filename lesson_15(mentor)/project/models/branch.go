@@ -6,13 +6,13 @@ type CreateBranch struct {
 }
 
 type Branch struct {
-	Id     int
+	Id     string
 	Name   string
 	Adress string
 }
 
 type IdRequest struct {
-	Id int
+	Id string
 }
 
 type GetAllBranchRequest struct {

@@ -3,6 +3,9 @@ package memory
 import (
 	"errors"
 	"lesson_15/models"
+	"strings"
+
+	"github.com/google/uuid"
 )
 
 type staffRepo struct {
@@ -13,23 +16,18 @@ func NewStaffRepo() *staffRepo {
 	return &staffRepo{staffes: make([]models.Staff, 0)}
 }
 
-func (s *staffRepo) CreateStaff(req models.CreateStaff) (int, error) {
-	var id int
-	if len(s.staffes) == 0 {
-		id = 1
-	} else {
-		id = s.staffes[len(s.staffes)-1].Id + 1
-	}
+func (s *staffRepo) CreateStaff(req models.CreateStaff) (string, error) {
+	id := uuid.New()
 
 	s.staffes = append(s.staffes, models.Staff{
-		Id:       id,
+		Id:       id.String(),
 		BranchId: req.BranchId,
 		TariffId: req.TariffId,
 		TypeId:   req.TypeId,
 		Name:     req.Name,
 		Balance:  req.Balance,
 	})
-	return id, nil
+	return id.String(), nil
 }
 
 func (s *staffRepo) UpdateStaff(req models.Staff) (string, error) {
@@ -52,24 +50,21 @@ func (s *staffRepo) GetStaff(req models.IdRequest) (models.Staff, error) {
 }
 
 func (s *staffRepo) GetAllStaff(req models.GetAllStaffRequest) (resp models.GetAllStaff, err error) {
+	var filtered []models.Staff
 	start := req.Limit * (req.Page - 1)
 	end := start + req.Limit
 
-	if start > len(s.staffes) {
-		resp.Staffes = []models.Staff{}
-		resp.Count = len(s.staffes)
-		return
-	} else if end > len(s.staffes) {
-		return models.GetAllStaff{
-			Staffes: s.staffes[start:],
-			Count:   len(s.staffes),
-		}, nil
+	for _, v := range resp.Staffes {
+		if strings.Contains(v.Name, req.Name) && v.TypeId == req.Type && req.BalanceFrom >= v.Balance && req.BalanceTo <= v.Balance {
+			filtered = append(filtered, v)
+		}
 	}
 
 	return models.GetAllStaff{
-		Staffes: s.staffes[start:end],
-		Count:   len(s.staffes),
+		Staffes: filtered[start:end],
+		Count:   len(filtered),
 	}, nil
+
 }
 
 func (s *staffRepo) DeleteStaff(req models.IdRequest) (resp string, err error) {

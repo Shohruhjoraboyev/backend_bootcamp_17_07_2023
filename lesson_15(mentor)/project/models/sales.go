@@ -13,7 +13,7 @@ type CreateSales struct {
 }
 
 type Sales struct {
-	Id               int
+	Id               string
 	Name             string
 	Price            float64
 	Payment_Type     int

@@ -24,7 +24,7 @@ func (h *handler) UpdateSale(BranchId, TariffId, TypeId int, Name string, Balanc
 	fmt.Println("Updated staff with id: ", resp)
 }
 
-func (h *handler) GetSale(id int) {
+func (h *handler) GetSale(id string) {
 	resp, err := h.strg.Sales().GetSale(models.IdRequest{
 		Id: id,
 	})
@@ -57,7 +57,7 @@ func (h *handler) GetAllSale(page, limit int, search string) {
 	fmt.Println("found all Saleses based on filter: ", resp)
 }
 
-func (h *handler) DeleteSale(id int) {
+func (h *handler) DeleteSale(id string) {
 	resp, err := h.strg.Sales().DeleteSale(models.IdRequest{
 		Id: id,
 	})
