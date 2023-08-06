@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"strings"
+	"time"
 )
 
 func main() {
@@ -13,6 +14,7 @@ func main() {
 		Type:            "fixed",
 		amoun_for_cash:  12.2,
 		amount_for_card: 12,
+		Founded_at:      "2002-02-25",
 	}
 
 	staf2 := Staff_tariff{
@@ -21,6 +23,7 @@ func main() {
 		Type:            "percentage",
 		amoun_for_cash:  1223.2,
 		amount_for_card: 12323.1,
+		Founded_at:      "2000-02-25",
 	}
 
 	// CREATE STAFF_TARIF
@@ -33,6 +36,7 @@ func main() {
 	fmt.Println(staff_tariffs)
 
 	// GET TARIFF BY ID
+	fmt.Println("GET BY ID:")
 	tariff, err := staff_tariffs.GetTariffById(1)
 	if err != nil {
 		fmt.Println(err.Error())
@@ -41,6 +45,7 @@ func main() {
 	}
 
 	// GET ALL DATA
+	fmt.Println("GET ALL:")
 	// 4)getAllda  name(search), type filter, pagination
 	data, err := staff_tariffs.getAllTariffes("Pre", "fixed", 1, 1)
 	if err != nil {
@@ -79,12 +84,15 @@ type Staff_tariff struct {
 	Type            string
 	amoun_for_cash  float64
 	amount_for_card float64
+	Founded_at      string
+	Created_at      string
 }
 
 var staff_tariffs = Staff_tariffs{Data: make([]Staff_tariff, 0)}
 
 func (s *Staff_tariffs) CreateStaffTariff(newTariff Staff_tariff) (string, error) {
 	newTariff.Id = len(s.Data) + 1
+	newTariff.Created_at = time.Now().Format("2006-01-02 15:04:05")
 	for _, staff := range s.Data {
 		if staff.Id == newTariff.Id {
 			return "", fmt.Errorf("tariff with ID %d already exits", newTariff.Id)
