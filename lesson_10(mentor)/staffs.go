@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
+	"time"
 )
 
 func main() {
@@ -14,7 +16,9 @@ func main() {
 		TypeId:   1,
 		Name:     "Zo'r zo'r",
 		Balance:  123.3,
+		BirthDay: "2006-01-02",
 	}
+
 	staf2 := Staff{
 		Id:       2,
 		BranchId: 2,
@@ -22,6 +26,7 @@ func main() {
 		TypeId:   2,
 		Name:     "Zo'r UPDATED",
 		Balance:  223.3,
+		BirthDay: "2010-01-20",
 	}
 
 	// CREATE STAFF
@@ -31,8 +36,8 @@ func main() {
 	} else {
 		fmt.Println(res)
 	}
-	fmt.Println(staffes)
 
+	fmt.Println("GET BY ID:")
 	// GET STAFF BY ID
 	staff, err := staffes.GetStaffById(1)
 	if err != nil {
@@ -41,9 +46,10 @@ func main() {
 		fmt.Println(staff)
 	}
 
+	fmt.Println("GET ALL:")
 	// GET ALL DATA
-	// (page, limit, branchId, tariffId, TypeId int, name string, balanceFrom, balanceTo float64)
-	data, err := staffes.getAllStaffes(1, 1, 1, 1, 1, "zo'r", 12.2, 1221.2)
+	//(page, limit, branchId, tarifId, typ int, name string, balanceFrom, balanceTo float64)
+	data, err := staffes.getAllStaffes(1, 10, 1, 1, 1, "Zo'r", 12.1, 10000.2)
 	if err != nil {
 		fmt.Println(err.Error())
 	} else {
@@ -77,12 +83,15 @@ const (
 var staffes = Staffes{Data: make([]Staff, 0)}
 
 type Staff struct {
-	Id       int
-	BranchId int
-	TarifId  int
-	TypeId   int
-	Name     string
-	Balance  float64
+	Id         int
+	BranchId   int
+	TarifId    int
+	TypeId     int // cashier, shop_assistant
+	Name       string
+	Balance    float64
+	Created_At string
+	BirthDay   string
+	Age        int
 }
 
 type Staffes struct {
@@ -91,6 +100,7 @@ type Staffes struct {
 
 func (s *Staffes) CreateStaff(newStaff Staff) (string, error) {
 	newStaff.Id = len(s.Data) + 1
+	newStaff.Created_At = time.Now().Format("2006-01-02 15:04:05")
 	for _, staff := range s.Data {
 		if staff.Id == newStaff.Id {
 			return "", fmt.Errorf("branch with ID %d already exits", newStaff.Id)
@@ -105,17 +115,20 @@ func (s *Staffes) CreateStaff(newStaff Staff) (string, error) {
 func (s *Staffes) GetStaffById(id int) (Staff, error) {
 	for _, s := range staffes.Data {
 		if s.Id == id {
+			year, _ := strconv.Atoi(s.BirthDay[:4])
+			s.Age = time.Now().Year() - year
 			return s, nil
 		}
 	}
 	return Staff{}, fmt.Errorf("no branch found with ID %d", id)
 }
 
-func (s *Staffes) getAllStaffes(page, limit, branchId, tariffId, TypeId int, name string, balanceFrom, balanceTo float64) ([]Staff, error) {
+func (s *Staffes) getAllStaffes(page, limit, branchId, tarifId, typ int, name string, balanceFrom, balanceTo float64) ([]Staff, error) {
 	filtered := []Staff{}
-
 	for i, v := range s.Data {
-		if v.BranchId == branchId && v.TarifId == TypeId && v.TypeId == TypeId && strings.Contains(v.Name, name) && v.Balance > balanceFrom && v.Balance < balanceTo {
+		if v.BranchId == branchId && v.TarifId == tarifId && v.TypeId == typ && strings.Contains(v.Name, name) && v.Balance > balanceFrom && v.Balance < balanceTo {
+			year, _ := strconv.Atoi(s.Data[i].BirthDay[:4])
+			s.Data[i].Age = time.Now().Year() - year
 			filtered = append(filtered, s.Data[i])
 		}
 	}
