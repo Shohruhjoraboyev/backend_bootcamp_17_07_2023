@@ -2,7 +2,10 @@ package memory
 
 import (
 	"errors"
+	"fmt"
 	"lesson_15/models"
+	"strconv"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -17,11 +20,13 @@ func NewBranchRepo() *branchRepo {
 
 func (b *branchRepo) CreateBranch(req models.CreateBranch) (string, error) {
 	id := uuid.New()
-
+	createdAt := time.Now().Format("2006-01-02 15:04:05")
 	b.branches = append(b.branches, models.Branch{
-		Id:     id.String(),
-		Name:   req.Name,
-		Adress: req.Adress,
+		Id:        id.String(),
+		Name:      req.Name,
+		Adress:    req.Adress,
+		FoundedAt: req.FoundedAt,
+		CreatedAt: createdAt,
 	})
 	return id.String(), nil
 }
@@ -30,6 +35,7 @@ func (b *branchRepo) UpdateBranch(req models.Branch) (string, error) {
 	for i, v := range b.branches {
 		if v.Id == req.Id {
 			b.branches[i] = req
+			fmt.Println(b.branches)
 			return "updated", nil
 		}
 	}
@@ -39,6 +45,8 @@ func (b *branchRepo) UpdateBranch(req models.Branch) (string, error) {
 func (b *branchRepo) GetBranch(req models.IdRequest) (resp models.Branch, err error) {
 	for _, v := range b.branches {
 		if v.Id == req.Id {
+			foundedAt, _ := strconv.Atoi(v.FoundedAt[:4])
+			v.Year = time.Now().Year() - foundedAt
 			return v, nil
 		}
 	}

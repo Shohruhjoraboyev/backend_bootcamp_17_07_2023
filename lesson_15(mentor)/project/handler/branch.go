@@ -5,10 +5,11 @@ import (
 	"lesson_15/models"
 )
 
-func (h *handler) CreateBranch(name, adress string) {
+func (h *handler) CreateBranch(name, adress, year string) {
 	resp, err := h.strg.Branch().CreateBranch(models.CreateBranch{
-		Name:   name,
-		Adress: adress,
+		Name:      name,
+		Adress:    adress,
+		FoundedAt: year,
 	})
 
 	if err != nil {
@@ -18,11 +19,12 @@ func (h *handler) CreateBranch(name, adress string) {
 	fmt.Println("created new branch with id: ", resp)
 }
 
-func (h *handler) UpdateBranch(id string, name, adress string) {
+func (h *handler) UpdateBranch(id string, name, adress, founded_at string) {
 	resp, err := h.strg.Branch().UpdateBranch(models.Branch{
-		Id:     id,
-		Name:   name,
-		Adress: adress,
+		Id:        id,
+		Name:      name,
+		Adress:    adress,
+		FoundedAt: founded_at,
 	})
 
 	if err != nil {
