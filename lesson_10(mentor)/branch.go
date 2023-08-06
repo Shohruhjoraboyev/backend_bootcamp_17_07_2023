@@ -2,21 +2,25 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
+	"time"
 )
 
 var branches = Branches{Data: make([]Branch, 0)}
 
 func main() {
 	data1 := Branch{
-		ID:     1,
-		Name:   "Omadbek",
-		Adress: "Andijan City",
+		ID:        1,
+		Name:      "Omadbek",
+		Adress:    "Andijan City",
+		FoundedAt: "2002-02-25",
 	}
 	data2 := Branch{
-		ID:     2,
-		Name:   "Sarvarbek",
-		Adress: "Toshkent City",
+		ID:        2,
+		Name:      "Sarvarbek",
+		Adress:    "Toshkent City",
+		FoundedAt: "2002-02-25",
 	}
 
 	// CREATE BRANCH
@@ -36,7 +40,7 @@ func main() {
 	}
 
 	// GET BRANCH WITH ID
-	branch, err := branches.GetBranch(2)
+	branch, err := branches.GetBranch(1)
 	if err != nil {
 		fmt.Println(err.Error())
 	} else {
@@ -62,9 +66,12 @@ func main() {
 }
 
 type Branch struct {
-	ID     int
-	Name   string
-	Adress string
+	ID        int
+	Name      string
+	Adress    string
+	FoundedAt string
+	Year      int
+	CreatedAt string
 }
 
 type Branches struct {
@@ -74,7 +81,7 @@ type Branches struct {
 // creates new branch
 func (b *Branches) CreateBranch(newBranch Branch) (string, error) {
 	newBranch.ID = len(b.Data) + 1
-
+	newBranch.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
 	// Check if branch id already exists
 	for _, branch := range b.Data {
 		if branch.ID == newBranch.ID {
@@ -107,14 +114,17 @@ func (b *Branches) UpdateBranch(branchID int, updatedBranch Branch) (string, err
 	}
 
 	updatedBranch.ID = branchID
+	b.Data[index].FoundedAt = updatedBranch.FoundedAt
 	b.Data[index] = updatedBranch
 	return "successfully updated", nil
 }
 
 func (b *Branches) GetBranch(id int) (Branch, error) {
-	for _, v := range branches.Data {
-		if id == v.ID {
-			return v, nil
+	for i := range b.Data {
+		if b.Data[i].ID == id {
+			foundedAt, _ := strconv.Atoi(b.Data[i].FoundedAt[:4])
+			b.Data[i].Year = (time.Now().Year() - foundedAt)
+			return b.Data[i], nil
 		}
 	}
 	return Branch{}, fmt.Errorf("no branch found with ID %d", id)
