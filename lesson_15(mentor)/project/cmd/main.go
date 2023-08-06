@@ -28,8 +28,26 @@ func main() {
 		method, object := "", ""
 		fmt.Scan(&method, &object)
 
-		if object == "branch" && method == "getAll" {
-			h.GetAllBranch(1, 10, "")
+		// if object == "branch" && method == "getAll" {
+		// 	h.GetAllBranch(1, 10, "")
+		// }
+		switch object {
+		// BRANCH
+		case "branch":
+			switch method {
+			case "create":
+				fmt.Println("Enter name and adress: ")
+				name, adress := "", ""
+				fmt.Scan(&name, &adress)
+				h.CreateBranch(name, adress)
+			case "getAll":
+				h.GetAllBranch(1, 10, "")
+			case "get":
+				fmt.Print("Enter ID: ")
+				var id string
+				fmt.Scan(&id)
+				h.GetBranch(id)
+			}
 		}
 	}
 
