@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"backend_bootcamp_17_07_2023/lesson_8/project/config"
-	"backend_bootcamp_17_07_2023/lesson_8/project/storage"
+	"lesson_15/config"
+	"lesson_15/storage"
 )
 
 type handler struct {

@@ -1,3 +1,3 @@
-module backend_bootcamp_17_07_2023/lesson_8/project
+module lesson_15
 
 go 1.19

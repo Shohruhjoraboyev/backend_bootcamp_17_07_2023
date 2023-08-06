@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"backend_bootcamp_17_07_2023/lesson_8/project/models"
 	"fmt"
+	"lesson_15/models"
 )
 
 func (h *handler) CreateStaff(BranchId, TariffId, TypeId int, Name string, Balance float64) {

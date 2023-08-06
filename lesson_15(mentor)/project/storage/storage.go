@@ -1,10 +1,12 @@
 package storage
 
-import "backend_bootcamp_17_07_2023/lesson_8/project/models"
+import "lesson_15/models"
 
 type StorageI interface {
 	Branch() BranchesI
 	Staff() StaffesI
+	Sales() SalesI
+	Transaction() TransactionI
 }
 
 type BranchesI interface {
@@ -21,4 +23,20 @@ type StaffesI interface {
 	GetStaff(models.IdRequest) (models.Staff, error)
 	GetAllStaff(models.GetAllStaffRequest) (models.GetAllStaff, error)
 	DeleteStaff(models.IdRequest) (string, error)
+}
+
+type TransactionI interface {
+	CreateTransaction(models.CreateTransaction) (int, error)
+	UpdateTransaction(models.Transaction) (string, error)
+	GetTransaction(models.IdRequest) (models.Transaction, error)
+	GetAllTransaction(models.GetAllTransactionRequest) (models.GetAllTransactionResponse, error)
+	DeleteTransaction(models.IdRequest) (string, error)
+}
+
+type SalesI interface {
+	CreateSale(models.CreateSales) (int, error)
+	UpdateSale(models.Sales) (string, error)
+	GetSale(models.IdRequest) (models.Sales, error)
+	GetAllSale(models.GetAllSalesRequest) (models.GetAllSalesResponse, error)
+	DeleteSale(models.IdRequest) (string, error)
 }
