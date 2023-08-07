@@ -32,6 +32,14 @@ func main() {
 			h.GetAllBranch(1, 10, "")
 		}
 	}
+	
+	type branchRepo struct {
+	fileName string
+}
+
+func NewBranchRepo(fileName string) *branchRepo {
+	return &branchRepo{fileName: fileName}
+}
 	//================== BRANCH ==================
 	// fmt.Println("Enter name and adress: ")
 	// name, adress := "", ""
