@@ -34,9 +34,9 @@ type Sales struct {
 }
 
 type GetAllSalesRequest struct {
-	Page  int
-	Limit int
-	Name  string
+	Page        int
+	Limit       int
+	Client_name string
 }
 
 type GetAllSalesResponse struct {
