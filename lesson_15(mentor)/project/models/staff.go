@@ -27,8 +27,6 @@ const (
 type GetAllStaffRequest struct {
 	Page        int
 	Limit       int
-	BranchId    int
-	TariffId    int
 	Type        StaffType
 	Name        string
 	BalanceFrom float64
