@@ -3,6 +3,7 @@ package memory
 import (
 	"errors"
 	"lesson_15/models"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -55,22 +56,30 @@ func (c *saleRepo) GetSale(req models.IdRequest) (resp models.Sales, err error) 
 func (c *saleRepo) GetAllSale(req models.GetAllSalesRequest) (resp models.GetAllSalesResponse, err error) {
 	start := req.Limit * (req.Page - 1)
 	end := start + req.Limit
+	var filtered []models.Sales
 
-	if start > len(c.sales) {
+	for _, v := range c.sales {
+		if strings.Contains(v.Client_name, req.Client_name) {
+			filtered = append(filtered, v)
+		}
+	}
+
+	if start > len(filtered) {
 		resp.Sales = []models.Sales{}
-		resp.Count = len(c.sales)
+		resp.Count = len(filtered)
 		return
-	} else if end > len(c.sales) {
+	} else if end > len(filtered) {
 		return models.GetAllSalesResponse{
-			Sales: c.sales[start:],
-			Count: len(c.sales),
+			Sales: filtered[start:],
+			Count: len(filtered),
 		}, nil
 	}
 
 	return models.GetAllSalesResponse{
-		Sales: c.sales[start:end],
-		Count: len(c.sales),
+		Sales: filtered[start:end],
+		Count: len(filtered),
 	}, nil
+
 }
 
 func (c *saleRepo) DeleteSale(req models.IdRequest) (resp string, err error) {
