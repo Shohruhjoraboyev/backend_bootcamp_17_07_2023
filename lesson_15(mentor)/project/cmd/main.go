@@ -95,6 +95,43 @@ func main() {
 				fmt.Scan(&id)
 				h.DeleteStaff(id)
 			}
+		// SALE
+		case "sale":
+			switch method {
+			case "create":
+				fmt.Println("Client_name, Branch_id, Shop_asissent_id, Cashier_id, Price, Payment_Type(card, cash), Status(seccess, cancel): ")
+				client_name := ""
+				Branch_id, Shop_asissent_id, Cashier_id := 0, 0, 0
+				price := 0.0
+				var payment models.Payment
+				var status models.Status
+				fmt.Scan(&client_name, &Branch_id, &Shop_asissent_id, &Cashier_id, &price, &payment, &status)
+				h.CreateSale(client_name, Branch_id, Shop_asissent_id, Cashier_id, price, payment, status)
+			case "get":
+				fmt.Print("Enter ID: ")
+				var id string
+				fmt.Scan(&id)
+				h.GetSale(id)
+			case "getAll":
+				fmt.Println("Enter Client name: ")
+				client_name := ""
+				fmt.Scan(&client_name)
+				h.GetAllSale(1, 10, client_name)
+			case "update":
+				fmt.Println("Enter ID, Client_name, Branch_id, Shop_asissent_id, Cashier_id, Price, Payment_Type(card, cash), Status(seccess, cancel): ")
+				id, client_name := "", ""
+				Branch_id, Shop_asissent_id, Cashier_id := 0, 0, 0
+				price := 0.0
+				var payment models.Payment
+				var status models.Status
+				fmt.Scan(&id, &client_name, &Branch_id, &Shop_asissent_id, &Cashier_id, &price, &payment, &status)
+				h.UpdateSale(id, client_name, Branch_id, Shop_asissent_id, Cashier_id, price, payment, status)
+			case "delete":
+				fmt.Print("Enter ID that you want to delete: ")
+				id := ""
+				fmt.Scan(&id)
+				h.DeleteSale(id)
+			}
 		}
 	}
 }
