@@ -5,8 +5,16 @@ import (
 	"lesson_15/models"
 )
 
-func (h *handler) CreateSale(BranchId, TariffId, TypeId int, Name string, Balance float64) {
-	resp, err := h.strg.Sales().CreateSale(models.CreateSales{})
+func (h *handler) CreateSale(Client_name string, Branch_id, Shop_asissent_id, Cashier_id int, Price float64, Payment_Type models.Payment, Status models.Status) {
+	resp, err := h.strg.Sales().CreateSale(models.CreateSales{
+		Client_name:      Client_name,
+		Branch_id:        Branch_id,
+		Shop_asissent_id: Shop_asissent_id,
+		Cashier_id:       Cashier_id,
+		Price:            Price,
+		Payment_Type:     Payment_Type,
+		Status:           Status,
+	})
 	if err != nil {
 		fmt.Println("error from CreateSales: ", err.Error())
 		return
@@ -14,8 +22,17 @@ func (h *handler) CreateSale(BranchId, TariffId, TypeId int, Name string, Balanc
 	fmt.Println("created new staff with id: ", resp)
 }
 
-func (h *handler) UpdateSale(BranchId, TariffId, TypeId int, Name string, Balance float64) {
-	resp, err := h.strg.Sales().UpdateSale(models.Sales{})
+func (h *handler) UpdateSale(Id, Client_name string, Branch_id, Shop_asissent_id, Cashier_id int, Price float64, Payment_Type models.Payment, Status models.Status) {
+	resp, err := h.strg.Sales().UpdateSale(models.Sales{
+		Id:               Id,
+		Client_name:      Client_name,
+		Branch_id:        Branch_id,
+		Shop_asissent_id: Shop_asissent_id,
+		Cashier_id:       Cashier_id,
+		Price:            Price,
+		Payment_Type:     Payment_Type,
+		Status:           Status,
+	})
 
 	if err != nil {
 		fmt.Println("error from UpdateSales: ", err.Error())

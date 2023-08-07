@@ -21,7 +21,7 @@ func (c *saleRepo) CreateSale(req models.CreateSales) (string, error) {
 
 	c.sales = append(c.sales, models.Sales{
 		Id:               id.String(),
-		Name:             req.Name,
+		Client_name:      req.Client_name,
 		Price:            req.Price,
 		Payment_Type:     req.Payment_Type,
 		Status:           req.Status,
