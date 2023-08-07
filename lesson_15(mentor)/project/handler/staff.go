@@ -48,7 +48,7 @@ func (h *handler) GetStaff(id string) {
 	fmt.Println("found staff with id: ", resp)
 }
 
-func (h *handler) GetAllStaff(page, limit, branchId, tariffId int, staffType models.StaffType, name string, balanceFrom, balanceTo float64) {
+func (h *handler) GetAllStaff(page, limit int, staffType models.StaffType, name string, balanceFrom, balanceTo float64) {
 	if page < 1 {
 		page = h.cfg.Page
 	}
@@ -58,8 +58,6 @@ func (h *handler) GetAllStaff(page, limit, branchId, tariffId int, staffType mod
 	resp, err := h.strg.Staff().GetAllStaff(models.GetAllStaffRequest{
 		Page:        page,
 		Limit:       limit,
-		BranchId:    branchId,
-		TariffId:    tariffId,
 		Type:        staffType,
 		Name:        name,
 		BalanceFrom: balanceFrom,

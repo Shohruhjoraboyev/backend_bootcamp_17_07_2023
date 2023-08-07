@@ -54,10 +54,21 @@ func (s *staffRepo) GetAllStaff(req models.GetAllStaffRequest) (resp models.GetA
 	start := req.Limit * (req.Page - 1)
 	end := start + req.Limit
 
-	for _, v := range resp.Staffes {
-		if strings.Contains(v.Name, req.Name) && v.TypeId == req.Type && req.BalanceFrom >= v.Balance && req.BalanceTo <= v.Balance {
+	for _, v := range s.staffes {
+		if strings.Contains(v.Name, req.Name) || v.TypeId == req.Type && req.BalanceFrom >= v.Balance && req.BalanceTo <= v.Balance {
 			filtered = append(filtered, v)
 		}
+	}
+
+	if start > len(filtered) {
+		resp.Staffes = []models.Staff{}
+		resp.Count = len(filtered)
+		return
+	} else if end > len(filtered) {
+		return models.GetAllStaff{
+			Staffes: filtered[start:],
+			Count:   len(filtered),
+		}, nil
 	}
 
 	return models.GetAllStaff{
