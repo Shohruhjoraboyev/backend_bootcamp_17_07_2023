@@ -20,7 +20,7 @@ func Load() *Config {
 			"create", "update", "get", "getAll", "update", "delete",
 		},
 		Objects: []string{
-			"branch", "staff", "sales", "staff_transaction", "staff",
+			"branch", "staff", "sales", "transaction", "staff",
 		},
 	}
 }
