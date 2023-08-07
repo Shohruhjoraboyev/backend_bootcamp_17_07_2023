@@ -1,27 +1,35 @@
 package models
 
 type CreateSales struct {
-	Name             string
-	Price            float64
-	Payment_Type     int
-	Status           int
-	Client_id        int
+	Client_name      string
 	Branch_id        int
 	Shop_asissent_id int
 	Cashier_id       int
+	Price            float64
+	Payment_Type     Payment
+	Status           Status
 	Created_at       string
 }
 
+type Payment string
+type Status string
+
+const (
+	Card    Payment = "card"
+	Cash    Payment = "cash"
+	Success Status  = "success"
+	Cancel  Status  = "cancel"
+)
+
 type Sales struct {
 	Id               string
-	Name             string
-	Price            float64
-	Payment_Type     int
-	Status           int
-	Client_id        int
+	Client_name      string
 	Branch_id        int
 	Shop_asissent_id int
 	Cashier_id       int
+	Price            float64
+	Payment_Type     Payment
+	Status           Status
 	Created_at       string
 }
 
