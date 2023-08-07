@@ -70,12 +70,8 @@ func (s *staffRepo) GetAllStaff(req models.GetAllStaffRequest) (resp models.GetA
 func (s *staffRepo) DeleteStaff(req models.IdRequest) (resp string, err error) {
 	for i, v := range s.staffes {
 		if v.Id == req.Id {
-			if i == len(s.staffes)-1 {
-				s.staffes = s.staffes[:i]
-			} else {
-				s.staffes = append(s.staffes[:i], s.staffes[i+1:]...)
-				return "deleted", nil
-			}
+			s.staffes = append(s.staffes[:i], s.staffes[i+1:]...)
+			return "deleted", nil
 		}
 	}
 	return "", errors.New("not found")

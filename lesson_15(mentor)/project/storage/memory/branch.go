@@ -77,12 +77,8 @@ func (b *branchRepo) GetAllBranch(req models.GetAllBranchRequest) (resp models.G
 func (b *branchRepo) DeleteBranch(req models.IdRequest) (resp string, err error) {
 	for i, v := range b.branches {
 		if v.Id == req.Id {
-			if i == len(b.branches)-1 {
-				b.branches = b.branches[:i]
-			} else {
-				b.branches = append(b.branches[:i], b.branches[i+1:]...)
-				return "deleted", nil
-			}
+			b.branches = append(b.branches[:i], b.branches[i+1:]...)
+			return "deleted", nil
 		}
 	}
 	return "", errors.New("not found")

@@ -75,12 +75,8 @@ func (c *saleRepo) GetAllSale(req models.GetAllSalesRequest) (resp models.GetAll
 func (c *saleRepo) DeleteSale(req models.IdRequest) (resp string, err error) {
 	for i, v := range c.sales {
 		if v.Id == req.Id {
-			if i == len(c.sales)-1 {
-				c.sales = c.sales[:i]
-			} else {
-				c.sales = append(c.sales[:i], c.sales[i+1:]...)
-				return "deleted", nil
-			}
+			c.sales = append(c.sales[:i], c.sales[i+1:]...)
+			return "deleted", nil
 		}
 	}
 	return "", errors.New("not found")

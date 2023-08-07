@@ -74,12 +74,8 @@ func (p *transactionRepo) GetAllTransaction(req models.GetAllTransactionRequest)
 func (p *transactionRepo) DeleteTransaction(req models.IdRequest) (resp string, err error) {
 	for i, v := range p.transactions {
 		if v.Id == req.Id {
-			if i == len(p.transactions)-1 {
-				p.transactions = p.transactions[:i]
-			} else {
-				p.transactions = append(p.transactions[:i], p.transactions[i+1:]...)
-				return "deleted", nil
-			}
+			p.transactions = append(p.transactions[:i], p.transactions[i+1:]...)
+			return "deleted", nil
 		}
 	}
 	return "", errors.New("not found")
