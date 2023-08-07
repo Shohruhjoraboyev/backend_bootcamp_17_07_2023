@@ -1,25 +1,32 @@
 package memory
 
 import (
+	"encoding/json"
 	"errors"
 	"lesson_15/models"
+	"log"
+	"os"
 	"strings"
 
 	"github.com/google/uuid"
 )
 
 type staffRepo struct {
-	staffes []models.Staff
+	fileName string
 }
 
-func NewStaffRepo() *staffRepo {
-	return &staffRepo{staffes: make([]models.Staff, 0)}
+func NewStaffRepo(fileName string) *staffRepo {
+	return &staffRepo{fileName: fileName}
 }
 
 func (s *staffRepo) CreateStaff(req models.CreateStaff) (string, error) {
+	staffes, err := s.read()
+	if err != nil {
+		return "", err
+	}
 	id := uuid.New()
 
-	s.staffes = append(s.staffes, models.Staff{
+	staffes = append(staffes, models.Staff{
 		Id:       id.String(),
 		BranchId: req.BranchId,
 		TariffId: req.TariffId,
@@ -27,13 +34,25 @@ func (s *staffRepo) CreateStaff(req models.CreateStaff) (string, error) {
 		Name:     req.Name,
 		Balance:  req.Balance,
 	})
+	err = s.write(staffes)
+	if err != nil {
+		return "", err
+	}
 	return id.String(), nil
 }
 
 func (s *staffRepo) UpdateStaff(req models.Staff) (string, error) {
-	for i, v := range s.staffes {
+	staffes, err := s.read()
+	if err != nil {
+		return "", err
+	}
+	for i, v := range staffes {
 		if v.Id == req.Id {
-			s.staffes[i] = req
+			staffes[i] = req
+			err = s.write(staffes)
+			if err != nil {
+				return "", err
+			}
 			return "updated", nil
 		}
 	}
@@ -41,7 +60,11 @@ func (s *staffRepo) UpdateStaff(req models.Staff) (string, error) {
 }
 
 func (s *staffRepo) GetStaff(req models.IdRequest) (models.Staff, error) {
-	for _, v := range s.staffes {
+	staffes, err := s.read()
+	if err != nil {
+		return models.Staff{}, err
+	}
+	for _, v := range staffes {
 		if v.Id == req.Id {
 			return v, nil
 		}
@@ -50,11 +73,15 @@ func (s *staffRepo) GetStaff(req models.IdRequest) (models.Staff, error) {
 }
 
 func (s *staffRepo) GetAllStaff(req models.GetAllStaffRequest) (resp models.GetAllStaff, err error) {
+	staffes, err := s.read()
+	if err != nil {
+		return models.GetAllStaff{}, err
+	}
 	var filtered []models.Staff
 	start := req.Limit * (req.Page - 1)
 	end := start + req.Limit
 
-	for _, v := range s.staffes {
+	for _, v := range staffes {
 		if strings.Contains(v.Name, req.Name) || v.TypeId == req.Type && req.BalanceFrom >= v.Balance && req.BalanceTo <= v.Balance {
 			filtered = append(filtered, v)
 		}
@@ -79,11 +106,51 @@ func (s *staffRepo) GetAllStaff(req models.GetAllStaffRequest) (resp models.GetA
 }
 
 func (s *staffRepo) DeleteStaff(req models.IdRequest) (resp string, err error) {
-	for i, v := range s.staffes {
+	staffes, err := s.read()
+	if err != nil {
+		return "", err
+	}
+
+	for i, v := range staffes {
 		if v.Id == req.Id {
-			s.staffes = append(s.staffes[:i], s.staffes[i+1:]...)
+			staffes = append(staffes[:i], staffes[i+1:]...)
+			err = s.write(staffes)
+			if err != nil {
+				return "", err
+			}
 			return "deleted", nil
 		}
 	}
 	return "", errors.New("not found")
+}
+
+func (u *staffRepo) read() ([]models.Staff, error) {
+	var staffes []models.Staff
+
+	data, err := os.ReadFile(u.fileName)
+	if err != nil {
+		log.Printf("Error while Read data: %+v", err)
+		return nil, err
+	}
+
+	err = json.Unmarshal(data, &staffes)
+	if err != nil {
+		log.Printf("Error while Unmarshal data: %+v", err)
+		return nil, err
+	}
+	return staffes, nil
+}
+
+func (u *staffRepo) write(staffes []models.Staff) error {
+
+	body, err := json.Marshal(staffes)
+	if err != nil {
+		return err
+	}
+
+	err = os.WriteFile(u.fileName, body, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -11,8 +11,10 @@ import (
 func main() {
 
 	cfg := config.Load()
-	strg := memory.NewStorage("data/branch.json")
-	h := handler.NewHandler(strg, *cfg)
+	strgBranch := memory.NewStorage("data/branch.json")
+	strgStaff := memory.NewStorage("data/staff.json")
+	handlerBranch := handler.NewHandler(strgBranch, *cfg)
+	handlerStaff := handler.NewHandler(strgStaff, *cfg)
 
 	fmt.Println("Welcome to my Golang Project!")
 	fmt.Println("Available methods:")
@@ -37,27 +39,27 @@ func main() {
 				fmt.Println("Enter name, adress and founded year: ")
 				name, adress, year := "", "", ""
 				fmt.Scan(&name, &adress, &year)
-				h.CreateBranch(name, adress, year)
+				handlerBranch.CreateBranch(name, adress, year)
 			case "get":
 				fmt.Print("Enter ID: ")
 				var id string
 				fmt.Scan(&id)
-				h.GetBranch(id)
+				handlerBranch.GetBranch(id)
 			case "getAll":
 				fmt.Print("Enter search text: ")
 				var search string
 				fmt.Scan(&search)
-				h.GetAllBranch(1, 10, search)
+				handlerBranch.GetAllBranch(1, 10, search)
 			case "update":
 				fmt.Println("Enter ID, name, adress and founded year: ")
 				id, name, adress, year := "", "", "", ""
 				fmt.Scan(&id, &name, &adress, &year)
-				h.UpdateBranch(id, name, adress, year)
+				handlerBranch.UpdateBranch(id, name, adress, year)
 			case "delete":
 				fmt.Print("Enter ID that you want to delete: ")
 				id := ""
 				fmt.Scan(&id)
-				h.DeleteBranch(id)
+				handlerBranch.DeleteBranch(id)
 			}
 		// STAFF
 		case "staff":
@@ -69,19 +71,19 @@ func main() {
 				name := ""
 				balance := 0.0
 				fmt.Scan(&branchId, &TariffId, &typId, &name, &balance)
-				h.CreateStaff(branchId, TariffId, typId, name, balance)
+				handlerStaff.CreateStaff(branchId, TariffId, typId, name, balance)
 			case "get":
 				fmt.Print("Enter ID: ")
 				var id string
 				fmt.Scan(&id)
-				h.GetStaff(id)
+				handlerStaff.GetStaff(id)
 			case "getAll":
 				fmt.Println("Enter Type(cashier, shop_assistant), Name, balanceFrom and BalanceTo: ")
 				var typId models.StaffType = ""
 				name := ""
 				balanceFrom, balanceTo := 0.0, 0.0
 				fmt.Scan(&typId, &name, &balanceFrom, &balanceTo)
-				h.GetAllStaff(1, 10, typId, name, balanceFrom, balanceTo)
+				handlerStaff.GetAllStaff(1, 10, typId, name, balanceFrom, balanceTo)
 			case "update":
 				fmt.Println("Enter ID, BranchId, TariffId, Type(cashier, shop_assistant), Name, Balance:")
 				id := ""
@@ -91,12 +93,12 @@ func main() {
 				Balance := 0.0
 				fmt.Scan(&id, &BranchId, &TariffId, &TypeId, &Name, &Balance)
 				// BranchId int, TariffId int, TypeId models.StaffType, Name string, Balance float64
-				h.UpdateStaff(id, BranchId, TariffId, TypeId, Name, Balance)
+				handlerStaff.UpdateStaff(id, BranchId, TariffId, TypeId, Name, Balance)
 			case "delete":
 				fmt.Print("Enter ID that you want to delete: ")
 				id := ""
 				fmt.Scan(&id)
-				h.DeleteStaff(id)
+				handlerStaff.DeleteStaff(id)
 			}
 		// SALE
 		case "sale":
@@ -109,17 +111,17 @@ func main() {
 				var payment models.Payment
 				var status models.Status
 				fmt.Scan(&client_name, &Branch_id, &Shop_asissent_id, &Cashier_id, &price, &payment, &status)
-				h.CreateSale(client_name, Branch_id, Shop_asissent_id, Cashier_id, price, payment, status)
+				handlerBranch.CreateSale(client_name, Branch_id, Shop_asissent_id, Cashier_id, price, payment, status)
 			case "get":
 				fmt.Print("Enter ID: ")
 				var id string
 				fmt.Scan(&id)
-				h.GetSale(id)
+				handlerBranch.GetSale(id)
 			case "getAll":
 				fmt.Println("Enter Client name: ")
 				client_name := ""
 				fmt.Scan(&client_name)
-				h.GetAllSale(1, 10, client_name)
+				handlerBranch.GetAllSale(1, 10, client_name)
 			case "update":
 				fmt.Println("Enter ID, Client_name, Branch_id, Shop_asissent_id, Cashier_id, Price, Payment_Type(card, cash), Status(seccess, cancel): ")
 				id, client_name := "", ""
@@ -128,12 +130,12 @@ func main() {
 				var payment models.Payment
 				var status models.Status
 				fmt.Scan(&id, &client_name, &Branch_id, &Shop_asissent_id, &Cashier_id, &price, &payment, &status)
-				h.UpdateSale(id, client_name, Branch_id, Shop_asissent_id, Cashier_id, price, payment, status)
+				handlerBranch.UpdateSale(id, client_name, Branch_id, Shop_asissent_id, Cashier_id, price, payment, status)
 			case "delete":
 				fmt.Print("Enter ID that you want to delete: ")
 				id := ""
 				fmt.Scan(&id)
-				h.DeleteSale(id)
+				handlerBranch.DeleteSale(id)
 			}
 			// TRANSACTION
 		case "transaction":
@@ -143,28 +145,28 @@ func main() {
 				amount, staffId := 0, 0
 				typ, sourceType, text, saleId := "", "", "", ""
 				fmt.Scan(&amount, &staffId, &typ, &sourceType, &text, &saleId)
-				h.CreateTransaction(amount, staffId, typ, sourceType, text, saleId)
+				handlerBranch.CreateTransaction(amount, staffId, typ, sourceType, text, saleId)
 			case "get":
 				fmt.Print("Enter ID: ")
 				var id string
 				fmt.Scan(&id)
-				h.GetTransaction(id)
+				handlerBranch.GetTransaction(id)
 			case "getAll":
 				fmt.Print("Enter Text: ")
 				text := ""
 				fmt.Scan(&text)
-				h.GetAllTransaction(1, 10, text)
+				handlerBranch.GetAllTransaction(1, 10, text)
 			case "update":
 				fmt.Println("Enter ID, amount, staffId, type(withdraw,topup), sourceType(sales,bonus), Text, saleId: ")
 				amount, staffId := 0, 0
 				Id, typ, sourceType, text, saleId := "", "", "", "", ""
 				fmt.Scan(&Id, &amount, &staffId, &typ, &sourceType, &text, &saleId)
-				h.UpdateTransaction(amount, staffId, Id, typ, sourceType, text, saleId)
+				handlerBranch.UpdateTransaction(amount, staffId, Id, typ, sourceType, text, saleId)
 			case "delete":
 				fmt.Print("Enter ID that you want to delete: ")
 				id := ""
 				fmt.Scan(&id)
-				h.DeleteTransaction(id)
+				handlerBranch.DeleteTransaction(id)
 			}
 		}
 	}
