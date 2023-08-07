@@ -62,9 +62,9 @@ func (h *handler) GetAllSale(page, limit int, search string) {
 	}
 
 	resp, err := h.strg.Sales().GetAllSale(models.GetAllSalesRequest{
-		Page:  page,
-		Limit: limit,
-		Name:  search,
+		Page:        page,
+		Limit:       limit,
+		Client_name: search,
 	})
 
 	if err != nil {
