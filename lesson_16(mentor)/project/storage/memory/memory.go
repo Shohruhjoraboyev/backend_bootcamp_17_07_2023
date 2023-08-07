@@ -9,9 +9,9 @@ type store struct {
 	transaction *transactionRepo
 }
 
-func NewStorage() storage.StorageI {
+func NewStorage(fileName string) storage.StorageI {
 	return &store{
-		branches:    NewBranchRepo(),
+		branches:    NewBranchRepo(fileName),
 		staffes:     NewStaffRepo(),
 		sales:       NewSaleRepo(),
 		transaction: NewTransactionRepo(),
