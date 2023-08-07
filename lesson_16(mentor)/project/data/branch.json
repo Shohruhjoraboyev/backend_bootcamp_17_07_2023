@@ -22,5 +22,29 @@
     "FoundedAt": "2002",
     "Year": 0,
     "CreatedAt": "2023-08-07 18:47:43"
+  },
+  {
+    "Id": "d3234988-f231-4591-b7c8-ff4b5b32ee31",
+    "Name": "Uacademy",
+    "Adress": "\"toshkent",
+    "FoundedAt": "andijon",
+    "Year": 0,
+    "CreatedAt": "2023-08-07 19:15:06"
+  },
+  {
+    "Id": "fc009b95-0b0c-4adb-9565-3b3438bd6b5b",
+    "Name": "name",
+    "Adress": "'space",
+    "FoundedAt": "space'",
+    "Year": 0,
+    "CreatedAt": "2023-08-07 19:16:08"
+  },
+  {
+    "Id": "f52f81cd-9541-4d76-b5b5-91673442063c",
+    "Name": "nimadir",
+    "Adress": "`space",
+    "FoundedAt": "space`",
+    "Year": 0,
+    "CreatedAt": "2023-08-07 19:17:04"
   }
 ]
