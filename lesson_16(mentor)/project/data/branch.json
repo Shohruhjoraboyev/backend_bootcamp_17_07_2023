@@ -1,0 +1,26 @@
+[
+  {
+    "Id": "21174bba-9ca0-410a-b9e4-4be86a71b128",
+    "Name": "toshkent",
+    "Adress": "toshkent",
+    "FoundedAt": "2002",
+    "Year": 0,
+    "CreatedAt": "2023-08-07 18:36:59"
+  },
+  {
+    "Id": "4cd51f94-ed30-4ea5-96eb-f9684c8c3136",
+    "Name": "uacademy",
+    "Adress": "adrescha",
+    "FoundedAt": "2002",
+    "Year": 0,
+    "CreatedAt": "2023-08-07 18:46:38"
+  },
+  {
+    "Id": "1a27d9eb-0bbb-43e5-9d26-24eb415456f0",
+    "Name": "adress",
+    "Adress": "tosh",
+    "FoundedAt": "2002",
+    "Year": 0,
+    "CreatedAt": "2023-08-07 18:47:43"
+  }
+]

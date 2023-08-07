@@ -11,7 +11,7 @@ import (
 func main() {
 
 	cfg := config.Load()
-	strg := memory.NewStorage()
+	strg := memory.NewStorage("data/branch.json")
 	h := handler.NewHandler(strg, *cfg)
 
 	fmt.Println("Welcome to my Golang Project!")
@@ -44,14 +44,17 @@ func main() {
 				fmt.Scan(&id)
 				h.GetBranch(id)
 			case "getAll":
-				h.GetAllBranch(1, 10, "")
+				fmt.Print("Enter search text: ")
+				var search string
+				fmt.Scan(&search)
+				h.GetAllBranch(1, 10, search)
 			case "update":
 				fmt.Println("Enter ID, name, adress and founded year: ")
 				id, name, adress, year := "", "", "", ""
 				fmt.Scan(&id, &name, &adress, &year)
 				h.UpdateBranch(id, name, adress, year)
 			case "delete":
-				fmt.Print("Enter ID that you want to delete:")
+				fmt.Print("Enter ID that you want to delete: ")
 				id := ""
 				fmt.Scan(&id)
 				h.DeleteBranch(id)
