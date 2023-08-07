@@ -76,10 +76,6 @@ func (b *branchRepo) GetBranch(req models.IdRequest) (resp models.Branch, err er
 		}
 	}
 
-	err = b.write(branches)
-	if err != nil {
-		return models.Branch{}, err
-	}
 	return models.Branch{}, errors.New("not found")
 }
 
