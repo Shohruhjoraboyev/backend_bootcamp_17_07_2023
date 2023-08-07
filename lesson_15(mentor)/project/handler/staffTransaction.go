@@ -5,7 +5,7 @@ import (
 	"lesson_15/models"
 )
 
-func (h *handler) CreateTransaction(BranchId, TariffId, TypeId int, Name string, Balance float64) {
+func (h *handler) CreateTransaction(BranchId, TariffId, TypeId int, Text string, Balance float64) {
 	resp, err := h.strg.Transaction().CreateTransaction(models.CreateTransaction{})
 	if err != nil {
 		fmt.Println("error from CreateTransaction: ", err.Error())
@@ -14,7 +14,7 @@ func (h *handler) CreateTransaction(BranchId, TariffId, TypeId int, Name string,
 	fmt.Println("created new transaction with id: ", resp)
 }
 
-func (h *handler) UpdateTransaction(BranchId, TariffId, TypeId int, Name string, Balance float64) {
+func (h *handler) UpdateTransaction(BranchId, TariffId, TypeId int, Text string, Balance float64) {
 	resp, err := h.strg.Transaction().UpdateTransaction(models.Transaction{})
 
 	if err != nil {
@@ -47,7 +47,7 @@ func (h *handler) GetAllTransaction(page, limit int, search string) {
 	resp, err := h.strg.Transaction().GetAllTransaction(models.GetAllTransactionRequest{
 		Page:  page,
 		Limit: limit,
-		Name:  search,
+		Text:  search,
 	})
 
 	if err != nil {

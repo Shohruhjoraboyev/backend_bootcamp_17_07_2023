@@ -3,6 +3,7 @@ package memory
 import (
 	"errors"
 	"lesson_15/models"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -55,20 +56,28 @@ func (p *transactionRepo) GetAllTransaction(req models.GetAllTransactionRequest)
 	start := req.Limit * (req.Page - 1)
 	end := start + req.Limit
 
-	if start > len(p.transactions) {
+	var filtered []models.Transaction
+
+	for _, v := range p.transactions {
+		if strings.Contains(v.Text, req.Text) {
+			filtered = append(filtered, v)
+		}
+	}
+
+	if start > len(filtered) {
 		resp.Transactions = []models.Transaction{}
-		resp.Count = len(p.transactions)
+		resp.Count = len(filtered)
 		return
-	} else if end > len(p.transactions) {
+	} else if end > len(filtered) {
 		return models.GetAllTransactionResponse{
-			Transactions: p.transactions[start:],
-			Count:        len(p.transactions),
+			Transactions: filtered[start:],
+			Count:        len(filtered),
 		}, nil
 	}
 
 	return models.GetAllTransactionResponse{
-		Transactions: p.transactions[start:end],
-		Count:        len(p.transactions),
+		Transactions: filtered[start:end],
+		Count:        len(filtered),
 	}, nil
 }
 

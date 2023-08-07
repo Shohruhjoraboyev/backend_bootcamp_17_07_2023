@@ -23,7 +23,7 @@ type Transaction struct {
 type GetAllTransactionRequest struct {
 	Page  int
 	Limit int
-	Name  string
+	Text  string
 }
 
 type GetAllTransactionResponse struct {
