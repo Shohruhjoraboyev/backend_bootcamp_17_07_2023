@@ -20,8 +20,9 @@ func (h *handler) CreateStaff(BranchId, TariffId int, TypeId models.StaffType, N
 	fmt.Println("created new staff with id: ", resp)
 }
 
-func (h *handler) UpdateStaff(BranchId, TariffId int, TypeId models.StaffType, Name string, Balance float64) {
+func (h *handler) UpdateStaff(ID string, BranchId, TariffId int, TypeId models.StaffType, Name string, Balance float64) {
 	resp, err := h.strg.Staff().UpdateStaff(models.Staff{
+		Id:       ID,
 		BranchId: BranchId,
 		TariffId: TariffId,
 		TypeId:   TypeId,
