@@ -3,6 +3,7 @@ package memory
 import (
 	"errors"
 	"lesson_15/models"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -27,7 +28,7 @@ func (c *saleRepo) CreateSale(req models.CreateSales) (string, error) {
 		Branch_id:        req.Branch_id,
 		Shop_asissent_id: req.Shop_asissent_id,
 		Cashier_id:       req.Cashier_id,
-		Created_at:       req.Created_at,
+		Created_at:       time.Now().Format("2006-01-02 15:04:05"),
 	})
 	return id.String(), nil
 }

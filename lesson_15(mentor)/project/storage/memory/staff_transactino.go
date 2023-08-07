@@ -3,6 +3,7 @@ package memory
 import (
 	"errors"
 	"lesson_15/models"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -25,7 +26,7 @@ func (t *transactionRepo) CreateTransaction(req models.CreateTransaction) (strin
 		Text:        req.Text,
 		Sale_id:     req.Sale_id,
 		Staff_id:    req.Staff_id,
-		Created_at:  req.Created_at,
+		Created_at:  time.Now().Format("2006-01-02 15:04:05"),
 	})
 
 	return id.String(), nil
