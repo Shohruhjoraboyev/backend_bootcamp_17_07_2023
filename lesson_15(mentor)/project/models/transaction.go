@@ -1,21 +1,22 @@
 package models
 
 type CreateTransaction struct {
-	Type        int
+	Type        string //(withdraw,topup)
 	Amount      int
-	Source_type string
+	Source_type string //(sales,bonus)
 	Text        string
-	Sale_id     float64
+	Sale_id     string
 	Staff_id    int
 	Created_at  string
 }
 
 type Transaction struct {
 	Id          string
+	Type        string //(withdraw,topup)
 	Amount      int
-	Source_type string
+	Source_type string //(sales,bonus)
 	Text        string
-	Sale_id     float64
+	Sale_id     string
 	Staff_id    int
 	Created_at  string
 }

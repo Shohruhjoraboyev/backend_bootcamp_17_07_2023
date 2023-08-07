@@ -5,8 +5,15 @@ import (
 	"lesson_15/models"
 )
 
-func (h *handler) CreateTransaction(BranchId, TariffId, TypeId int, Text string, Balance float64) {
-	resp, err := h.strg.Transaction().CreateTransaction(models.CreateTransaction{})
+func (h *handler) CreateTransaction(amount, staffId int, typ, sourceType, text, saleId string) {
+	resp, err := h.strg.Transaction().CreateTransaction(models.CreateTransaction{
+		Type:        typ,
+		Amount:      amount,
+		Text:        text,
+		Source_type: sourceType,
+		Sale_id:     saleId,
+		Staff_id:    staffId,
+	})
 	if err != nil {
 		fmt.Println("error from CreateTransaction: ", err.Error())
 		return
@@ -14,8 +21,16 @@ func (h *handler) CreateTransaction(BranchId, TariffId, TypeId int, Text string,
 	fmt.Println("created new transaction with id: ", resp)
 }
 
-func (h *handler) UpdateTransaction(BranchId, TariffId, TypeId int, Text string, Balance float64) {
-	resp, err := h.strg.Transaction().UpdateTransaction(models.Transaction{})
+func (h *handler) UpdateTransaction(amount, staffId int, id, typ, sourceType, text, saleId string) {
+	resp, err := h.strg.Transaction().UpdateTransaction(models.Transaction{
+		Id:          id,
+		Type:        typ,
+		Amount:      amount,
+		Text:        text,
+		Source_type: sourceType,
+		Sale_id:     saleId,
+		Staff_id:    staffId,
+	})
 
 	if err != nil {
 		fmt.Println("error from UpdateTransaction: ", err.Error())

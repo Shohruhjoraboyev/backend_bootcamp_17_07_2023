@@ -132,6 +132,37 @@ func main() {
 				fmt.Scan(&id)
 				h.DeleteSale(id)
 			}
+			// TRANSACTION
+		case "transaction":
+			switch method {
+			case "create":
+				fmt.Println("amount, staffId, type(withdraw,topup), sourceType(sales,bonus), Text, saleId: ")
+				amount, staffId := 0, 0
+				typ, sourceType, text, saleId := "", "", "", ""
+				fmt.Scan(&amount, &staffId, &typ, &sourceType, &text, &saleId)
+				h.CreateTransaction(amount, staffId, typ, sourceType, text, saleId)
+			case "get":
+				fmt.Print("Enter ID: ")
+				var id string
+				fmt.Scan(&id)
+				h.GetTransaction(id)
+			case "getAll":
+				fmt.Print("Enter Text: ")
+				text := ""
+				fmt.Scan(&text)
+				h.GetAllTransaction(1, 10, text)
+			case "update":
+				fmt.Println("Enter ID, amount, staffId, type(withdraw,topup), sourceType(sales,bonus), Text, saleId: ")
+				amount, staffId := 0, 0
+				Id, typ, sourceType, text, saleId := "", "", "", "", ""
+				fmt.Scan(&Id, &amount, &staffId, &typ, &sourceType, &text, &saleId)
+				h.UpdateTransaction(amount, staffId, Id, typ, sourceType, text, saleId)
+			case "delete":
+				fmt.Print("Enter ID that you want to delete: ")
+				id := ""
+				fmt.Scan(&id)
+				h.DeleteTransaction(id)
+			}
 		}
 	}
 }
