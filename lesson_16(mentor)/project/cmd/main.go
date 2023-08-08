@@ -13,8 +13,10 @@ func main() {
 	cfg := config.Load()
 	strgBranch := memory.NewStorage("data/branch.json")
 	strgStaff := memory.NewStorage("data/staff.json")
+	strgSale := memory.NewStorage("data/sale.json")
 	handlerBranch := handler.NewHandler(strgBranch, *cfg)
 	handlerStaff := handler.NewHandler(strgStaff, *cfg)
+	handlerSale := handler.NewHandler(strgSale, *cfg)
 
 	fmt.Println("Welcome to my Golang Project!")
 	fmt.Println("Available methods:")
@@ -111,17 +113,17 @@ func main() {
 				var payment models.Payment
 				var status models.Status
 				fmt.Scan(&client_name, &Branch_id, &Shop_asissent_id, &Cashier_id, &price, &payment, &status)
-				handlerBranch.CreateSale(client_name, Branch_id, Shop_asissent_id, Cashier_id, price, payment, status)
+				handlerSale.CreateSale(client_name, Branch_id, Shop_asissent_id, Cashier_id, price, payment, status)
 			case "get":
 				fmt.Print("Enter ID: ")
 				var id string
 				fmt.Scan(&id)
-				handlerBranch.GetSale(id)
+				handlerSale.GetSale(id)
 			case "getAll":
 				fmt.Println("Enter Client name: ")
 				client_name := ""
 				fmt.Scan(&client_name)
-				handlerBranch.GetAllSale(1, 10, client_name)
+				handlerSale.GetAllSale(1, 10, client_name)
 			case "update":
 				fmt.Println("Enter ID, Client_name, Branch_id, Shop_asissent_id, Cashier_id, Price, Payment_Type(card, cash), Status(seccess, cancel): ")
 				id, client_name := "", ""
@@ -130,12 +132,12 @@ func main() {
 				var payment models.Payment
 				var status models.Status
 				fmt.Scan(&id, &client_name, &Branch_id, &Shop_asissent_id, &Cashier_id, &price, &payment, &status)
-				handlerBranch.UpdateSale(id, client_name, Branch_id, Shop_asissent_id, Cashier_id, price, payment, status)
+				handlerSale.UpdateSale(id, client_name, Branch_id, Shop_asissent_id, Cashier_id, price, payment, status)
 			case "delete":
 				fmt.Print("Enter ID that you want to delete: ")
 				id := ""
 				fmt.Scan(&id)
-				handlerBranch.DeleteSale(id)
+				handlerSale.DeleteSale(id)
 			}
 			// TRANSACTION
 		case "transaction":

@@ -1,8 +1,11 @@
 package memory
 
 import (
+	"encoding/json"
 	"errors"
 	"lesson_15/models"
+	"log"
+	"os"
 	"strings"
 	"time"
 
@@ -10,18 +13,21 @@ import (
 )
 
 type saleRepo struct {
-	sales []models.Sales
+	fileName string
 }
 
-func NewSaleRepo() *saleRepo {
-	return &saleRepo{sales: make([]models.Sales, 0)}
+func NewSaleRepo(fileName string) *saleRepo {
+	return &saleRepo{fileName: fileName}
 }
 
 func (c *saleRepo) CreateSale(req models.CreateSales) (string, error) {
-	id := uuid.New()
-
-	c.sales = append(c.sales, models.Sales{
-		Id:               id.String(),
+	id := uuid.NewString()
+	sales, err := c.read()
+	if err != nil {
+		return "", err
+	}
+	sales = append(sales, models.Sales{
+		Id:               id,
 		Client_name:      req.Client_name,
 		Price:            req.Price,
 		Payment_Type:     req.Payment_Type,
@@ -31,13 +37,26 @@ func (c *saleRepo) CreateSale(req models.CreateSales) (string, error) {
 		Cashier_id:       req.Cashier_id,
 		Created_at:       time.Now().Format("2006-01-02 15:04:05"),
 	})
-	return id.String(), nil
+	err = c.write(sales)
+	if err != nil {
+		return "", err
+	}
+	return id, nil
 }
 
 func (c *saleRepo) UpdateSale(req models.Sales) (string, error) {
-	for i, v := range c.sales {
+	sales, err := c.read()
+	if err != nil {
+		return "", err
+	}
+	for i, v := range sales {
 		if v.Id == req.Id {
-			c.sales[i] = req
+			sales[i] = req
+			sales[i].Created_at = time.Now().Format("2006-01-02 15:04:05")
+			err = c.write(sales)
+			if err != nil {
+				return "", err
+			}
 			return "updated", nil
 		}
 	}
@@ -45,7 +64,11 @@ func (c *saleRepo) UpdateSale(req models.Sales) (string, error) {
 }
 
 func (c *saleRepo) GetSale(req models.IdRequest) (resp models.Sales, err error) {
-	for _, v := range c.sales {
+	sales, err := c.read()
+	if err != nil {
+		return models.Sales{}, err
+	}
+	for _, v := range sales {
 		if v.Id == req.Id {
 			return v, nil
 		}
@@ -54,11 +77,15 @@ func (c *saleRepo) GetSale(req models.IdRequest) (resp models.Sales, err error) 
 }
 
 func (c *saleRepo) GetAllSale(req models.GetAllSalesRequest) (resp models.GetAllSalesResponse, err error) {
+	sales, err := c.read()
+	if err != nil {
+		return models.GetAllSalesResponse{}, err
+	}
 	start := req.Limit * (req.Page - 1)
 	end := start + req.Limit
 	var filtered []models.Sales
 
-	for _, v := range c.sales {
+	for _, v := range sales {
 		if strings.Contains(v.Client_name, req.Client_name) {
 			filtered = append(filtered, v)
 		}
@@ -83,11 +110,50 @@ func (c *saleRepo) GetAllSale(req models.GetAllSalesRequest) (resp models.GetAll
 }
 
 func (c *saleRepo) DeleteSale(req models.IdRequest) (resp string, err error) {
-	for i, v := range c.sales {
+	sales, err := c.read()
+	if err != nil {
+		return "", err
+	}
+	for i, v := range sales {
 		if v.Id == req.Id {
-			c.sales = append(c.sales[:i], c.sales[i+1:]...)
+			sales = append(sales[:i], sales[i+1:]...)
+			err = c.write(sales)
+			if err != nil {
+				return "", err
+			}
 			return "deleted", nil
 		}
 	}
 	return "", errors.New("not found")
+}
+
+func (u *saleRepo) read() ([]models.Sales, error) {
+	var branches []models.Sales
+
+	data, err := os.ReadFile(u.fileName)
+	if err != nil {
+		log.Printf("Error while Read data: %+v", err)
+		return nil, err
+	}
+
+	err = json.Unmarshal(data, &branches)
+	if err != nil {
+		log.Printf("Error while Unmarshal data: %+v", err)
+		return nil, err
+	}
+
+	return branches, nil
+}
+
+func (u *saleRepo) write(sales []models.Sales) error {
+	body, err := json.Marshal(sales)
+	if err != nil {
+		return err
+	}
+
+	err = os.WriteFile(u.fileName, body, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	return nil
 }

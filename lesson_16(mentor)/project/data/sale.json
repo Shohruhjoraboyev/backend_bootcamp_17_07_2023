@@ -1,0 +1,24 @@
+[
+  {
+    "Id": "88458efc-5af7-4c3f-8e67-c1e8d7b28091",
+    "Client_name": "Omadbek",
+    "Branch_id": 1,
+    "Shop_asissent_id": 1,
+    "Cashier_id": 1,
+    "Price": 444.4,
+    "Payment_Type": "card",
+    "Status": "cancel",
+    "Created_at": "2023-08-08 14:41:40"
+  },
+  {
+    "Id": "743f71f7-8dc1-409b-a5bd-0ba69a126b4d",
+    "Client_name": "Sarvarbek",
+    "Branch_id": 1,
+    "Shop_asissent_id": 1,
+    "Cashier_id": 1,
+    "Price": 323.32,
+    "Payment_Type": "cash",
+    "Status": "cancel",
+    "Created_at": "2023-08-08 14:34:28"
+  }
+]
