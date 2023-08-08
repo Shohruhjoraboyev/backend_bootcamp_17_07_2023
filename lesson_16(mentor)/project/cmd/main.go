@@ -14,9 +14,11 @@ func main() {
 	strgBranch := memory.NewStorage("data/branch.json")
 	strgStaff := memory.NewStorage("data/staff.json")
 	strgSale := memory.NewStorage("data/sale.json")
+	strgTrans := memory.NewStorage("data/transaction.json")
 	handlerBranch := handler.NewHandler(strgBranch, *cfg)
 	handlerStaff := handler.NewHandler(strgStaff, *cfg)
 	handlerSale := handler.NewHandler(strgSale, *cfg)
+	handlerTrans := handler.NewHandler(strgTrans, *cfg)
 
 	fmt.Println("Welcome to my Golang Project!")
 	fmt.Println("Available methods:")
@@ -94,7 +96,6 @@ func main() {
 				Name := ""
 				Balance := 0.0
 				fmt.Scan(&id, &BranchId, &TariffId, &TypeId, &Name, &Balance)
-				// BranchId int, TariffId int, TypeId models.StaffType, Name string, Balance float64
 				handlerStaff.UpdateStaff(id, BranchId, TariffId, TypeId, Name, Balance)
 			case "delete":
 				fmt.Print("Enter ID that you want to delete: ")
@@ -106,7 +107,7 @@ func main() {
 		case "sale":
 			switch method {
 			case "create":
-				fmt.Println("Client_name, Branch_id, Shop_asissent_id, Cashier_id, Price, Payment_Type(card, cash), Status(seccess, cancel): ")
+				fmt.Println("Client_name, Branch_id, Shop_asissent_id, Cashier_id, Price, Payment_Type(card, cash), Status(success, cancel): ")
 				client_name := ""
 				Branch_id, Shop_asissent_id, Cashier_id := 0, 0, 0
 				price := 0.0
@@ -143,32 +144,32 @@ func main() {
 		case "transaction":
 			switch method {
 			case "create":
-				fmt.Println("amount, staffId, type(withdraw,topup), sourceType(sales,bonus), Text, saleId: ")
-				amount, staffId := 0, 0
+				fmt.Println("type(withdraw,topup), amount, sourceType(sales,bonus), Text, saleId, staffId:")
+				amount, staffId := 0.0, 0
 				typ, sourceType, text, saleId := "", "", "", ""
-				fmt.Scan(&amount, &staffId, &typ, &sourceType, &text, &saleId)
-				handlerBranch.CreateTransaction(amount, staffId, typ, sourceType, text, saleId)
+				fmt.Scan(&typ, &amount, &sourceType, &text, &saleId, &staffId)
+				handlerTrans.CreateTransaction(typ, amount, sourceType, text, saleId, staffId)
 			case "get":
 				fmt.Print("Enter ID: ")
 				var id string
 				fmt.Scan(&id)
-				handlerBranch.GetTransaction(id)
+				handlerTrans.GetTransaction(id)
 			case "getAll":
 				fmt.Print("Enter Text: ")
 				text := ""
 				fmt.Scan(&text)
-				handlerBranch.GetAllTransaction(1, 10, text)
+				handlerTrans.GetAllTransaction(1, 10, text)
 			case "update":
-				fmt.Println("Enter ID, amount, staffId, type(withdraw,topup), sourceType(sales,bonus), Text, saleId: ")
-				amount, staffId := 0, 0
+				fmt.Println("Enter ID, type(withdraw,topup), amount, sourceType(sales,bonus), Text, saleId, staffId:")
+				amount, staffId := 0.0, 0
 				Id, typ, sourceType, text, saleId := "", "", "", "", ""
-				fmt.Scan(&Id, &amount, &staffId, &typ, &sourceType, &text, &saleId)
-				handlerBranch.UpdateTransaction(amount, staffId, Id, typ, sourceType, text, saleId)
+				fmt.Scan(&Id, &typ, &amount, &sourceType, &text, &saleId, &staffId)
+				handlerTrans.UpdateTransaction(Id, typ, amount, sourceType, text, saleId, staffId)
 			case "delete":
 				fmt.Print("Enter ID that you want to delete: ")
 				id := ""
 				fmt.Scan(&id)
-				handlerBranch.DeleteTransaction(id)
+				handlerTrans.DeleteTransaction(id)
 			}
 		}
 	}

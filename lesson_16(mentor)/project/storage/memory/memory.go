@@ -12,9 +12,9 @@ type store struct {
 func NewStorage(fileName string) storage.StorageI {
 	return &store{
 		branches:    NewBranchRepo(fileName),
-		staffes:     NewStaffRepo(),
-		sales:       NewSaleRepo(),
-		transaction: NewTransactionRepo(),
+		staffes:     NewStaffRepo(fileName),
+		sales:       NewSaleRepo(fileName),
+		transaction: NewTransactionRepo(fileName),
 	}
 }
 

@@ -5,12 +5,12 @@ import (
 	"lesson_15/models"
 )
 
-func (h *handler) CreateTransaction(amount, staffId int, typ, sourceType, text, saleId string) {
+func (h *handler) CreateTransaction(typ string, amount float64, sourceType, text, saleId string, staffId int) {
 	resp, err := h.strg.Transaction().CreateTransaction(models.CreateTransaction{
 		Type:        typ,
 		Amount:      amount,
-		Text:        text,
 		Source_type: sourceType,
+		Text:        text,
 		Sale_id:     saleId,
 		Staff_id:    staffId,
 	})
@@ -21,13 +21,13 @@ func (h *handler) CreateTransaction(amount, staffId int, typ, sourceType, text, 
 	fmt.Println("created new transaction with id: ", resp)
 }
 
-func (h *handler) UpdateTransaction(amount, staffId int, id, typ, sourceType, text, saleId string) {
+func (h *handler) UpdateTransaction(id, typ string, amount float64, sourceType, text, saleId string, staffId int) {
 	resp, err := h.strg.Transaction().UpdateTransaction(models.Transaction{
 		Id:          id,
 		Type:        typ,
 		Amount:      amount,
-		Text:        text,
 		Source_type: sourceType,
+		Text:        text,
 		Sale_id:     saleId,
 		Staff_id:    staffId,
 	})
