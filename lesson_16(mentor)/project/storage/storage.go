@@ -26,6 +26,7 @@ type StaffesI interface {
 	GetStaff(models.IdRequest) (models.Staff, error)
 	GetAllStaff(models.GetAllStaffRequest) (models.GetAllStaff, error)
 	DeleteStaff(models.IdRequest) (string, error)
+	ChangeBalance(models.ChangeBalance) (string, error)
 }
 
 type TransactionI interface {

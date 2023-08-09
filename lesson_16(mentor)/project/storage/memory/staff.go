@@ -123,6 +123,24 @@ func (s *staffRepo) DeleteStaff(req models.IdRequest) (resp string, err error) {
 	return "", errors.New("not found")
 }
 
+func (u *staffRepo) ChangeBalance(req models.ChangeBalance) (string, error) {
+	staffes, err := u.read()
+	if err != nil {
+		return "", err
+	}
+	for i, v := range staffes {
+		if v.Id == req.Id {
+			staffes[i].Balance = req.Balance
+			err = u.write(staffes)
+			if err != nil {
+				return "", err
+			}
+			return "updated balance", nil
+		}
+	}
+	return "", errors.New("not staff balance found with ID")
+}
+
 func (u *staffRepo) read() ([]models.Staff, error) {
 	var staffes []models.Staff
 

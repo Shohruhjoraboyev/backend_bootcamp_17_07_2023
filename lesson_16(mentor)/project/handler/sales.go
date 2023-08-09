@@ -27,8 +27,8 @@ func (h *handler) CreateSale(Client_name string, Branch_id, Shop_asissent_id, Ca
 		return
 	}
 
-	if tarif.Type == "fixed" {
-		if Payment_Type == "cash" {
+	if Payment_Type == "cash" {
+		if tarif.Type == "fixed" {
 
 		}
 	}

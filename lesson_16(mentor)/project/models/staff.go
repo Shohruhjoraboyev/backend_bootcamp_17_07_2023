@@ -17,6 +17,11 @@ type Staff struct {
 	Balance  float64
 }
 
+type ChangeBalance struct {
+	Id      string
+	Balance float64
+}
+
 type StaffType string
 
 const (
