@@ -24,10 +24,9 @@ func (s *staffRepo) CreateStaff(req models.CreateStaff) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	id := uuid.New()
-
+	id := uuid.NewString()
 	staffes = append(staffes, models.Staff{
-		Id:       id.String(),
+		Id:       id,
 		BranchId: req.BranchId,
 		TariffId: req.TariffId,
 		TypeId:   req.TypeId,
@@ -38,7 +37,7 @@ func (s *staffRepo) CreateStaff(req models.CreateStaff) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return id.String(), nil
+	return id, nil
 }
 
 func (s *staffRepo) UpdateStaff(req models.Staff) (string, error) {

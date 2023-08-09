@@ -1,8 +1,8 @@
 package models
 
 type CreateStaff struct {
-	BranchId int
-	TariffId int
+	BranchId string
+	TariffId string
 	TypeId   StaffType
 	Name     string
 	Balance  float64
@@ -10,8 +10,8 @@ type CreateStaff struct {
 
 type Staff struct {
 	Id       string
-	BranchId int
-	TariffId int
+	BranchId string
+	TariffId string
 	TypeId   StaffType
 	Name     string
 	Balance  float64

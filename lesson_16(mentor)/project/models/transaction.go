@@ -6,7 +6,7 @@ type CreateTransaction struct {
 	Source_type string //(sales,bonus)
 	Text        string
 	Sale_id     string
-	Staff_id    int
+	Staff_id    string
 	Created_at  string
 }
 
@@ -17,7 +17,7 @@ type Transaction struct {
 	Source_type string //(sales,bonus)
 	Text        string
 	Sale_id     string
-	Staff_id    int
+	Staff_id    string
 	Created_at  string
 }
 

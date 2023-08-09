@@ -7,14 +7,16 @@ type store struct {
 	staffes     *staffRepo
 	sales       *saleRepo
 	transaction *transactionRepo
+	staffTarifs *staffTarifRepo
 }
 
-func NewStorage(fileName string) storage.StorageI {
+func NewStorage(fileBranch, fileStaffes, fileSales, fileTransaction, fileTariffes string) storage.StorageI {
 	return &store{
-		branches:    NewBranchRepo(fileName),
-		staffes:     NewStaffRepo(fileName),
-		sales:       NewSaleRepo(fileName),
-		transaction: NewTransactionRepo(fileName),
+		branches:    NewBranchRepo(fileBranch),
+		staffes:     NewStaffRepo(fileStaffes),
+		sales:       NewSaleRepo(fileSales),
+		transaction: NewTransactionRepo(fileTransaction),
+		staffTarifs: NewStaffTarifRepo(fileTariffes),
 	}
 }
 
@@ -32,4 +34,8 @@ func (s *store) Sales() storage.SalesI {
 
 func (s *store) Transaction() storage.TransactionI {
 	return s.transaction
+}
+
+func (s *store) StaffTarif() storage.StaffTarifsI {
+	return s.staffTarifs
 }

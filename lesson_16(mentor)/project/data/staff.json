@@ -1,18 +1,26 @@
 [
   {
-    "Id": "93a30b48-a22c-4111-a3f2-43c3c2c67cd9",
-    "BranchId": 5,
-    "TariffId": 5,
-    "TypeId": "shop_assitant",
-    "Name": "UpdateName",
-    "Balance": 555.5
+    "Id": "7fb8fe47-3948-447c-957e-f187736ec654",
+    "BranchId": "819a6d0a-cf98-44a4-84b3-f8503e846ded",
+    "TariffId": "1",
+    "TypeId": "cashier",
+    "Name": "Omadbek",
+    "Balance": 100.1
   },
   {
-    "Id": "2033a842-94f7-45fa-adbb-b1b9158426b9",
-    "BranchId": 2,
-    "TariffId": 2,
+    "Id": "b391718a-2307-44bb-b028-506028e167dc",
+    "BranchId": "819a6d0a-cf98-44a4-84b3-f8503e846ded",
+    "TariffId": "2",
     "TypeId": "shop_assistant",
     "Name": "Sarvarbek",
-    "Balance": 232.2
+    "Balance": 200.2
+  },
+  {
+    "Id": "17cfd192-4c37-4240-91e5-8e3fa90ae5d7",
+    "BranchId": "819a6d0a-cf98-44a4-84b3-f8503e846ded",
+    "TariffId": "22",
+    "TypeId": "cashier",
+    "Name": "Omadbek",
+    "Balance": 121.2
   }
 ]

@@ -21,13 +21,13 @@ func NewTransactionRepo(fileName string) *transactionRepo {
 }
 
 func (t *transactionRepo) CreateTransaction(req models.CreateTransaction) (string, error) {
-	id := uuid.New()
+	id := uuid.NewString()
 	transactions, err := t.read()
 	if err != nil {
 		return "", err
 	}
 	transactions = append(transactions, models.Transaction{
-		Id:          id.String(),
+		Id:          id,
 		Type:        req.Type,
 		Amount:      req.Amount,
 		Source_type: req.Source_type,
@@ -40,7 +40,7 @@ func (t *transactionRepo) CreateTransaction(req models.CreateTransaction) (strin
 	if err != nil {
 		return "", err
 	}
-	return id.String(), nil
+	return id, nil
 }
 
 func (t *transactionRepo) UpdateTransaction(req models.Transaction) (string, error) {

@@ -5,7 +5,7 @@ import (
 	"lesson_15/models"
 )
 
-func (h *handler) CreateSale(Client_name string, Branch_id, Shop_asissent_id, Cashier_id int, Price float64, Payment_Type models.Payment, Status models.Status) {
+func (h *handler) CreateSale(Client_name string, Branch_id, Shop_asissent_id, Cashier_id string, Price float64, Payment_Type models.Payment, Status models.Status) {
 	resp, err := h.strg.Sales().CreateSale(models.CreateSales{
 		Client_name:      Client_name,
 		Branch_id:        Branch_id,
@@ -22,7 +22,7 @@ func (h *handler) CreateSale(Client_name string, Branch_id, Shop_asissent_id, Ca
 	fmt.Println("created new staff with id: ", resp)
 }
 
-func (h *handler) UpdateSale(Id, Client_name string, Branch_id, Shop_asissent_id, Cashier_id int, Price float64, Payment_Type models.Payment, Status models.Status) {
+func (h *handler) UpdateSale(Id, Client_name string, Branch_id, Shop_asissent_id, Cashier_id string, Price float64, Payment_Type models.Payment, Status models.Status) {
 	resp, err := h.strg.Sales().UpdateSale(models.Sales{
 		Id:               Id,
 		Client_name:      Client_name,

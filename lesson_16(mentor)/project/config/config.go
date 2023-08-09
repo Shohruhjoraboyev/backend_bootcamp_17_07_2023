@@ -7,11 +7,6 @@ type Config struct {
 	Objects []string
 }
 
-const (
-	SuccessStatus = iota + 1
-	CancelStatus
-)
-
 func Load() *Config {
 	return &Config{
 		Limit: 10,
@@ -20,7 +15,7 @@ func Load() *Config {
 			"create", "update", "get", "getAll", "update", "delete",
 		},
 		Objects: []string{
-			"branch", "staff", "sales", "transaction", "staff",
+			"branch", "staff", "sales", "transaction", "tariff",
 		},
 	}
 }

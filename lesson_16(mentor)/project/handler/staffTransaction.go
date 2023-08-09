@@ -5,7 +5,7 @@ import (
 	"lesson_15/models"
 )
 
-func (h *handler) CreateTransaction(typ string, amount float64, sourceType, text, saleId string, staffId int) {
+func (h *handler) CreateTransaction(typ string, amount float64, sourceType, text, saleId string, staffId string) {
 	resp, err := h.strg.Transaction().CreateTransaction(models.CreateTransaction{
 		Type:        typ,
 		Amount:      amount,
@@ -21,7 +21,7 @@ func (h *handler) CreateTransaction(typ string, amount float64, sourceType, text
 	fmt.Println("created new transaction with id: ", resp)
 }
 
-func (h *handler) UpdateTransaction(id, typ string, amount float64, sourceType, text, saleId string, staffId int) {
+func (h *handler) UpdateTransaction(id, typ string, amount float64, sourceType, text, saleId string, staffId string) {
 	resp, err := h.strg.Transaction().UpdateTransaction(models.Transaction{
 		Id:          id,
 		Type:        typ,

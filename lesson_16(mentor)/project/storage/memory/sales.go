@@ -51,8 +51,13 @@ func (c *saleRepo) UpdateSale(req models.Sales) (string, error) {
 	}
 	for i, v := range sales {
 		if v.Id == req.Id {
-			sales[i] = req
-			sales[i].Created_at = time.Now().Format("2006-01-02 15:04:05")
+			sales[i].Client_name = req.Client_name
+			sales[i].Price = req.Price
+			sales[i].Payment_Type = req.Payment_Type
+			sales[i].Status = req.Status
+			sales[i].Branch_id = req.Branch_id
+			sales[i].Shop_asissent_id = req.Shop_asissent_id
+			sales[i].Cashier_id = req.Cashier_id
 			err = c.write(sales)
 			if err != nil {
 				return "", err

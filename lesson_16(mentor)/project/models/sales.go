@@ -2,9 +2,9 @@ package models
 
 type CreateSales struct {
 	Client_name      string
-	Branch_id        int
-	Shop_asissent_id int
-	Cashier_id       int
+	Branch_id        string
+	Shop_asissent_id string
+	Cashier_id       string
 	Price            float64
 	Payment_Type     Payment
 	Status           Status
@@ -24,9 +24,9 @@ const (
 type Sales struct {
 	Id               string
 	Client_name      string
-	Branch_id        int
-	Shop_asissent_id int
-	Cashier_id       int
+	Branch_id        string
+	Shop_asissent_id string
+	Cashier_id       string
 	Price            float64
 	Payment_Type     Payment
 	Status           Status
