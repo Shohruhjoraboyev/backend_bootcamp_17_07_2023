@@ -7,6 +7,11 @@ type Config struct {
 	Objects []string
 }
 
+const (
+	SuccessStatus = iota + 1
+	CancelStatus
+)
+
 func Load() *Config {
 	return &Config{
 		Limit: 10,

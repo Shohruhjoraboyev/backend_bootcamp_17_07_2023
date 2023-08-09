@@ -12,7 +12,7 @@
     "Name": "percent_type",
     "Type": "percent",
     "AmountForCash": 5,
-    "AmountForCard": 5,
+    "AmountForCard": 6,
     "CreatedAt": "2023-08-09 14:29:24"
   }
 ]
