@@ -5,6 +5,12 @@ type BranchTransactionCount struct {
 	BranchName string
 	Count      int
 }
+type BranchTransactionCategoryCount struct {
+	BranchID     int
+	BranchName   string
+	CategoryName string
+	Count        int
+}
 type Transaction struct {
 	ID        int    `json:"id"`
 	BranchID  int    `json:"branch_id"`
@@ -24,6 +30,12 @@ type Products struct {
 	Name       string `json:"name"`
 	Price      int    `json:"price"`
 	CategoryId int    `json:"category_id"`
+}
+
+type ProductTop struct {
+	Id    int    `json:"id"`
+	Name  string `json:"name"`
+	Count int
 }
 
 type BranchProductPrice struct {

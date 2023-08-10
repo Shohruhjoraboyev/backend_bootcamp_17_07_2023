@@ -26,7 +26,7 @@
   {
     "id": 4,
     "branch_id": 3,
-    "product_id": 2,
+    "product_id": 22,
     "type": "plus",
     "quantity": 26,
     "created_at": "2023-08-09 15:30:12"
@@ -34,7 +34,7 @@
   {
     "id": 5,
     "branch_id": 4,
-    "product_id": 1,
+    "product_id": 21,
     "type": "minus",
     "quantity": 13,
     "created_at": "2023-08-10 09:12:45"
@@ -58,7 +58,7 @@
   {
     "id": 8,
     "branch_id": 3,
-    "product_id": 2,
+    "product_id": 33,
     "type": "plus",
     "quantity": 11,
     "created_at": "2023-08-13 17:29:53"
@@ -66,7 +66,7 @@
   {
     "id": 9,
     "branch_id": 4,
-    "product_id": 1,
+    "product_id": 11,
     "type": "plus",
     "quantity": 32,
     "created_at": "2023-08-14 10:18:37"
@@ -74,7 +74,7 @@
   {
     "id": 10,
     "branch_id": 3,
-    "product_id": 4,
+    "product_id": 34,
     "type": "minus",
     "quantity": 10,
     "created_at": "2023-08-15 14:03:21"
@@ -88,7 +88,7 @@
   },  {
     "id": 12,
     "branch_id": 2,
-    "product_id": 13,
+    "product_id": 34,
     "type": "minus",
     "quantity": 10,
     "created_at": "2023-08-15 14:03:21"
@@ -105,6 +105,27 @@
     "product_id": 1,
     "type": "minus",
     "quantity": 10,
+    "created_at": "2023-08-15 14:03:21"
+  },  {
+    "id": 15,
+    "branch_id": 3,
+    "product_id": 17,
+    "type": "minus",
+    "quantity": 10,
+    "created_at": "2023-08-15 14:03:21"
+  },  {
+    "id": 16,
+    "branch_id": 3,
+    "product_id": 3,
+    "type": "minus",
+    "quantity": 10,
+    "created_at": "2023-08-15 14:03:21"
+  },  {
+    "id": 17,
+    "branch_id": 1,
+    "product_id": 3,
+    "type": "minus",
+    "quantity": 100,
     "created_at": "2023-08-15 14:03:21"
   }
 ]

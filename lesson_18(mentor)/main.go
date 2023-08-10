@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"task/second"
+	"task/fifth"
 )
 
 func main() {
@@ -10,11 +10,19 @@ func main() {
 	// first.CalculateTranTopBranches()
 	// fmt.Println()
 
-	fmt.Println("2.transactionlar summasi bo'yicha top branches")
-	second.CalculateSumOfPriceTopBranches()
-}
+	// fmt.Println("2.transactionlar summasi bo'yicha top branches")
+	// second.CalculateSumOfPriceTopBranches()
+	// fmt.Println()
 
-// 2.transactionlar summasi bo'yicha top branches
-// 3.transactionda bo'lgan top productlar
-// 4.transactionda bo'lgan top categorylar
-// 5.har bir branchda har bir categorydan qancha transaction bo'lgani
+	// fmt.Println("3.transactionda bo'lgan top productlar")
+	// third.TopTransactionProducts()
+	// fmt.Println()
+
+	// fmt.Println("4.transactionda bo'lgan top categorylar")
+	// fourth.TopTransactionCategory()
+	// fmt.Println()
+
+	fmt.Println("5.har bir branchda har bir categorydan qancha transaction bo'lgani")
+	fifth.TopBranchTransactionCategory()
+	fmt.Println()
+}
