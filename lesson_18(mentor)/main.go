@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"task/seventh"
+	"task/nineth"
 )
 
 func main() {
@@ -30,8 +30,12 @@ func main() {
 	// sixth.PlusMinus()
 	// fmt.Println()
 
-	fmt.Println("7. har bir kunda kirgan productlar sonini kamayish tartibida chiqarish")
-	seventh.CalculateProductIncome()
+	// fmt.Println("7. har bir kunda kirgan productlar sonini kamayish tartibida chiqarish")
+	// seventh.CalculateProductIncome()
+	// fmt.Println()
+
+	fmt.Println("9. Filialda qancha summalik product borligi jadvali")
+	nineth.CalculateProductSum()
 	fmt.Println()
 }
 
@@ -41,11 +45,6 @@ func main() {
 //     1. Branch1      53      20          853 000  278 000
 //     2. Branch2      38      185         492 000  1 982 000
 
-// 7. har bir kunda kirgan productlar sonini kamayish tartibida chiqarish:
-//         kun         soni
-//     1. 2023-08-04   789
-//     2. 2023-08-12   634
-//     ...  ...  ...  ...
 // 8. Product qancha kiritilgan va chiqarilganligi jadvali:
 //     Name    Kiritilgan  Chiqarilgan
 //     Olma     345            847

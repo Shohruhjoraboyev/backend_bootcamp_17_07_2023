@@ -43,3 +43,28 @@ type BranchProductPrice struct {
 	BranchName string
 	Sum        int
 }
+
+type PlusMinus struct {
+	TranType  string
+	Quantity  int
+	TranPlus  int
+	TranMinus int
+	SumPlus   int
+	SumMinus  int
+}
+
+type ProductIncome struct {
+	Day   string
+	Count int
+}
+
+type Product7task struct {
+	BranchId  int `json:"branch_id"`
+	ProductId int `json:"product_id"`
+	Quantity  int `json:"quantity"`
+}
+
+type ModelFor9 struct {
+	Name string
+	Sum  int
+}
