@@ -1,4 +1,4 @@
-package fifth
+package task5
 
 import (
 	"encoding/json"

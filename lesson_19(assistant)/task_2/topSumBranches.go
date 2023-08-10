@@ -1,4 +1,4 @@
-package second
+package task2
 
 import (
 	"encoding/json"
