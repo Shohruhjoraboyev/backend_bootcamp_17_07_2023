@@ -5,69 +5,43 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"sort"
 	"task/models"
 )
 
 // 5.har bir branchda har bir categorydan qancha transaction bo'lgani
+
 func TopBranchTransactionCategory() {
-	productes, _ := readProducts("data/products.json")
 	transactions, _ := readTransaction("data/branch_pr_transaction.json")
 	categories, _ := readTCategory("data/categories.json")
+	branches, _ := readTCategory("data/branches.json")
 
-	var transactionCategoryCount = make(map[int]int) //[productId]count
-	var transactionBranchCount = make(map[int]int)   //[branchID]count
+	countMap := make(map[string]int)
 
-	for _, p := range productes {
-		for _, t := range transactions {
-			if t.ProductID == p.Id {
-				transactionCategoryCount[p.CategoryId]++
-				transactionBranchCount[t.BranchID]++
-			}
-		}
-
+	// Count the transactions
+	for _, transaction := range transactions {
+		key := fmt.Sprintf("Branch %d, Category %d", transaction.BranchID, transaction.ProductID)
+		countMap[key]++
 	}
 
-	var sortedTopProducts []models.ProductTop
-	for _, c := range categories {
-		for k, t := range transactionCategoryCount {
-			if c.Id == k {
-				sortedTopProducts = append(sortedTopProducts, models.ProductTop{
-					Id:    k,
-					Name:  c.Name,
-					Count: t,
-				})
+	// Print the branches with non-zero transaction counts for each category
+	for _, branch := range branches {
+		fmt.Printf("Branch: %s\n", branch.Name)
+		hasTransactions := false
+		for _, category := range categories {
+			key := fmt.Sprintf("Branch %d, Category %d", branch.Id, category.Id)
+			count := countMap[key]
+			if count > 0 {
+				hasTransactions = true
+				fmt.Printf("%s => transacted %d times\n", category.Name, count)
 			}
 		}
-	}
-
-	sort.Slice(sortedTopProducts, func(i, j int) bool {
-		return sortedTopProducts[i].Count > sortedTopProducts[j].Count
-	})
-
-	for _, v := range sortedTopProducts {
-		fmt.Printf("%s: %d times transacted\n", v.Name, v.Count)
+		if !hasTransactions {
+			fmt.Println("No transactions found for any category.")
+		}
 	}
 }
 
 // ================================READERS======================================
-
-func readProducts(data string) ([]models.Products, error) {
-	var products []models.Products
-
-	p, err := os.ReadFile(data)
-	if err != nil {
-		log.Printf("Error while Read data: %+v", err)
-		return nil, err
-	}
-	err = json.Unmarshal(p, &products)
-	if err != nil {
-		log.Printf("Error while Unmarshal data: %+v", err)
-		return nil, err
-	}
-	return products, nil
-}
-
 func readTransaction(data string) ([]models.Transaction, error) {
 	var transactions []models.Transaction
 
@@ -98,4 +72,21 @@ func readTCategory(data string) ([]models.ProductTop, error) {
 		return nil, err
 	}
 	return categories, nil
+}
+
+func readBranches(data string) ([]models.Branch, error) {
+	var branches []models.Branch
+
+	branch, err := os.ReadFile(data)
+	if err != nil {
+		log.Printf("Error while Read branch: %+v", err)
+		return nil, err
+	}
+	err = json.Unmarshal(branch, &branches)
+	if err != nil {
+		log.Printf("Error while Unmarshal branch: %+v", err)
+		return nil, err
+	}
+
+	return branches, nil
 }
