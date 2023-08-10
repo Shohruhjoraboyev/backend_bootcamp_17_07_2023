@@ -13,7 +13,7 @@ import (
 func TopBranchTransactionCategory() {
 	transactions, _ := readTransaction("data/branch_pr_transaction.json")
 	categories, _ := readTCategory("data/categories.json")
-	branches, _ := readTCategory("data/branches.json")
+	branches, _ := readBranches("data/branches.json")
 
 	countMap := make(map[string]int)
 
@@ -28,7 +28,7 @@ func TopBranchTransactionCategory() {
 		fmt.Printf("Branch: %s\n", branch.Name)
 		hasTransactions := false
 		for _, category := range categories {
-			key := fmt.Sprintf("Branch %d, Category %d", branch.Id, category.Id)
+			key := fmt.Sprintf("Branch %d, Category %d", branch.ID, category.Id)
 			count := countMap[key]
 			if count > 0 {
 				hasTransactions = true
