@@ -29,6 +29,5 @@ type Products struct {
 type BranchProductPrice struct {
 	BranchID   int
 	BranchName string
-	Quantity   int
 	Sum        int
 }

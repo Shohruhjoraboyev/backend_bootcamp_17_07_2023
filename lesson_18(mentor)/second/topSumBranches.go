@@ -5,29 +5,11 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 	"task/models"
 )
 
-// 2.transactionlar summasi bo'yicha top branches
-// {
-// 	"id": 4,
-// 	"name": "Uacademy",
-// 	"address": "Shahriobod ko'chasi"
-//   }
-// {
-//     "id": 1,
-//     "branch_id": 4,
-//     "product_id": 3,
-//     "type": "plus",
-//     "quantity": 74,
-//     "created_at": "2023-08-09 20:05:37"
-//   },
-// {
-//     "id": 2,
-//     "name": "orange",
-//     "price": 3000,
-//     "category_id": 1
-//   },
+// 2.transactionlar summasi bo'yicha top branchess
 
 func CalculateSumOfPriceTopBranches() {
 	branches, _ := readBranches("data/branches.json")
@@ -35,7 +17,6 @@ func CalculateSumOfPriceTopBranches() {
 	transactions, _ := readTransaction("data/branch_pr_transaction.json")
 
 	branchSums := make(map[int]int)
-
 	for _, p := range productes {
 		for _, t := range transactions {
 			for _, b := range branches {
@@ -49,15 +30,26 @@ func CalculateSumOfPriceTopBranches() {
 		}
 	}
 
-	fmt.Println(branchSums)
+	var sortedBranches []models.BranchProductPrice
+	for branchId, sum := range branchSums {
+		for _, b := range branches {
+			if branchId == b.ID {
+				sortedBranches = append(sortedBranches, models.BranchProductPrice{
+					BranchID:   branchId,
+					BranchName: b.Name,
+					Sum:        sum,
+				})
+			}
+		}
+	}
 
-	// sort.Slice(sortedBranches, func(i, j int) bool {
-	// 	return sortedBranches[i].Count > sortedBranches[j].Count
-	// })
+	sort.Slice(sortedBranches, func(i, j int) bool {
+		return sortedBranches[i].Sum > sortedBranches[j].Sum
+	})
 
-	// for _, v := range sortedBranches {
-	// 	fmt.Printf("Branch: %s: Total Transactions: %d\n", v.BranchName, v.Count)
-	// }
+	for _, v := range sortedBranches {
+		fmt.Printf("Branch: %s: total sum: %d\n", v.BranchName, v.Sum)
+	}
 }
 
 // ================================READERS======================================
