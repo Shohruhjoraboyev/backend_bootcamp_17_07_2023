@@ -1,4 +1,4 @@
-package sixth
+package task6
 
 // import (
 // 	"encoding/json"

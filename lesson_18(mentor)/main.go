@@ -1,42 +1,37 @@
 package main
 
-import (
-	"fmt"
-	"task/nineth"
-)
-
 func main() {
 	// fmt.Println("1.transactionlar soni bo'yicha top branches")
-	// first.CalculateTranTopBranches()
+	// task1.CalculateTranTopBranches()
 	// fmt.Println()
 
 	// fmt.Println("2.transactionlar summasi bo'yicha top branches")
-	// second.CalculateSumOfPriceTopBranches()
+	// task2.CalculateSumOfPriceTopBranches()
 	// fmt.Println()
 
 	// fmt.Println("3.transactionda bo'lgan top productlar")
-	// third.TopTransactionProducts()
+	// task3.TopTransactionProducts()
 	// fmt.Println()
 
 	// fmt.Println("4.transactionda bo'lgan top categorylar")
-	// fourth.TopTransactionCategory()
+	// task4.TopTransactionCategory()
 	// fmt.Println()
 
 	// fmt.Println("5.har bir branchda har bir categorydan qancha transaction bo'lgani")
-	// fifth.TopBranchTransactionCategory()
+	// task5.TopBranchTransactionCategory()
 	// fmt.Println()
 
 	// fmt.Println("6. har bir branch nechta plus/minus transactionlar soni, plus/minus transactionlar summasini quyidagicha chiqarish")
-	// sixth.PlusMinus()
+	// task6.PlusMinus()
 	// fmt.Println()
 
 	// fmt.Println("7. har bir kunda kirgan productlar sonini kamayish tartibida chiqarish")
-	// seventh.CalculateProductIncome()
+	// task7.CalculateProductIncome()
 	// fmt.Println()
 
-	fmt.Println("9. Filialda qancha summalik product borligi jadvali")
-	nineth.CalculateProductSum()
-	fmt.Println()
+	// fmt.Println("9. Filialda qancha summalik product borligi jadvali")
+	// task9.CalculateProductSum()
+	// fmt.Println()
 }
 
 // 6. har bir branch nechta plus/minus transactionlar soni, plus/minus transactionlar summasini quyidagicha chiqarish:

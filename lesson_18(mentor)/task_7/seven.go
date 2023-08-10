@@ -1,4 +1,4 @@
-package seventh
+package task7
 
 import (
 	"encoding/json"

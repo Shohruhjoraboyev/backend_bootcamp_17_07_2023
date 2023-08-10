@@ -1,4 +1,4 @@
-package nineth
+package task9
 
 import (
 	"encoding/json"

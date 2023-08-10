@@ -1,4 +1,4 @@
-package eighth
+package task8
 
 // 8. Product qancha kiritilgan va chiqarilganligi jadvali:
 //     Name    Kiritilgan  Chiqarilgan

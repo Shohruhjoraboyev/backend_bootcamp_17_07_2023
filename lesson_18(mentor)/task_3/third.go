@@ -1,4 +1,4 @@
-package fourth
+package task3
 
 import (
 	"encoding/json"
@@ -9,30 +9,28 @@ import (
 	"task/models"
 )
 
-// 4.transactionda bo'lgan top categorylar
-func TopTransactionCategory() {
+// 3.transactionda bo'lgan top productlar
+func TopTransactionProducts() {
 	productes, _ := readProducts("data/products.json")
 	transactions, _ := readTransaction("data/branch_pr_transaction.json")
-	categories, _ := readTCategory("data/categories.json")
 
 	var transactionCount = make(map[int]int) //[productId]count
 	for _, p := range productes {
 		for _, t := range transactions {
 			if t.ProductID == p.Id {
-				transactionCount[p.CategoryId]++
+				transactionCount[p.Id]++
 			}
 		}
-
 	}
 
 	var sortedTopProducts []models.ProductTop
-	for _, c := range categories {
-		for k, t := range transactionCount {
-			if c.Id == k {
+	for productId, count := range transactionCount {
+		for _, p := range productes {
+			if productId == p.Id {
 				sortedTopProducts = append(sortedTopProducts, models.ProductTop{
-					Id:    k,
-					Name:  c.Name,
-					Count: t,
+					Id:    productId,
+					Name:  p.Name,
+					Count: count,
 				})
 			}
 		}
@@ -43,7 +41,7 @@ func TopTransactionCategory() {
 	})
 
 	for _, v := range sortedTopProducts {
-		fmt.Printf("%s: %d times transacted\n", v.Name, v.Count)
+		fmt.Printf("%s: transacted %d times\n", v.Name, v.Count)
 	}
 }
 
@@ -79,20 +77,4 @@ func readTransaction(data string) ([]models.Transaction, error) {
 		return nil, err
 	}
 	return transactions, nil
-}
-
-func readTCategory(data string) ([]models.ProductTop, error) {
-	var categories []models.ProductTop
-
-	d, err := os.ReadFile(data)
-	if err != nil {
-		log.Printf("Error while Read data: %+v", err)
-		return nil, err
-	}
-	err = json.Unmarshal(d, &categories)
-	if err != nil {
-		log.Printf("Error while Unmarshal data: %+v", err)
-		return nil, err
-	}
-	return categories, nil
 }
