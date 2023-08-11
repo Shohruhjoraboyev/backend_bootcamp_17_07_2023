@@ -44,15 +44,6 @@ type BranchProductPrice struct {
 	Sum        int
 }
 
-type PlusMinus struct {
-	TranType  string
-	Quantity  int
-	TranPlus  int
-	TranMinus int
-	SumPlus   int
-	SumMinus  int
-}
-
 type ProductIncome struct {
 	Day   string
 	Count int
@@ -67,4 +58,11 @@ type Product7task struct {
 type ModelFor9 struct {
 	Name string
 	Sum  int
+}
+
+type CountSum struct {
+	PlusCount  int
+	MinusCount int
+	PlusSum    int
+	MinusSum   int
 }

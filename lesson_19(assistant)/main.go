@@ -1,5 +1,10 @@
 package main
 
+import (
+	"fmt"
+	task8 "task/task_8"
+)
+
 func main() {
 	// fmt.Println("1.transactionlar soni bo'yicha top branches")
 	// task1.CalculateTranTopBranches()
@@ -29,6 +34,10 @@ func main() {
 	// task7.CalculateProductIncome()
 	// fmt.Println()
 
+	fmt.Println("8. Product qancha kiritilgan va chiqarilganligi jadvali")
+	task8.Task8()
+	fmt.Println()
+
 	// fmt.Println("9. Filialda qancha summalik product borligi jadvali")
 	// task9.CalculateProductSum()
 	// fmt.Println()
@@ -45,8 +54,3 @@ func main() {
 //     Olma     345            847
 //     Cola     374            219
 //     ....     ...       ...   ....
-
-// 9. Filialda qancha summalik product borligi jadvali:
-
-// 1. Branch1        853 000
-// 2. Branch2      1 982 000
