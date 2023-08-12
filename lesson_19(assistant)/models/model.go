@@ -59,10 +59,3 @@ type ModelFor9 struct {
 	Name string
 	Sum  int
 }
-
-type CountSum struct {
-	PlusCount  int
-	MinusCount int
-	PlusSum    int
-	MinusSum   int
-}

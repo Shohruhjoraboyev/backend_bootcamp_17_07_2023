@@ -15,15 +15,13 @@ func TopTransactionProducts() {
 	transactions, _ := readTransaction("data/branch_pr_transaction.json")
 
 	var transactionCount = make(map[int]int) //[productId]count
-	for _, p := range productes {
-		for _, t := range transactions {
-			if t.ProductID == p.Id {
-				transactionCount[p.Id]++
-			}
-		}
+
+	for _, t := range transactions {
+		transactionCount[t.ProductID]++
 	}
 
 	var sortedTopProducts []models.ProductTop
+
 	for productId, count := range transactionCount {
 		for _, p := range productes {
 			if productId == p.Id {

@@ -16,7 +16,12 @@ type Staff struct {
 	Name     string
 	Balance  float64
 }
-
+type StaffTop struct {
+	BranchId string
+	TypeId   StaffType
+	Name     string
+	Money    int
+}
 type ChangeBalance struct {
 	Id      string
 	Balance float64

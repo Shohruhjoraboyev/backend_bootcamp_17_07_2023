@@ -2,7 +2,7 @@ package models
 
 type CreateTransaction struct {
 	Type        string //(withdraw,topup)
-	Amount      float64
+	Amount      int
 	Source_type string //(sales,bonus)
 	Text        string
 	Sale_id     string
@@ -13,7 +13,7 @@ type CreateTransaction struct {
 type Transaction struct {
 	Id          string
 	Type        string //(withdraw,topup)
-	Amount      float64
+	Amount      int
 	Source_type string //(sales,bonus)
 	Text        string
 	Sale_id     string

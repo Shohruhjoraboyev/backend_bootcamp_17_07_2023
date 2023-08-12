@@ -5,7 +5,7 @@ import (
 	"lesson_20/models"
 )
 
-func (h *handler) CreateTransaction(typ string, amount float64, sourceType, text, saleId string, staffId string) {
+func (h *handler) CreateTransaction(typ string, amount int, sourceType, text, saleId string, staffId string) {
 	resp, err := h.strg.Transaction().CreateTransaction(models.CreateTransaction{
 		Type:        typ,
 		Amount:      amount,
@@ -21,7 +21,7 @@ func (h *handler) CreateTransaction(typ string, amount float64, sourceType, text
 	fmt.Println("created new transaction with id: ", resp)
 }
 
-func (h *handler) UpdateTransaction(id, typ string, amount float64, sourceType, text, saleId string, staffId string) {
+func (h *handler) UpdateTransaction(id, typ string, amount int, sourceType, text, saleId string, staffId string) {
 	resp, err := h.strg.Transaction().UpdateTransaction(models.Transaction{
 		Id:          id,
 		Type:        typ,
@@ -84,11 +84,21 @@ func (h *handler) DeleteTransaction(id string) {
 }
 
 func (h *handler) GetTopStaffs(Type, fromData, ToData string) {
-	_, err := h.strg.Transaction().GetTopStaffs(models.TopWorkerRequest{
+	resp, err := h.strg.Transaction().GetTopStaffs(models.TopWorkerRequest{
 		Type:     Type,
 		FromDate: fromData,
 		ToDate:   ToData,
 	})
+
+	branchNamesMap, _ := h.strg.Branch().GetAllBranch(models.GetAllBranchRequest{})
+
+	for _, b := range branchNamesMap.Branches {
+		for _, v := range resp {
+			if b.Id == v.BranchId {
+				fmt.Printf("Branch: %s Staff: %s Earning: %d\n", b.Name, v.Name, v.Money)
+			}
+		}
+	}
 
 	if err != nil {
 		fmt.Println(err)

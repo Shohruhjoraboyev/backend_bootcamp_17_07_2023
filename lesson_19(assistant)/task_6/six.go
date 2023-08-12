@@ -2,6 +2,7 @@ package task6
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"task/models"
@@ -22,14 +23,44 @@ import (
 //   },
 
 func PlusMinus() {
-	productes, _ := readProduct("data/products.json")
 	transactions, _ := readTransaction("data/branch_pr_transaction.json")
+	productes, _ := readProduct("data/products.json")
 	branches, _ := readBranches("data/branches.json")
 
-	// for k, v := range branchNameValues {
-	// 	fmt.Printf("%s: quantity: %d TranPlus: %d TranMinus %d SumPlus: %d SumMinus: %d\n", k, v.Quantity, v.TranPlus, v.TranMinus, v.SumPlus, v.SumMinus)
-	// 	fmt.Println()
-	// }
+	plusBranchIdTransCount := make(map[int]int)
+	minusBranchIdTransCount := make(map[int]int)
+	plusBranchIdSum := make(map[int]int)
+	minusBranchIdSum := make(map[int]int)
+
+	BranchMap := make(map[int]string)
+	ProductMap := make(map[int]int)
+
+	for _, br := range branches {
+		BranchMap[br.ID] = br.Name
+	}
+	for _, pr := range productes {
+		ProductMap[pr.Id] = pr.Price
+	}
+
+	for _, tr := range transactions {
+		if tr.Type == "plus" {
+			plusBranchIdTransCount[tr.BranchID]++
+			plusBranchIdSum[tr.BranchID] += tr.Quantity * ProductMap[tr.ProductID]
+		} else {
+			minusBranchIdTransCount[tr.BranchID]++
+			minusBranchIdSum[tr.BranchID] += tr.Quantity * ProductMap[tr.ProductID]
+		}
+	}
+
+	for BranchID, BranchName := range BranchMap {
+		fmt.Printf("%s TranPlus: %d, Tranminus: %d, SumPlus: %d, SumMinus: %d\n", BranchName,
+			plusBranchIdTransCount[BranchID],
+			minusBranchIdTransCount[BranchID],
+			plusBranchIdSum[BranchID],
+			minusBranchIdSum[BranchID],
+		)
+	}
+
 }
 
 // // ================================READERS======================================

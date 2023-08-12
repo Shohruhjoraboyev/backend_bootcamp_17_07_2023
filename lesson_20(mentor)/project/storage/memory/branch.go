@@ -106,8 +106,8 @@ func (b *branchRepo) GetAllBranch(req models.GetAllBranchRequest) (resp models.G
 	}
 
 	return models.GetAllBranch{
-		Branches: filtered[start:end],
-		Count:    len(filtered),
+		Branches: branches,
+		Count:    len(branches),
 	}, nil
 }
 

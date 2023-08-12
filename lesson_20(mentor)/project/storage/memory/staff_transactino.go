@@ -160,34 +160,30 @@ func (u *transactionRepo) write(transasctions []models.Transaction) error {
 	return nil
 }
 
-func (t *transactionRepo) GetTopStaffs(req models.TopWorkerRequest) (str string, err error) {
-	var branches []models.Branch
+func (t *transactionRepo) GetTopStaffs(req models.TopWorkerRequest) (resp map[string]models.StaffTop, err error) {
 	var staffes []models.Staff
-	data, err := os.ReadFile("data/branch.json")
+	var transactions []models.Transaction
+	data, err := os.ReadFile("data/staff.json")
 	if err != nil {
 		log.Printf("Error while Read data: %+v", err)
-		return "", err
+		return map[string]models.StaffTop{}, err
 	}
-	err = json.Unmarshal(data, &branches)
+	err = json.Unmarshal(data, &staffes)
 	if err != nil {
 		log.Printf("Error while Unmarshal data: %+v", err)
-		return "", err
+		return make(map[string]models.StaffTop), err
 	}
-	datastaff, err := os.ReadFile("data/staff.json")
+	dataTrans, err := os.ReadFile("data/transaction.json")
 	if err != nil {
 		log.Printf("Error while Read data: %+v", err)
-		return "", err
+		return make(map[string]models.StaffTop), err
 	}
-	err = json.Unmarshal(datastaff, &staffes)
+	err = json.Unmarshal(dataTrans, &transactions)
 	if err != nil {
 		log.Printf("Error while Unmarshal data: %+v", err)
-		return "", err
+		return make(map[string]models.StaffTop), err
 	}
-	transactions, err := t.read()
-	if err != nil {
-		return "", err
-	}
-	// =======================time parsing=======
+
 	startDate, err := time.Parse("2006-01-02", req.FromDate)
 	if err != nil {
 		fmt.Println("Error parsing start date:", err)
@@ -198,40 +194,35 @@ func (t *transactionRepo) GetTopStaffs(req models.TopWorkerRequest) (str string,
 		fmt.Println("Error parsing end date:", err)
 		return
 	}
-	staffIdAmountMap := make(map[string]int)
+
+	staffMap := make(map[string]models.Staff)
+	result := make(map[string]models.StaffTop)
+
+	for _, s := range staffes {
+		staffMap[s.Id] = models.Staff{
+			Id:       s.Id,
+			BranchId: s.BranchId,
+			Name:     s.Name,
+			TypeId:   s.TypeId,
+		}
+	}
+
 	for _, tr := range transactions {
 		createdAt, err := time.Parse("2006-01-02 15:04:05", tr.Created_at)
 		if err != nil {
 			fmt.Println("Error parsing createdAt:", err)
 			continue
 		}
-		if createdAt.After(startDate) && createdAt.Before(endDate) {
-			staffIdAmountMap[tr.Staff_id] += int(tr.Amount)
 
-		}
+		if createdAt.After(startDate) && createdAt.Before(endDate) && string(staffMap[tr.Staff_id].TypeId) == req.Type {
+			v := result[tr.Staff_id]
+			v.BranchId = staffMap[tr.Staff_id].BranchId
+			v.Name = staffMap[tr.Staff_id].Name
+			v.TypeId = staffMap[tr.Staff_id].TypeId
+			v.Money += tr.Amount
 
-	}
-
-	type fullStruct struct {
-		BranchName string
-		StaffName  string
-		Amount     int
-	}
-
-	fullCountMap := make(map[string]fullStruct)
-	for _, br := range branches {
-		for _, s := range staffes {
-			for staffId, amount := range staffIdAmountMap {
-				if staffId == s.Id && br.Id == s.BranchId && req.Type == string(s.TypeId) {
-					fullCountMap[string(s.TypeId)] = fullStruct{
-						BranchName: br.Name,
-						StaffName:  s.Name,
-						Amount:     amount,
-					}
-					fmt.Printf("Branch: %s Staff: %s Earning: %d\n", br.Name, s.Name, amount)
-				}
-			}
+			result[tr.Staff_id] = v
 		}
 	}
-	return
+	return result, nil
 }
