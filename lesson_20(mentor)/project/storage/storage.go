@@ -35,7 +35,7 @@ type TransactionI interface {
 	GetTransaction(models.IdRequest) (models.Transaction, error)
 	GetAllTransaction(models.GetAllTransactionRequest) (models.GetAllTransactionResponse, error)
 	DeleteTransaction(models.IdRequest) (string, error)
-	// GetTopStaffs(models.TopWorkerRequest) (models.TopWorkerRespond, error)
+	GetTopStaffs(models.TopWorkerRequest) (string, error)
 }
 
 type SalesI interface {

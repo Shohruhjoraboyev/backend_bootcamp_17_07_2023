@@ -83,15 +83,14 @@ func (h *handler) DeleteTransaction(id string) {
 	fmt.Println("deleted transaction with id: ", resp)
 }
 
-// func (h *handler) GetTopStaffs(fromData, ToData string) {
-// 	resp, err := h.strg.Transaction().GetTopStaffs(models.TopWorkerRequest{
-// 		FromDate: fromData,
-// 		ToDate:   ToData,
-// 	})
+func (h *handler) GetTopStaffs(Type, fromData, ToData string) {
+	_, err := h.strg.Transaction().GetTopStaffs(models.TopWorkerRequest{
+		Type:     Type,
+		FromDate: fromData,
+		ToDate:   ToData,
+	})
 
-// 	if err != nil {
-// 		fmt.Println(err)
-// 	}
-
-// 	fmt.Println("resp", resp)
-// }
+	if err != nil {
+		fmt.Println(err)
+	}
+}

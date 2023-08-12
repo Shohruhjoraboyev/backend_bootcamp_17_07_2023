@@ -3,6 +3,7 @@ package memory
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"lesson_20/models"
 	"log"
 	"os"
@@ -152,7 +153,6 @@ func (u *transactionRepo) write(transasctions []models.Transaction) error {
 	if err != nil {
 		return err
 	}
-
 	err = os.WriteFile(u.fileName, body, os.ModePerm)
 	if err != nil {
 		return err
@@ -160,9 +160,78 @@ func (u *transactionRepo) write(transasctions []models.Transaction) error {
 	return nil
 }
 
-// func (t *transactionRepo) GetTopStaffs(req models.TopWorkerRequest) (resp models.TopWorkerRespond, err error) {
+func (t *transactionRepo) GetTopStaffs(req models.TopWorkerRequest) (str string, err error) {
+	var branches []models.Branch
+	var staffes []models.Staff
+	data, err := os.ReadFile("data/branch.json")
+	if err != nil {
+		log.Printf("Error while Read data: %+v", err)
+		return "", err
+	}
+	err = json.Unmarshal(data, &branches)
+	if err != nil {
+		log.Printf("Error while Unmarshal data: %+v", err)
+		return "", err
+	}
+	datastaff, err := os.ReadFile("data/staff.json")
+	if err != nil {
+		log.Printf("Error while Read data: %+v", err)
+		return "", err
+	}
+	err = json.Unmarshal(datastaff, &staffes)
+	if err != nil {
+		log.Printf("Error while Unmarshal data: %+v", err)
+		return "", err
+	}
+	transactions, err := t.read()
+	if err != nil {
+		return "", err
+	}
+	// =======================time parsing=======
+	startDate, err := time.Parse("2006-01-02", req.FromDate)
+	if err != nil {
+		fmt.Println("Error parsing start date:", err)
+		return
+	}
+	endDate, err := time.Parse("2006-01-02", req.ToDate)
+	if err != nil {
+		fmt.Println("Error parsing end date:", err)
+		return
+	}
+	staffIdAmountMap := make(map[string]int)
+	for _, tr := range transactions {
+		createdAt, err := time.Parse("2006-01-02 15:04:05", tr.Created_at)
+		if err != nil {
+			fmt.Println("Error parsing createdAt:", err)
+			continue
+		}
+		if createdAt.After(startDate) && createdAt.Before(endDate) {
+			staffIdAmountMap[tr.Staff_id] += int(tr.Amount)
 
-// 	transactions, err := t.GetAllTransaction(models.GetAllTransactionRequest{1, 10, ""})
-// 	fmt.Println(transactions)
-// 	return models.TopWorkerRespond{}, nil
-// }
+		}
+
+	}
+
+	type fullStruct struct {
+		BranchName string
+		StaffName  string
+		Amount     int
+	}
+
+	fullCountMap := make(map[string]fullStruct)
+	for _, br := range branches {
+		for _, s := range staffes {
+			for staffId, amount := range staffIdAmountMap {
+				if staffId == s.Id && br.Id == s.BranchId && req.Type == string(s.TypeId) {
+					fullCountMap[string(s.TypeId)] = fullStruct{
+						BranchName: br.Name,
+						StaffName:  s.Name,
+						Amount:     amount,
+					}
+					fmt.Printf("Branch: %s Staff: %s Earning: %d\n", br.Name, s.Name, amount)
+				}
+			}
+		}
+	}
+	return
+}

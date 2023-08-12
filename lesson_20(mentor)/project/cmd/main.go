@@ -163,8 +163,10 @@ func main() {
 				fmt.Scan(&id)
 				handler.DeleteTransaction(id)
 			case "getTopStaff":
-				fmt.Print("Enter staff Type,  FromData and ToDate")
-				// logic her
+				fmt.Println("Enter staff Type,  FromData and ToDate (2023-08-08)")
+				tip, fromDate, toDate := "", "", ""
+				fmt.Scan(&tip, &fromDate, &toDate)
+				handler.GetTopStaffs(tip, fromDate, toDate)
 			}
 
 		// TARIFF
