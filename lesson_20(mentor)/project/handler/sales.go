@@ -141,9 +141,7 @@ func (h *handler) GetTopSaleBranch() {
 	for _, v := range branches.Branches {
 		branchName[v.Id] = v.Name
 	}
-	for id, timeAndSum := range resp {
-		for t, s := range timeAndSum {
-			fmt.Printf("%s, %s, %f\n", t, branchName[id], s)
-		}
+	for _, structs := range resp {
+		fmt.Printf("%s - %s - %f\n", structs.Day, branchName[structs.BranchId], structs.SalesAmount)
 	}
 }

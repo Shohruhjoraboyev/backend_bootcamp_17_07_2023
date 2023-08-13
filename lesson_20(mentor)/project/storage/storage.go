@@ -44,7 +44,7 @@ type SalesI interface {
 	GetSale(models.IdRequest) (models.Sales, error)
 	GetAllSale(models.GetAllSalesRequest) (models.GetAllSalesResponse, error)
 	DeleteSale(models.IdRequest) (string, error)
-	GetTopSaleBranch() (resp map[string]map[string]float64, err error)
+	GetTopSaleBranch() (resp map[string]models.SaleTopBranch, err error)
 }
 
 type StaffTarifsI interface {

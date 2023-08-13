@@ -84,6 +84,7 @@ func (h *handler) DeleteTransaction(id string) {
 }
 
 func (h *handler) GetTopStaffs(Type, fromData, ToData string) {
+
 	resp, err := h.strg.Transaction().GetTopStaffs(models.TopWorkerRequest{
 		Type:     Type,
 		FromDate: fromData,
@@ -91,6 +92,7 @@ func (h *handler) GetTopStaffs(Type, fromData, ToData string) {
 	})
 
 	branchNamesMap, _ := h.strg.Branch().GetAllBranch(models.GetAllBranchRequest{})
+
 	branchName := make(map[string]string)
 	for _, b := range branchNamesMap.Branches {
 		branchName[b.Id] = b.Name

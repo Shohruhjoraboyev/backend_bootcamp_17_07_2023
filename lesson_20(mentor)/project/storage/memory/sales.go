@@ -131,33 +131,27 @@ func (c *saleRepo) DeleteSale(req models.IdRequest) (resp string, err error) {
 	return "", errors.New("not found")
 }
 
-func (u *saleRepo) GetTopSaleBranch() (resp map[string]map[string]float64, err error) {
+func (u *saleRepo) GetTopSaleBranch() (resp map[string]models.SaleTopBranch, err error) {
 	sales, err := u.read()
 	if err != nil {
 		return resp, err
 	}
-
-	timeBranchNameSum := make(map[string]map[string]float64)
-
+	retMap := make(map[string]models.SaleTopBranch)
 	for _, sale := range sales {
-		branchId := sale.Branch_id
-		price := sale.Price
-
 		createdAtTime, err := time.Parse("2006-01-02 15:04:05", sale.Created_at)
 		if err != nil {
 			log.Fatal(err)
 		}
 		day := createdAtTime.Format("2006-01-02")
+		v := retMap[sale.Id]
+		v.BranchId = sale.Branch_id
+		v.Day = day
+		v.SalesAmount += sale.Price
 
-		if timeBranchNameSum[branchId] == nil {
-			timeBranchNameSum[branchId] = make(map[string]float64)
-		}
-		if sale.Status == "success" {
-			timeBranchNameSum[branchId][day] += price
-		}
+		retMap[sale.Id] = v
 	}
 
-	return timeBranchNameSum, nil
+	return retMap, nil
 }
 
 func (u *saleRepo) read() ([]models.Sales, error) {

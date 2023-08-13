@@ -43,3 +43,9 @@ type GetAllSalesResponse struct {
 	Sales []Sales
 	Count int
 }
+
+type SaleTopBranch struct {
+	Day         string
+	BranchId    string
+	SalesAmount float64
+}
