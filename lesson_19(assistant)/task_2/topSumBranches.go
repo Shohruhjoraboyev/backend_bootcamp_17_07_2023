@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"sort"
 	"task/models"
 )
 
@@ -16,40 +15,24 @@ func CalculateSumOfPriceTopBranches() {
 	productes, _ := readProducts("data/products.json")
 	transactions, _ := readTransaction("data/branch_pr_transaction.json")
 
-	branchSums := make(map[int]int)
+	branchName := make(map[int]string)
+	productPrice := make(map[int]int)
+	branchSum := make(map[string]int)
+
 	for _, p := range productes {
-		for _, t := range transactions {
-			for _, b := range branches {
-				if t.BranchID == b.ID && t.ProductID == p.Id {
-					for _, transaction := range transactions {
-						// sum := t.Quantity * p.Price
-						branchSums[transaction.BranchID] += t.Quantity * p.Price
-					}
-				}
-			}
-		}
+		productPrice[p.Id] = p.Price
+	}
+	for _, b := range branches {
+		branchName[b.ID] = b.Name
+	}
+	for _, t := range transactions {
+		branchSum[branchName[t.BranchID]] += productPrice[t.BranchID]
 	}
 
-	var sortedBranches []models.BranchProductPrice
-	for branchId, sum := range branchSums {
-		for _, b := range branches {
-			if branchId == b.ID {
-				sortedBranches = append(sortedBranches, models.BranchProductPrice{
-					BranchID:   branchId,
-					BranchName: b.Name,
-					Sum:        sum,
-				})
-			}
-		}
+	for n, s := range branchSum {
+		fmt.Printf("%s - %d\n", n, s)
 	}
 
-	sort.Slice(sortedBranches, func(i, j int) bool {
-		return sortedBranches[i].Sum > sortedBranches[j].Sum
-	})
-
-	for _, v := range sortedBranches {
-		fmt.Printf("Branch: %s: total sum: %d\n", v.BranchName, v.Sum)
-	}
 }
 
 // ================================READERS======================================

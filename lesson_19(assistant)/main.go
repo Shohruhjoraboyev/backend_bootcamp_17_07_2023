@@ -2,17 +2,17 @@ package main
 
 import (
 	"fmt"
-	task1 "task/task_1"
+	task2 "task/task_2"
 )
 
 func main() {
-	fmt.Println("1.transactionlar soni bo'yicha top branches")
-	task1.CalculateTranTopBranches()
-	fmt.Println()
-
-	// fmt.Println("2.transactionlar summasi bo'yicha top branches")
-	// task2.CalculateSumOfPriceTopBranches()
+	// fmt.Println("1.transactionlar soni bo'yicha top branches")
+	// task1.CalculateTranTopBranches()
 	// fmt.Println()
+
+	fmt.Println("2.transactionlar summasi bo'yicha top branches")
+	task2.CalculateSumOfPriceTopBranches()
+	fmt.Println()
 
 	// fmt.Println("3.transactionda bo'lgan top productlar")
 	// task3.TopTransactionProducts()
