@@ -1,10 +1,5 @@
 package main
 
-import (
-	"fmt"
-	task3 "task/task_3"
-)
-
 func main() {
 	// fmt.Println("1.transactionlar soni bo'yicha top branches")
 	// task1.CalculateTranTopBranches()
@@ -14,9 +9,9 @@ func main() {
 	// task2.CalculateSumOfPriceTopBranches()
 	// fmt.Println()
 
-	fmt.Println("3.transactionda bo'lgan top productlar")
-	task3.TopTransactionProducts()
-	fmt.Println()
+	// fmt.Println("3.transactionda bo'lgan top productlar")
+	// task3.TopTransactionProducts()
+	// fmt.Println()
 
 	// fmt.Println("4.transactionda bo'lgan top categorylar")
 	// task4.TopTransactionCategory()
@@ -54,15 +49,3 @@ func main() {
 	// task12.Task12()
 	// fmt.Println()
 }
-
-// 6. har bir branch nechta plus/minus transactionlar soni, plus/minus transactionlar summasini quyidagicha chiqarish:
-//                     Transactions            Summ
-//                     plus   minus        plus     minus
-//     1. Branch1      53      20          853 000  278 000
-//     2. Branch2      38      185         492 000  1 982 000
-
-// 8. Product qancha kiritilgan va chiqarilganligi jadvali:
-//     Name    Kiritilgan  Chiqarilgan
-//     Olma     345            847
-//     Cola     374            219
-//     ....     ...       ...   ....
