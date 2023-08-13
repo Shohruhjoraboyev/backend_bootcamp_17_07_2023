@@ -21,13 +21,6 @@ type BranchProduct struct {
 	Quantity  int
 }
 
-type Product struct {
-	ID         int
-	Name       string
-	Price      int
-	CategoryID int
-}
-
 type Branch struct {
 	ID                int
 	Name              string
@@ -90,7 +83,6 @@ func CalculateProductSum() {
 }
 
 // ================================READERS======================================
-
 func readProducts(data string) ([]models.Products, error) {
 	var products []models.Products
 

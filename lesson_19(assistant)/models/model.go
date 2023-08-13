@@ -14,6 +14,7 @@ type BranchTransactionCategoryCount struct {
 type Transaction struct {
 	ID        int    `json:"id"`
 	BranchID  int    `json:"branch_id"`
+	UserID    int    `json:"user_id"`
 	ProductID int    `json:"product_id"`
 	Type      string `json:"type"`
 	Quantity  int    `json:"quantity"`
@@ -29,7 +30,7 @@ type Products struct {
 	Id         int    `json:"id"`
 	Name       string `json:"name"`
 	Price      int    `json:"price"`
-	CategoryId int    `json:"category_id"`
+	CategoryID int    `json:"category_id"`
 }
 
 type ProductTop struct {
@@ -58,4 +59,9 @@ type Product7task struct {
 type ModelFor9 struct {
 	Name string
 	Sum  int
+}
+
+type User struct {
+	ID   int
+	Name string
 }

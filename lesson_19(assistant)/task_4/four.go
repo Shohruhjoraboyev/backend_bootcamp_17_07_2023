@@ -11,18 +11,13 @@ import (
 
 // 4.transactionda bo'lgan top categorylar
 func TopTransactionCategory() {
-	productes, _ := readProducts("data/products.json")
 	transactions, _ := readTransaction("data/branch_pr_transaction.json")
 	categories, _ := readTCategory("data/categories.json")
 
 	var transactionCount = make(map[int]int) //[productId]count
-	for _, p := range productes {
-		for _, t := range transactions {
-			if t.ProductID == p.Id {
-				transactionCount[p.CategoryId]++
-			}
-		}
 
+	for _, t := range transactions {
+		transactionCount[t.ProductID]++
 	}
 
 	var sortedTopProducts []models.ProductTop
@@ -48,23 +43,6 @@ func TopTransactionCategory() {
 }
 
 // ================================READERS======================================
-
-func readProducts(data string) ([]models.Products, error) {
-	var products []models.Products
-
-	p, err := os.ReadFile(data)
-	if err != nil {
-		log.Printf("Error while Read data: %+v", err)
-		return nil, err
-	}
-	err = json.Unmarshal(p, &products)
-	if err != nil {
-		log.Printf("Error while Unmarshal data: %+v", err)
-		return nil, err
-	}
-	return products, nil
-}
-
 func readTransaction(data string) ([]models.Transaction, error) {
 	var transactions []models.Transaction
 

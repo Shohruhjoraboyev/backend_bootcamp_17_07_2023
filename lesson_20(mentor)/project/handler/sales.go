@@ -128,3 +128,22 @@ func (h *handler) DeleteSale(id string) {
 	}
 	fmt.Println("deleted staff with id: ", resp)
 }
+
+func (h *handler) GetTopSaleBranch() {
+	resp, err := h.strg.Sales().GetTopSaleBranch()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	branches, _ := h.strg.Branch().GetAllBranch(models.GetAllBranchRequest{})
+	branchName := make(map[string]string)
+
+	for _, v := range branches.Branches {
+		branchName[v.Id] = v.Name
+	}
+	for id, timeAndSum := range resp {
+		for t, s := range timeAndSum {
+			fmt.Printf("%s, %s, %f\n", t, branchName[id], s)
+		}
+	}
+}

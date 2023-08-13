@@ -6,7 +6,6 @@ import (
 	"lesson_20/models"
 	"log"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -91,7 +90,8 @@ func (c *saleRepo) GetAllSale(req models.GetAllSalesRequest) (resp models.GetAll
 	var filtered []models.Sales
 
 	for _, v := range sales {
-		if strings.Contains(v.Client_name, req.Client_name) {
+		// if strings.Contains(v.Client_name, req.Client_name) {
+		if true {
 			filtered = append(filtered, v)
 		}
 	}
@@ -99,7 +99,7 @@ func (c *saleRepo) GetAllSale(req models.GetAllSalesRequest) (resp models.GetAll
 	if start > len(filtered) {
 		resp.Sales = []models.Sales{}
 		resp.Count = len(filtered)
-		return
+
 	} else if end > len(filtered) {
 		return models.GetAllSalesResponse{
 			Sales: filtered[start:],
@@ -108,10 +108,9 @@ func (c *saleRepo) GetAllSale(req models.GetAllSalesRequest) (resp models.GetAll
 	}
 
 	return models.GetAllSalesResponse{
-		Sales: filtered[start:end],
-		Count: len(filtered),
+		Sales: sales,
+		Count: len(sales),
 	}, nil
-
 }
 
 func (c *saleRepo) DeleteSale(req models.IdRequest) (resp string, err error) {
@@ -130,6 +129,35 @@ func (c *saleRepo) DeleteSale(req models.IdRequest) (resp string, err error) {
 		}
 	}
 	return "", errors.New("not found")
+}
+
+func (u *saleRepo) GetTopSaleBranch() (resp map[string]map[string]float64, err error) {
+	sales, err := u.read()
+	if err != nil {
+		return resp, err
+	}
+
+	timeBranchNameSum := make(map[string]map[string]float64)
+
+	for _, sale := range sales {
+		branchId := sale.Branch_id
+		price := sale.Price
+
+		createdAtTime, err := time.Parse("2006-01-02 15:04:05", sale.Created_at)
+		if err != nil {
+			log.Fatal(err)
+		}
+		day := createdAtTime.Format("2006-01-02")
+
+		if timeBranchNameSum[branchId] == nil {
+			timeBranchNameSum[branchId] = make(map[string]float64)
+		}
+		if sale.Status == "success" {
+			timeBranchNameSum[branchId][day] += price
+		}
+	}
+
+	return timeBranchNameSum, nil
 }
 
 func (u *saleRepo) read() ([]models.Sales, error) {

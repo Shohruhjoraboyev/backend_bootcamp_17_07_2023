@@ -91,13 +91,12 @@ func (h *handler) GetTopStaffs(Type, fromData, ToData string) {
 	})
 
 	branchNamesMap, _ := h.strg.Branch().GetAllBranch(models.GetAllBranchRequest{})
-
+	branchName := make(map[string]string)
 	for _, b := range branchNamesMap.Branches {
-		for _, v := range resp {
-			if b.Id == v.BranchId {
-				fmt.Printf("Branch: %s Staff: %s Earning: %d\n", b.Name, v.Name, v.Money)
-			}
-		}
+		branchName[b.Id] = b.Name
+	}
+	for _, v := range resp {
+		fmt.Printf("Branch: %s Staff: %s Earning: %d\n", branchName[v.BranchId], v.Name, v.Money)
 	}
 
 	if err != nil {
