@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"sort"
 	"task/models"
 )
 
@@ -14,26 +13,17 @@ func CalculateTranTopBranches() {
 	transactions, _ := readTransaction("data/branch_pr_transaction.json")
 	branches, _ := readBranches("data/branches.json")
 
-	branchCounts := make(map[int]int)
-	for _, transaction := range transactions {
-		branchCounts[transaction.BranchID]++
+	branchName := make(map[int]string)
+	for _, b := range branches {
+		branchName[b.ID] = b.Name
+	}
+	transCount := make(map[int]int)
+	for _, t := range transactions {
+		transCount[t.BranchID]++
 	}
 
-	var sortedBranches []models.BranchTransactionCount
-	for branchID, count := range branchCounts {
-		for _, b := range branches {
-			if branchID == b.ID {
-				sortedBranches = append(sortedBranches, models.BranchTransactionCount{BranchID: branchID, BranchName: b.Name, Count: count})
-			}
-		}
-	}
-
-	sort.Slice(sortedBranches, func(i, j int) bool {
-		return sortedBranches[i].Count > sortedBranches[j].Count
-	})
-
-	for _, v := range sortedBranches {
-		fmt.Printf("Branch: %s: Total Transactions: %d\n", v.BranchName, v.Count)
+	for id, b := range branchName {
+		fmt.Printf("%s - %d\n", b, transCount[id])
 	}
 }
 
