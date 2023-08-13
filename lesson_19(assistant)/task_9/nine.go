@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"sort"
 	"task/models"
 )
 
@@ -13,72 +12,27 @@ import (
 // 1. Branch1        853 000
 // 2. Branch2      1 982 000
 
-// branch skladni range qilib branchId, productId va quantity ovolishim kerak
-// keyin quantityni productid orqali pricega kopaytirish kerak
-type BranchProduct struct {
-	BranchID  int
-	ProductID int
-	Quantity  int
-}
-
-type Branch struct {
-	ID                int
-	Name              string
-	ProductQuantities map[int]int
-}
-
 func CalculateProductSum() {
 	branch_products, _ := readBranches("data/branch_products.json")
 	productes, _ := readProducts("data/products.json")
 	branches, _ := readBranch("data/branches.json")
 
-	branchMap := make(map[int]Branch)
+	prodIdPrice := make(map[int]int)
+	branchIdName := make(map[int]string)
 
-	for _, branchProduct := range branch_products {
-		branchID := branchProduct.BranchId
-		productID := branchProduct.ProductId
-		quantity := branchProduct.Quantity
-
-		branch, exists := branchMap[branchID]
-		if !exists {
-			branch = Branch{
-				ID:                branchID,
-				ProductQuantities: make(map[int]int),
-			}
-		}
-
-		branch.ProductQuantities[productID] += quantity
-		branchMap[branchID] = branch
+	for _, p := range productes {
+		prodIdPrice[p.Id] = p.Price
 	}
-	container := make(map[int]int)
-	for branchID, v := range branchMap {
-		for _, p := range productes {
-			for product_id, quantity := range v.ProductQuantities {
-				if p.Id == product_id {
-					container[branchID] += quantity * p.Price
-				}
-			}
-		}
+	for _, b := range branches {
+		branchIdName[b.ID] = b.Name
 	}
 
-	sortedContainer := []models.ModelFor9{}
-	for i, v := range container {
-		for _, b := range branches {
-			if i == b.ID {
-				sortedContainer = append(sortedContainer, models.ModelFor9{
-					Name: b.Name,
-					Sum:  v,
-				})
-			}
-		}
+	branchSum := make(map[string]int)
+	for _, v := range branch_products {
+		branchSum[branchIdName[v.BranchId]] += (v.Quantity * prodIdPrice[v.ProductId])
 	}
-
-	sort.Slice(sortedContainer, func(i, j int) bool {
-		return sortedContainer[i].Sum > sortedContainer[j].Sum
-	})
-
-	for _, v := range sortedContainer {
-		fmt.Printf("%s: sum: %d\n", v.Name, v.Sum)
+	for name, sum := range branchSum {
+		fmt.Printf("%s - %d\n", name, sum)
 	}
 }
 

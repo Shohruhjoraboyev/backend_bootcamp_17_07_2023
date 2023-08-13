@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"task/task12"
+	task9 "task/task_9"
 )
 
 func main() {
@@ -38,9 +38,9 @@ func main() {
 	// task8.Task8()
 	// fmt.Println()
 
-	// fmt.Println("9. Filialda qancha summalik product borligi jadvali")
-	// task9.CalculateProductSum()
-	// fmt.Println()
+	fmt.Println("9. Filialda qancha summalik product borligi jadvali")
+	task9.CalculateProductSum()
+	fmt.Println()
 
 	// fmt.Println("10. har bir user transaction qilgan summasi jadvali")
 	// task10.Task10()
@@ -50,9 +50,9 @@ func main() {
 	// task11.Task11()
 	// fmt.Println()
 
-	fmt.Println("12. har bir user qancha product kiritgani va chiqargani jadvali")
-	task12.Task12()
-	fmt.Println()
+	// fmt.Println("12. har bir user qancha product kiritgani va chiqargani jadvali")
+	// task12.Task12()
+	// fmt.Println()
 }
 
 // 6. har bir branch nechta plus/minus transactionlar soni, plus/minus transactionlar summasini quyidagicha chiqarish:
