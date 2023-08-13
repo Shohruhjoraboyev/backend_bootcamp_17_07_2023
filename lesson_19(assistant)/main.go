@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"task/task11"
+	"task/task12"
 )
 
 func main() {
@@ -46,8 +46,12 @@ func main() {
 	// task10.Task10()
 	// fmt.Println()
 
-	fmt.Println("11. har bir user kun bo'yicha nechta va necha sumlik transaction qilgani jadvali")
-	task11.Task11()
+	// fmt.Println("11. har bir user kun bo'yicha nechta va necha sumlik transaction qilgani jadvali")
+	// task11.Task11()
+	// fmt.Println()
+
+	fmt.Println("12. har bir user qancha product kiritgani va chiqargani jadvali")
+	task12.Task12()
 	fmt.Println()
 }
 
