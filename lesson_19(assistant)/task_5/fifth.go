@@ -22,8 +22,6 @@ func TopBranchTransactionCategory() {
 		key := fmt.Sprintf("Branch %d, Category %d", transaction.BranchID, transaction.ProductID)
 		countMap[key]++
 	}
-
-	// Print the branches with non-zero transaction counts for each category
 	for _, branch := range branches {
 		fmt.Printf("Branch: %s\n", branch.Name)
 		hasTransactions := false
