@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"sort"
 	"task/models"
 )
 
@@ -14,32 +13,17 @@ func TopTransactionProducts() {
 	productes, _ := readProducts("data/products.json")
 	transactions, _ := readTransaction("data/branch_pr_transaction.json")
 
-	var transactionCount = make(map[int]int) //[productId]count
-
+	transactionCount := make(map[int]int) //[productId]count
+	prodNameCount := make(map[int]string)
 	for _, t := range transactions {
 		transactionCount[t.ProductID]++
 	}
-
-	var sortedTopProducts []models.ProductTop
-
-	for productId, count := range transactionCount {
-		for _, p := range productes {
-			if productId == p.Id {
-				sortedTopProducts = append(sortedTopProducts, models.ProductTop{
-					Id:    productId,
-					Name:  p.Name,
-					Count: count,
-				})
-			}
-		}
+	for _, p := range productes {
+		prodNameCount[p.Id] = p.Name
 	}
 
-	sort.Slice(sortedTopProducts, func(i, j int) bool {
-		return sortedTopProducts[i].Count > sortedTopProducts[j].Count
-	})
-
-	for _, v := range sortedTopProducts {
-		fmt.Printf("%s: transacted %d times\n", v.Name, v.Count)
+	for id, t := range transactionCount {
+		fmt.Printf("%s - %d\n", prodNameCount[id], t)
 	}
 }
 
