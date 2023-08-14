@@ -21,6 +21,8 @@ func Task11() {
 	userIdName := make(map[int]string)
 	// productID va price
 	prodIdPrice := make(map[int]int)
+	// userID: time va count
+	userTimeCount := make(map[int]map[string]int)
 
 	for _, u := range users {
 		userIdName[u.ID] = u.Name
@@ -28,25 +30,20 @@ func Task11() {
 	for _, p := range products {
 		prodIdPrice[p.Id] = p.Price
 	}
-	type Task11Model struct {
-		CreatedAt string
-		Count     int
-		Sum       int
-	}
-
-	nameSum := make(map[string]Task11Model)
+	totalSumMap := make(map[string]int)
 
 	for _, tr := range trasnsactions {
-		m := nameSum[userIdName[tr.UserID]]
-		m.CreatedAt = tr.CreatedAt[:11] // hammasi birxil sanada
-		m.Count += tr.Quantity
-		m.Sum += tr.Quantity * prodIdPrice[tr.ProductID]
-
-		nameSum[userIdName[tr.UserID]] = m
+		if _, ok := userTimeCount[tr.UserID]; !ok {
+			userTimeCount[tr.UserID] = make(map[string]int)
+		}
+		userTimeCount[tr.UserID][tr.CreatedAt[:11]]++
+		totalSumMap[tr.CreatedAt[:11]] = prodIdPrice[tr.ProductID]
 	}
 
-	for name, v := range nameSum {
-		fmt.Printf("%s - %s- %d - %d\n", name, v.CreatedAt, v.Count, v.Sum)
+	for userId, innerMap := range userTimeCount {
+		for time, count := range innerMap {
+			fmt.Printf("%s - %s - %d - %d\n", userIdName[userId], time, count, (totalSumMap[time] * count))
+		}
 	}
 }
 
