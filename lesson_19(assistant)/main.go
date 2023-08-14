@@ -1,5 +1,10 @@
 package main
 
+import (
+	"fmt"
+	"task/task11"
+)
+
 func main() {
 	// fmt.Println("1.transactionlar soni bo'yicha top branches")
 	// task1.CalculateTranTopBranches()
@@ -41,9 +46,9 @@ func main() {
 	// task10.Task10()
 	// fmt.Println()
 
-	// fmt.Println("11. har bir user kun bo'yicha nechta va necha sumlik transaction qilgani jadvali")
-	// task11.Task11()
-	// fmt.Println()
+	fmt.Println("11. har bir user kun bo'yicha nechta va necha sumlik transaction qilgani jadvali")
+	task11.Task11()
+	fmt.Println()
 
 	// fmt.Println("12. har bir user qancha product kiritgani va chiqargani jadvali")
 	// task12.Task12()

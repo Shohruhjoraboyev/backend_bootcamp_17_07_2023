@@ -11,7 +11,6 @@ func main() {
 	cfg := config.Load()
 	strg := memory.NewStorage("data/branch.json", "data/staff.json", "data/sale.json", "data/transaction.json", "data/tariff.json")
 	handler := handler.NewHandler(strg, *cfg)
-	handler.GetSaleCountBranch()
 
 	/*
 		fmt.Println("Welcome to my Golang Project!")
