@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"lesson_20/models"
+	"sort"
 )
 
 func (h *handler) CreateSale(Client_name string, Branch_id, Shop_asissent_id, Cashier_id string, Price float64, Payment_Type models.Payment) {
@@ -144,4 +145,32 @@ func (h *handler) GetTopSaleBranch() {
 	for _, structs := range resp {
 		fmt.Printf("%s - %s - %f\n", structs.Day, branchName[structs.BranchId], structs.SalesAmount)
 	}
+}
+
+func (h *handler) GetSaleCountBranch() {
+	resp, err := h.strg.Sales().GetSaleCountBranch()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	branches, _ := h.strg.Branch().GetAllBranch(models.GetAllBranchRequest{})
+	branchName := make(map[string]string)
+
+	for _, v := range branches.Branches {
+		branchName[v.Id] = v.Name
+	}
+	var sortedSlice []models.SaleCountSumBranch
+
+	for _, structs := range resp {
+		sortedSlice = append(sortedSlice, structs)
+	}
+	sort.Slice(sortedSlice, func(i, j int) bool {
+		return sortedSlice[i].SalesAmount > sortedSlice[j].SalesAmount
+	})
+
+	for _, v := range sortedSlice {
+		fmt.Printf("%s - %f - %d\n", branchName[v.BranchId], v.SalesAmount, v.Count)
+
+	}
+
 }

@@ -154,6 +154,30 @@ func (u *saleRepo) GetTopSaleBranch() (resp map[string]models.SaleTopBranch, err
 	return retMap, nil
 }
 
+// 1.branch umumiy sale summasi va soni bo'yicha jadval(summasi bo'yicha kamayish tartibida):
+//
+//	summa           son
+//
+// 1. Chilonzor   12 392 000       873
+// 2. MGorkiy      9 847 000       604
+func (u *saleRepo) GetSaleCountBranch() (resp map[string]models.SaleCountSumBranch, err error) {
+	sales, err := u.read()
+	if err != nil {
+		return resp, err
+	}
+	retMap := make(map[string]models.SaleCountSumBranch)
+	for _, sale := range sales {
+		if sale.Status == "success" {
+			v := retMap[sale.Id]
+			v.BranchId = sale.Branch_id
+			v.SalesAmount += sale.Price
+			v.Count++
+
+			retMap[sale.Id] = v
+		}
+	}
+	return retMap, nil
+}
 func (u *saleRepo) read() ([]models.Sales, error) {
 	var branches []models.Sales
 

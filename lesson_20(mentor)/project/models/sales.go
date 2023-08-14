@@ -49,3 +49,9 @@ type SaleTopBranch struct {
 	BranchId    string
 	SalesAmount float64
 }
+
+type SaleCountSumBranch struct {
+	BranchId    string
+	Count       int
+	SalesAmount float64
+}
