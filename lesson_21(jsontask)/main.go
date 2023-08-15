@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	task13 "task/task_13"
+	task14 "task/task_14"
 )
 
 func main() {
@@ -54,24 +54,11 @@ func main() {
 	// task12.Task12()
 	// fmt.Println()
 
-	fmt.Println("13. Har bir kunda o'rtacha qancha product kiritilgani va chiqarilgani bo'yicha jadvals")
-	task13.Task13()
+	// fmt.Println("13. Har bir kunda o'rtacha qancha product kiritilgani va chiqarilgani bo'yicha jadvals")
+	// task13.Task13()
+	// fmt.Println()
+
+	fmt.Println("14. Har kuni o'rtacha user qancha summa product kiritgani va chiqargani bo'yicha jadval")
+	task14.Task14()
 	fmt.Println()
 }
-
-/*
-
-...    ...     ...    ...       ...
-
-14. Har kuni o'rtacha qancha product kiritilgani va chiqarilgani bo'yicha jadval:
-    branch      o'rtacha+   o'rtacha-
-1. Chilonzor      73         34
-2. MGorkiy        60         75
-...    ...     ...    ...       ...
-
-15. Har kuni o'rtacha user qancha summa product kiritgani va chiqargani bo'yicha jadval:
-    branch      o'rtacha+        o'rtacha-
-1. Anvar          370 000         435 000
-2. Shuhrat        60 000          875 000
-...    ...     ...    ...       ...
-*/
