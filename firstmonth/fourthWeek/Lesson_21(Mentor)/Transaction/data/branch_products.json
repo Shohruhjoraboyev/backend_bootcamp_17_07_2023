@@ -1,0 +1,27 @@
+[
+    {
+        "branch_id": 2,
+        "product_id": 1,
+        "quantity": 400
+    },
+    {
+        "branch_id": 1,
+        "product_id": 2,
+        "quantity": 500
+    },
+    {
+        "branch_id": 3,
+        "product_id": 6,
+        "quantity": 50
+    },
+    {
+        "branch_id": 4,
+        "product_id": 5,
+        "quantity": 400
+    },
+    {
+        "branch_id": 5,
+        "product_id": 7,
+        "quantity": 300
+    }
+]
