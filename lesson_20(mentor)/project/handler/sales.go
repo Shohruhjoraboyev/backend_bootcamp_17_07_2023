@@ -131,19 +131,21 @@ func (h *handler) DeleteSale(id string) {
 }
 
 func (h *handler) GetTopSaleBranch() {
+	branches, _ := h.strg.Branch().GetAllBranch(models.GetAllBranchRequest{})
+	branchName := make(map[string]string)
+	for _, v := range branches.Branches {
+		branchName[v.Id] = v.Name
+	}
 	resp, err := h.strg.Sales().GetTopSaleBranch()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	branches, _ := h.strg.Branch().GetAllBranch(models.GetAllBranchRequest{})
-	branchName := make(map[string]string)
 
-	for _, v := range branches.Branches {
-		branchName[v.Id] = v.Name
-	}
-	for _, structs := range resp {
-		fmt.Printf("%s - %s - %f\n", structs.Day, branchName[structs.BranchId], structs.SalesAmount)
+	for brID, innerMap := range resp {
+		for time, price := range innerMap {
+			fmt.Printf("%s - %s - %d\n", time, branchName[brID], price)
+		}
 	}
 }
 

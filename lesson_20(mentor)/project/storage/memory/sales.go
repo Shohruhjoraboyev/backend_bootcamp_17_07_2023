@@ -21,7 +21,7 @@ func NewSaleRepo(fileName string) *saleRepo {
 
 func (c *saleRepo) CreateSale(req models.CreateSales) (string, error) {
 	id := uuid.NewString()
-	sales, err := c.read()
+	sales, err := c.readSale()
 	if err != nil {
 		return "", err
 	}
@@ -44,7 +44,7 @@ func (c *saleRepo) CreateSale(req models.CreateSales) (string, error) {
 }
 
 func (c *saleRepo) UpdateSale(req models.Sales) (string, error) {
-	sales, err := c.read()
+	sales, err := c.readSale()
 	if err != nil {
 		return "", err
 	}
@@ -68,7 +68,7 @@ func (c *saleRepo) UpdateSale(req models.Sales) (string, error) {
 }
 
 func (c *saleRepo) GetSale(req models.IdRequest) (resp models.Sales, err error) {
-	sales, err := c.read()
+	sales, err := c.readSale()
 	if err != nil {
 		return models.Sales{}, err
 	}
@@ -81,7 +81,7 @@ func (c *saleRepo) GetSale(req models.IdRequest) (resp models.Sales, err error) 
 }
 
 func (c *saleRepo) GetAllSale(req models.GetAllSalesRequest) (resp models.GetAllSalesResponse, err error) {
-	sales, err := c.read()
+	sales, err := c.readSale()
 	if err != nil {
 		return models.GetAllSalesResponse{}, err
 	}
@@ -114,7 +114,7 @@ func (c *saleRepo) GetAllSale(req models.GetAllSalesRequest) (resp models.GetAll
 }
 
 func (c *saleRepo) DeleteSale(req models.IdRequest) (resp string, err error) {
-	sales, err := c.read()
+	sales, err := c.readSale()
 	if err != nil {
 		return "", err
 	}
@@ -131,29 +131,6 @@ func (c *saleRepo) DeleteSale(req models.IdRequest) (resp string, err error) {
 	return "", errors.New("not found")
 }
 
-func (u *saleRepo) GetTopSaleBranch() (resp map[string]models.SaleTopBranch, err error) {
-	sales, err := u.read()
-	if err != nil {
-		return resp, err
-	}
-	retMap := make(map[string]models.SaleTopBranch)
-	for _, sale := range sales {
-		createdAtTime, err := time.Parse("2006-01-02 15:04:05", sale.Created_at)
-		if err != nil {
-			log.Fatal(err)
-		}
-		day := createdAtTime.Format("2006-01-02")
-		v := retMap[sale.Id]
-		v.BranchId = sale.Branch_id
-		v.Day = day
-		v.SalesAmount += sale.Price
-
-		retMap[sale.Id] = v
-	}
-
-	return retMap, nil
-}
-
 // 1.branch umumiy sale summasi va soni bo'yicha jadval(summasi bo'yicha kamayish tartibida):
 //
 //	summa           son
@@ -161,7 +138,7 @@ func (u *saleRepo) GetTopSaleBranch() (resp map[string]models.SaleTopBranch, err
 // 1. Chilonzor   12 392 000       873
 // 2. MGorkiy      9 847 000       604
 func (u *saleRepo) GetSaleCountBranch() (resp map[string]models.SaleCountSumBranch, err error) {
-	sales, err := u.read()
+	sales, err := u.readSale()
 	if err != nil {
 		return resp, err
 	}
@@ -178,7 +155,25 @@ func (u *saleRepo) GetSaleCountBranch() (resp map[string]models.SaleCountSumBran
 	}
 	return retMap, nil
 }
-func (u *saleRepo) read() ([]models.Sales, error) {
+
+//  2. Shu paytgacha eng ko'p savdo bo'lgan kunlar filiallar bo'yicha:
+//     Day                  Branch          Sales_Amount
+//     06-06-2023    Chilonzor       10 000 000
+//     10-06-2023     Chorsu            8 000 000
+func (u *saleRepo) GetTopSaleBranch() (resp map[string]map[string]int, err error) {
+	sales, _ := u.readSale()
+	branchTimeCount := make(map[string]map[string]int)
+
+	for _, tr := range sales {
+		if _, ok := branchTimeCount[tr.Branch_id]; !ok {
+			branchTimeCount[tr.Branch_id] = make(map[string]int)
+		}
+		branchTimeCount[tr.Branch_id][tr.Created_at[:11]] += int(tr.Price)
+	}
+	return branchTimeCount, nil
+}
+
+func (u *saleRepo) readSale() ([]models.Sales, error) {
 	var branches []models.Sales
 
 	data, err := os.ReadFile(u.fileName)
