@@ -60,7 +60,6 @@ func PlusMinus() {
 			minusBranchIdSum[BranchID],
 		)
 	}
-
 }
 
 // // ================================READERS======================================
