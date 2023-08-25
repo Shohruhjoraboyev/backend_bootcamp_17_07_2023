@@ -27,7 +27,6 @@ func CalculateSumOfPriceTopBranches() {
 	}
 	for _, t := range transactions {
 		branchSum[branchName[t.BranchID]] += (productPrice[t.ProductID] * t.Quantity)
-
 	}
 
 	for n, s := range branchSum {

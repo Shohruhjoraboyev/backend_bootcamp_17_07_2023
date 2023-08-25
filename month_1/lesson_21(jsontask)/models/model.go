@@ -5,6 +5,9 @@ type BranchTransactionCount struct {
 	BranchName string
 	Count      int
 }
+
+type Task2 struct {
+}
 type BranchTransactionCategoryCount struct {
 	BranchID     int
 	BranchName   string
