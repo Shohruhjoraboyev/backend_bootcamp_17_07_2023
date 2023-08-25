@@ -22,4 +22,18 @@
 		               GROUP BY p.id
 		               ORDER BY transaction_count DESC;
 
-                   
+                                     -- 4.transactionda bo'lgan top categorylar
+                  SELECT c.name,COUNT(c.id) AS trCategory
+                  from branch_transaction AS bt
+                  JOIN  product AS p ON bt.product_id=p.id
+                  JOIN category AS c ON p.category_id=c.id
+                  GROUP BY c.id
+                  ORDER BY trCategory DESC;
+               -- 5.har bir branchda har bir categorydan qancha transaction bo'lgani
+                  SELECT c.name,COUNT(c.id) AS trCategory
+                  FROM branch AS b
+						      JOIN branch_transaction AS bt ON b.id = bt.branch_id
+                  JOIN  product AS p ON bt.product_id=p.id
+                  JOIN category AS c ON p.category_id=c.id
+                  GROUP BY c.id
+                  ORDER BY trCategory DESC;
