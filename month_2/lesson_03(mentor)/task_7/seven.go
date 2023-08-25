@@ -1,60 +1,44 @@
 package task7
 
 import (
-	"encoding/json"
+	"database/sql"
 	"fmt"
-	"log"
-	"os"
-	"sort"
 	"task/models"
+
+	_ "github.com/lib/pq"
 )
 
-// 7. har bir kunda kirgan productlar sonini kamayish tartibida chiqarish:
-//         kun         soni
-//     1. 2023-08-04   789
-//     2. 2023-08-12   634
-
+//  7. har bir kunda kirgan productlar sonini kamayish tartibida chiqarish:
+//     kun         soni
+//  1. 2023-08-04   789
+//  2. 2023-08-12   634
 func CalculateProductIncome() {
-	transactions, _ := readTransaction("data/branch_pr_transaction.json")
+	db, err := sql.Open("postgres", "postgres://postgres:Muhammad@localhost:5432/json?sslmode=disable")
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
 
-	incomeCount := make(map[string]int)
-	for _, transaction := range transactions {
-		if transaction.Type == "plus" {
-			incomeCount[transaction.CreatedAt[:11]] += transaction.Quantity
+	query := `
+		SELECT TO_CHAR(created_at, 'YYYY-MM-DD') AS Day, sum(quantity) as soni from branch_transaction 
+	where type = 'plus' group by TO_CHAR(created_at, 'YYYY-MM-DD')
+	`
+	rows, err := db.Query(query)
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var t models.Task7
+		err := rows.Scan(&t.Date, &t.Sum)
+		if err != nil {
+			panic(err)
 		}
+		fmt.Printf("%s - %d\n", t.Date, t.Sum)
 	}
 
-	var sortedBranches []models.ProductIncome
-	for day, count := range incomeCount {
-		sortedBranches = append(sortedBranches, models.ProductIncome{
-			Day:   day,
-			Count: count,
-		})
+	if err := rows.Err(); err != nil {
+		panic(err)
 	}
-
-	sort.Slice(sortedBranches, func(i, j int) bool {
-		return sortedBranches[i].Count > sortedBranches[j].Count
-	})
-
-	for _, v := range sortedBranches {
-		fmt.Printf("Day: %s=> income count: %d\n", v.Day, v.Count)
-	}
-}
-
-// ================================READERS======================================
-
-func readTransaction(data string) ([]models.Transaction, error) {
-	var transactions []models.Transaction
-
-	d, err := os.ReadFile(data)
-	if err != nil {
-		log.Printf("Error while Read data: %+v", err)
-		return nil, err
-	}
-	err = json.Unmarshal(d, &transactions)
-	if err != nil {
-		log.Printf("Error while Unmarshal data: %+v", err)
-		return nil, err
-	}
-	return transactions, nil
 }
