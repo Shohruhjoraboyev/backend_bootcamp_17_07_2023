@@ -6,8 +6,8 @@ CREATE TABLE products (
   name VARCHAR(255),
   description TEXT,
   price NUMERIC(10,2),
-  createdAt TIMESTAMP,
-  updatedAt TIMESTAMP
+  createdAt TIMESTAMP DEFAULT NOW(),
+  updatedAt TIMESTAMP DEFAULT NOW()
 );
 
 --3. 1.name columnga unique va not null qo'shish
