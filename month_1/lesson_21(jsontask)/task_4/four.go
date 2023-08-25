@@ -2,6 +2,7 @@ package task4
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"task/models"
@@ -11,19 +12,27 @@ import (
 func TopTransactionCategory() {
 	transactions, _ := readTransaction("data/branch_pr_transaction.json")
 	categories, _ := readTCategory("data/categories.json")
-	products, _ := readProduct("data/categories.json")
+	products, _ := readProduct("data/products.json")
 
 	categoryMap := make(map[int]string)
 	productCategoryId := make(map[int]int)
+	categoryIdCount := make(map[int]int)
+
+	for _, p := range products {
+		productCategoryId[p.Id] = p.CategoryID
+	}
+
+	for _, tr := range transactions {
+		categoryIdCount[productCategoryId[tr.ProductID]]++
+	}
 
 	for _, v := range categories {
 		categoryMap[v.Id] = v.Name
 	}
 
-	// for catId, count := range productMap {
-	// 	fmt.Printf("%s  %d", categoryMap[catId], count)
-	// }
-
+	for catId, count := range categoryIdCount {
+		fmt.Printf("%s  %d\n", categoryMap[catId], count)
+	}
 }
 
 // ================================READERS======================================
