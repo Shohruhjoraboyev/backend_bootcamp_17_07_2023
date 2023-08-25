@@ -1,62 +1,42 @@
 package task3
 
 import (
-	"encoding/json"
+	"database/sql"
 	"fmt"
-	"log"
-	"os"
 	"task/models"
+
+	_ "github.com/lib/pq"
 )
 
 // 3.transactionda bo'lgan top productlar
 func TopTransactionProducts() {
-	productes, _ := readProducts("data/products.json")
-	transactions, _ := readTransaction("data/branch_pr_transaction.json")
-
-	transactionCount := make(map[int]int) //[productId]count
-	prodNameCount := make(map[int]string)
-	for _, t := range transactions {
-		transactionCount[t.ProductID]++
-	}
-	for _, p := range productes {
-		prodNameCount[p.Id] = p.Name
-	}
-
-	for id, t := range transactionCount {
-		fmt.Printf("%s - %d\n", prodNameCount[id], t)
-	}
-}
-
-// ================================READERS======================================
-
-func readProducts(data string) ([]models.Products, error) {
-	var products []models.Products
-
-	p, err := os.ReadFile(data)
+	db, err := sql.Open("postgres", "postgres://postgres:Muhammad@localhost:5432/json?sslmode=disable")
 	if err != nil {
-		log.Printf("Error while Read data: %+v", err)
-		return nil, err
+		panic(err)
 	}
-	err = json.Unmarshal(p, &products)
-	if err != nil {
-		log.Printf("Error while Unmarshal data: %+v", err)
-		return nil, err
-	}
-	return products, nil
-}
+	defer db.Close()
 
-func readTransaction(data string) ([]models.Transaction, error) {
-	var transactions []models.Transaction
+	query := `
+	SELECT p.name as product_name, count(t.product_id) as tr_count from branch_transaction t 
+	join product p on p.id = t.product_id 
+	group by product_name order by tr_count desc
+	`
+	rows, err := db.Query(query)
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
 
-	d, err := os.ReadFile(data)
-	if err != nil {
-		log.Printf("Error while Read data: %+v", err)
-		return nil, err
+	for rows.Next() {
+		var t models.Task2
+		err := rows.Scan(&t.BranchName, &t.Sum)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf("%s - %d\n", t.BranchName, t.Sum)
 	}
-	err = json.Unmarshal(d, &transactions)
-	if err != nil {
-		log.Printf("Error while Unmarshal data: %+v", err)
-		return nil, err
+
+	if err := rows.Err(); err != nil {
+		panic(err)
 	}
-	return transactions, nil
 }
