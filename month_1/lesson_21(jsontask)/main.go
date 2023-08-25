@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	task14 "task/task_14"
+	task2 "task/task_2"
 )
 
 func main() {
@@ -10,9 +10,9 @@ func main() {
 	// task1.CalculateTranTopBranches()
 	// fmt.Println()
 
-	// fmt.Println("2.transactionlar summasi bo'yicha top branches")
-	// task2.CalculateSumOfPriceTopBranches()
-	// fmt.Println()
+	fmt.Println("2.transactionlar summasi bo'yicha top branches")
+	task2.CalculateSumOfPriceTopBranches()
+	fmt.Println()
 
 	// fmt.Println("3.transactionda bo'lgan top productlar")
 	// task3.TopTransactionProducts()
@@ -58,7 +58,7 @@ func main() {
 	// task13.Task13()
 	// fmt.Println()
 
-	fmt.Println("14. Har kuni o'rtacha user qancha summa product kiritgani va chiqargani bo'yicha jadval")
-	task14.Task14()
-	fmt.Println()
+	// fmt.Println("14. Har kuni o'rtacha user qancha summa product kiritgani va chiqargani bo'yicha jadval")
+	// task14.Task14()
+	// fmt.Println()
 }
