@@ -53,6 +53,11 @@ type ProductIncome struct {
 	Count int
 }
 
+type Category struct {
+	Id   int
+	Name string
+}
+
 type Product7task struct {
 	BranchId  int `json:"branch_id"`
 	ProductId int `json:"product_id"`
