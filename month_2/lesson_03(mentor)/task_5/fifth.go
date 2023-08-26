@@ -1,90 +1,47 @@
 package task5
 
 import (
-	"encoding/json"
+	"database/sql"
 	"fmt"
-	"log"
-	"os"
 	"task/models"
+
+	_ "github.com/lib/pq"
 )
 
 // 5.har bir branchda har bir categorydan qancha transaction bo'lgani
-
 func TopBranchTransactionCategory() {
-	transactions, _ := readTransaction("data/branch_pr_transaction.json")
-	categories, _ := readTCategory("data/categories.json")
-	branches, _ := readBranches("data/branches.json")
-
-	countMap := make(map[string]int)
-
-	// Count the transactions
-	for _, transaction := range transactions {
-		key := fmt.Sprintf("Branch %d, Category %d", transaction.BranchID, transaction.ProductID)
-		countMap[key]++
+	db, err := sql.Open("postgres", "postgres://postgres:Muhammad@localhost:5432/json?sslmode=disable")
+	if err != nil {
+		panic(err)
 	}
-	for _, branch := range branches {
-		fmt.Printf("Branch: %s\n", branch.Name)
-		hasTransactions := false
-		for _, category := range categories {
-			key := fmt.Sprintf("Branch %d, Category %d", branch.ID, category.Id)
-			count := countMap[key]
-			if count > 0 {
-				hasTransactions = true
-				fmt.Printf("%s => transacted %d times\n", category.Name, count)
-			}
+	defer db.Close()
+
+	query := `
+		SELECT b.name as branch_name, c.name as cat_name, count(p.id) as tr_count
+		FROM branch b
+		JOIN branch_transaction t ON b.id = t.branch_id
+		JOIN product p on p.id = t.product_id
+		JOIN category c on c.id = p.category_id
+		GROUP BY branch_name, cat_name
+	`
+
+	rows, err := db.Query(query)
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var t models.Task5
+		err := rows.Scan(&t.BranchName, &t.CategoryName, &t.Count)
+		if err != nil {
+			panic(err)
 		}
-		if !hasTransactions {
-			fmt.Println("No transactions found for any category.")
-		}
-	}
-}
-
-// ================================READERS======================================
-func readTransaction(data string) ([]models.Transaction, error) {
-	var transactions []models.Transaction
-
-	d, err := os.ReadFile(data)
-	if err != nil {
-		log.Printf("Error while Read data: %+v", err)
-		return nil, err
-	}
-	err = json.Unmarshal(d, &transactions)
-	if err != nil {
-		log.Printf("Error while Unmarshal data: %+v", err)
-		return nil, err
-	}
-	return transactions, nil
-}
-
-func readTCategory(data string) ([]models.ProductTop, error) {
-	var categories []models.ProductTop
-
-	d, err := os.ReadFile(data)
-	if err != nil {
-		log.Printf("Error while Read data: %+v", err)
-		return nil, err
-	}
-	err = json.Unmarshal(d, &categories)
-	if err != nil {
-		log.Printf("Error while Unmarshal data: %+v", err)
-		return nil, err
-	}
-	return categories, nil
-}
-
-func readBranches(data string) ([]models.Branch, error) {
-	var branches []models.Branch
-
-	branch, err := os.ReadFile(data)
-	if err != nil {
-		log.Printf("Error while Read branch: %+v", err)
-		return nil, err
-	}
-	err = json.Unmarshal(branch, &branches)
-	if err != nil {
-		log.Printf("Error while Unmarshal branch: %+v", err)
-		return nil, err
+		fmt.Printf("%s - %s - %d\n", t.BranchName, t.CategoryName, t.Count)
 	}
 
-	return branches, nil
+	if err := rows.Err(); err != nil {
+		panic(err)
+	}
+
 }
