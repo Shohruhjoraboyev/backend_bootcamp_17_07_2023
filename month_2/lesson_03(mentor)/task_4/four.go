@@ -2,10 +2,7 @@ package task4
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
-	"log"
-	"os"
 	"task/models"
 
 	_ "github.com/lib/pq"
@@ -45,37 +42,4 @@ func TopTransactionCategory() {
 	if err := rows.Err(); err != nil {
 		panic(err)
 	}
-}
-
-// ================================READERS======================================
-func readTransaction(data string) ([]models.Transaction, error) {
-	var transactions []models.Transaction
-
-	d, err := os.ReadFile(data)
-	if err != nil {
-		log.Printf("Error while Read data: %+v", err)
-		return nil, err
-	}
-	err = json.Unmarshal(d, &transactions)
-	if err != nil {
-		log.Printf("Error while Unmarshal data: %+v", err)
-		return nil, err
-	}
-	return transactions, nil
-}
-
-func readTCategory(data string) ([]models.ProductTop, error) {
-	var categories []models.ProductTop
-
-	d, err := os.ReadFile(data)
-	if err != nil {
-		log.Printf("Error while Read data: %+v", err)
-		return nil, err
-	}
-	err = json.Unmarshal(d, &categories)
-	if err != nil {
-		log.Printf("Error while Unmarshal data: %+v", err)
-		return nil, err
-	}
-	return categories, nil
 }
