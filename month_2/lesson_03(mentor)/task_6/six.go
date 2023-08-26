@@ -1,11 +1,11 @@
 package task6
 
 import (
-	"encoding/json"
+	"database/sql"
 	"fmt"
-	"log"
-	"os"
 	"task/models"
+
+	_ "github.com/lib/pq"
 )
 
 // 6. har bir branch nechta plus/minus transactionlar soni, plus/minus transactionlar summasini quyidagicha chiqarish:
@@ -13,101 +13,63 @@ import (
 //                     plus   minus        plus     minus
 //     1. Branch1      53      20          853 000  278 000
 //     2. Branch2      38      185         492 000  1 982 000
-// { BranchName: transactionPlus: 23, minus: 12:
-//     "id": 1,
-//     "branch_id": 4,
-//     "product_id": 3,
-//     "type": "plus",
-//     "quantity": 74,
-//     "created_at": "2023-08-09 20:05:37"
-//   },
 
 func PlusMinus() {
-	transactions, _ := readTransaction("data/branch_pr_transaction.json")
-	productes, _ := readProduct("data/products.json")
-	branches, _ := readBranches("data/branches.json")
 
-	plusBranchIdTransCount := make(map[int]int)
-	minusBranchIdTransCount := make(map[int]int)
-	plusBranchIdSum := make(map[int]int)
-	minusBranchIdSum := make(map[int]int)
-
-	BranchMap := make(map[int]string)
-	ProductMap := make(map[int]int)
-
-	for _, br := range branches {
-		BranchMap[br.ID] = br.Name
+	db, err := sql.Open("postgres", "postgres://postgres:Muhammad@localhost:5432/json?sslmode=disable")
+	if err != nil {
+		panic(err)
 	}
-	for _, pr := range productes {
-		ProductMap[pr.Id] = pr.Price
-	}
+	defer db.Close()
 
-	for _, tr := range transactions {
-		if tr.Type == "plus" {
-			plusBranchIdTransCount[tr.BranchID]++
-			plusBranchIdSum[tr.BranchID] += tr.Quantity * ProductMap[tr.ProductID]
-		} else {
-			minusBranchIdTransCount[tr.BranchID]++
-			minusBranchIdSum[tr.BranchID] += tr.Quantity * ProductMap[tr.ProductID]
+	//============================ THIS IS MY OWN QUERY =============================
+	// query := `
+	// SELECT b.name, COUNT(b.id) as tr_plus_count, CAST(SUM(p.price*bt.quantity) AS int)  as plusSum
+	// FROM branch_transaction bt
+	// JOIN branch b ON bt.branch_id = b.id
+	// JOIN product p ON p.id = bt.product_id
+	// WHERE bt.type = 'plus'
+	// GROUP BY b.name
+	// UNION
+	// SELECT b.name, COUNT(b.id) as tr_minus_count, CAST(SUM(p.price*bt.quantity) AS int)  as minusSum
+	// FROM branch_transaction bt
+	// JOIN branch b ON bt.branch_id = b.id
+	// JOIN product p ON p.id = bt.product_id
+	// WHERE bt.type = 'minus'
+	// GROUP BY b.name
+	// `
+
+	//  ==========  BY CHATGPT ============= I asked if there are other ways of combining two select
+	query := `
+	SELECT b.name,
+       COUNT(CASE WHEN bt.type = 'plus' THEN b.id END) AS tr_plus_count,
+       COALESCE(SUM(CASE WHEN bt.type = 'plus' THEN p.price * bt.quantity END)::int, 0) AS plusSum,
+       COUNT(CASE WHEN bt.type = 'minus' THEN b.id END) AS tr_minus_count,
+       COALESCE(SUM(CASE WHEN bt.type = 'minus' THEN p.price * bt.quantity END)::int, 0) AS minusSum
+	FROM branch b
+	LEFT JOIN branch_transaction bt ON bt.branch_id = b.id
+	LEFT JOIN product p ON p.id = bt.product_id
+	GROUP BY b.name;
+`
+
+	rows, err := db.Query(query)
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var t models.Task6
+		err := rows.Scan(&t.BranchaName, &t.TranPlusCount, &t.TranMinusCount, &t.TranPlusSum, &t.TranMinusSum)
+		if err != nil {
+			panic(err)
 		}
+		fmt.Printf("%s: t_plus: %d t_minus: %d - s_plus: %d s_minus: %d\n",
+			t.BranchaName, t.TranPlusCount, t.TranMinusCount, t.TranPlusSum, t.TranMinusSum)
 	}
 
-	for BranchID, BranchName := range BranchMap {
-		fmt.Printf("%s TranPlus: %d, Tranminus: %d, SumPlus: %d, SumMinus: %d\n", BranchName,
-			plusBranchIdTransCount[BranchID],
-			minusBranchIdTransCount[BranchID],
-			plusBranchIdSum[BranchID],
-			minusBranchIdSum[BranchID],
-		)
-	}
-}
-
-// // ================================READERS======================================
-func readTransaction(data string) ([]models.Transaction, error) {
-	var transactions []models.Transaction
-
-	d, err := os.ReadFile(data)
-	if err != nil {
-		log.Printf("Error while Read data: %+v", err)
-		return nil, err
-	}
-	err = json.Unmarshal(d, &transactions)
-	if err != nil {
-		log.Printf("Error while Unmarshal data: %+v", err)
-		return nil, err
-	}
-	return transactions, nil
-}
-
-func readProduct(data string) ([]models.Products, error) {
-	var productes []models.Products
-
-	d, err := os.ReadFile(data)
-	if err != nil {
-		log.Printf("Error while Read data: %+v", err)
-		return nil, err
-	}
-	err = json.Unmarshal(d, &productes)
-	if err != nil {
-		log.Printf("Error while Unmarshal data: %+v", err)
-		return nil, err
-	}
-	return productes, nil
-}
-
-func readBranches(data string) ([]models.Branch, error) {
-	var branches []models.Branch
-
-	branch, err := os.ReadFile(data)
-	if err != nil {
-		log.Printf("Error while Read branch: %+v", err)
-		return nil, err
-	}
-	err = json.Unmarshal(branch, &branches)
-	if err != nil {
-		log.Printf("Error while Unmarshal branch: %+v", err)
-		return nil, err
+	if err := rows.Err(); err != nil {
+		panic(err)
 	}
 
-	return branches, nil
 }

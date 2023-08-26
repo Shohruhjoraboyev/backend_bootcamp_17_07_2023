@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	task5 "task/task_5"
+	task6 "task/task_6"
 )
 
 func main() {
@@ -22,13 +22,13 @@ func main() {
 	// task4.TopTransactionCategory()
 	// fmt.Println()
 
-	fmt.Println("5.har bir branchda har bir categorydan qancha transaction bo'lgani")
-	task5.TopBranchTransactionCategory()
-	fmt.Println()
-
-	// fmt.Println("6. har bir branch nechta plus/minus transactionlar soni, plus/minus transactionlar summasini quyidagicha chiqarish")
-	// task6.PlusMinus()
+	// fmt.Println("5.har bir branchda har bir categorydan qancha transaction bo'lgani")
+	// task5.TopBranchTransactionCategory()
 	// fmt.Println()
+
+	fmt.Println("6. har bir branch nechta plus/minus transactionlar soni, plus/minus transactionlar summasini quyidagicha chiqarish")
+	task6.PlusMinus()
+	fmt.Println()
 
 	// fmt.Println("7. har bir kunda kirgan productlar sonini kamayish tartibida chiqarish")
 	// task7.CalculateProductIncome()
