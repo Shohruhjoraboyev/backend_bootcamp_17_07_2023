@@ -20,8 +20,10 @@ func CalculateProductIncome() {
 	defer db.Close()
 
 	query := `
-		SELECT TO_CHAR(created_at, 'YYYY-MM-DD') AS Day, sum(quantity) as soni from branch_transaction 
-	where type = 'plus' group by TO_CHAR(created_at, 'YYYY-MM-DD')
+		SELECT TO_CHAR(created_at, 'YYYY-MM-DD') AS Day, sum(quantity) as soni 
+			FROM branch_transaction 
+		WHERE type = 'plus' 
+		GROUP BY TO_CHAR(created_at, 'YYYY-MM-DD')
 	`
 	rows, err := db.Query(query)
 	if err != nil {
