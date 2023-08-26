@@ -17,6 +17,14 @@ type Task5 struct {
 	Count        int
 }
 
+type Task6 struct {
+	BranchaName    string
+	TranPlusCount  int
+	TranMinusCount int
+	TranPlusSum    int
+	TranMinusSum   int
+}
+
 type Task7 struct {
 	Date string
 	Sum  int
