@@ -21,36 +21,25 @@ func PlusMinus() {
 		panic(err)
 	}
 	defer db.Close()
-
-	//============================ THIS IS MY OWN QUERY =============================
-	// query := `
-	// SELECT b.name, COUNT(b.id) as tr_plus_count, CAST(SUM(p.price*bt.quantity) AS int)  as plusSum
-	// FROM branch_transaction bt
-	// JOIN branch b ON bt.branch_id = b.id
-	// JOIN product p ON p.id = bt.product_id
-	// WHERE bt.type = 'plus'
-	// GROUP BY b.name
-	// UNION
-	// SELECT b.name, COUNT(b.id) as tr_minus_count, CAST(SUM(p.price*bt.quantity) AS int)  as minusSum
-	// FROM branch_transaction bt
-	// JOIN branch b ON bt.branch_id = b.id
-	// JOIN product p ON p.id = bt.product_id
-	// WHERE bt.type = 'minus'
-	// GROUP BY b.name
-	// `
-
-	//  ==========  BY CHATGPT ============= I asked if there are other ways of combining two select
+	// =========== EXAMPLE ==============
+	// SELECT purchases.seller_id,
+	//   SUM(CASE WHEN state IN ('authorized', 'reversed') THEN 1 ELSE 0 END) AS sales_count,
+	//   SUM(CASE WHEN state = 'authorized' THEN 1 ELSE 0 END) AS successful_sales_count
+	// FROM purchases
+	// GROUP BY purchases.seller_id
+	//=========================================================
 	query := `
-	SELECT b.name,
-       COUNT(CASE WHEN bt.type = 'plus' THEN b.id END) AS tr_plus_count,
-       COALESCE(SUM(CASE WHEN bt.type = 'plus' THEN p.price * bt.quantity END)::int, 0) AS plusSum,
-       COUNT(CASE WHEN bt.type = 'minus' THEN b.id END) AS tr_minus_count,
-       COALESCE(SUM(CASE WHEN bt.type = 'minus' THEN p.price * bt.quantity END)::int, 0) AS minusSum
-	FROM branch b
-	LEFT JOIN branch_transaction bt ON bt.branch_id = b.id
-	LEFT JOIN product p ON p.id = bt.product_id
+SELECT 
+    b.name AS branch_name,
+    COUNT(CASE WHEN t.type = 'plus' THEN t.id END) AS tran_plus,
+    COUNT(CASE WHEN t.type = 'minus' THEN t.id END) AS tran_minus,
+    cast( SUM(CASE WHEN t.type = 'plus' THEN t.quantity * p.price END) as int) AS sum_plus, -- cast as int vscode uchun ishlatdim
+    cast( SUM(CASE WHEN t.type = 'minus' THEN t.quantity * p.price END) as int) AS sum_minus
+ 	FROM branch AS b 
+	JOIN branch_transaction AS t ON b.id = t.branch_id
+	JOIN product AS p ON t.product_id = p.id
 	GROUP BY b.name;
-`
+	`
 
 	rows, err := db.Query(query)
 	if err != nil {
