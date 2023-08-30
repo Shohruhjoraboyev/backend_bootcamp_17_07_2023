@@ -30,6 +30,12 @@ type Task7 struct {
 	Sum  int
 }
 
+type Task8 struct {
+	Name       string
+	PlusCount  int
+	MinusCount int
+}
+
 type BranchTransactionCategoryCount struct {
 	BranchID     int
 	BranchName   string

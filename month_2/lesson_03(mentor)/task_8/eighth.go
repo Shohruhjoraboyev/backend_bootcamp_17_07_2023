@@ -1,11 +1,11 @@
 package task8
 
 import (
-	"encoding/json"
+	"database/sql"
 	"fmt"
-	"log"
-	"os"
 	"task/models"
+
+	_ "github.com/lib/pq"
 )
 
 // 8. Product qancha kiritilgan va chiqarilganligi jadvali:
@@ -16,57 +16,44 @@ import (
 // products, transaction
 
 func Task8() {
-	transactions, _ := readTransaction("data/branch_pr_transaction.json")
-	products, _ := readProducts("data/products.json")
+	db, err := sql.Open("postgres", "postgres://postgres:Muhammad@localhost:5432/json?sslmode=disable")
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
 
-	inputCount := make(map[int]int)
-	outputCount := make(map[int]int)
+	// =========== EXAMPLE ==============
+	// SELECT purchases.seller_id,
+	//   SUM(CASE WHEN state IN ('authorized', 'reversed') THEN 1 ELSE 0 END) AS sales_count,
+	//   SUM(CASE WHEN state = 'authorized' THEN 1 ELSE 0 END) AS successful_sales_count
+	// FROM purchases
+	// GROUP BY purchases.seller_id
+	//=========================================================
 
-	for _, t := range transactions {
-		if t.Type == "plus" {
-			inputCount[t.ProductID] += t.Quantity
-		} else {
-			outputCount[t.ProductID] += t.Quantity
+	query := `
+		SELECT p.name,
+		SUM(CASE WHEN t.type = 'plus' THEN t.quantity ELSE 0 END) as kiritilgan,
+		SUM(CASE WHEN t.type = 'minus' THEN t.quantity ELSE 0 END) as chiqarilgan
+		FROM product AS p 
+	 	JOIN branch_transaction AS t ON p.id = t.product_id
+		GROUP BY p.name;
+	`
+	rows, err := db.Query(query)
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var t models.Task8
+		err := rows.Scan(&t.Name, &t.PlusCount, &t.MinusCount)
+		if err != nil {
+			panic(err)
 		}
+		fmt.Printf("%s - %d - %d\n", t.Name, t.PlusCount, t.MinusCount)
 	}
 
-	for _, p := range products {
-		if inputCount[p.Id] > 0 || outputCount[p.Id] > 0 {
-			fmt.Printf("%s - kiritilgan: %d chiqarilgan: %d\n", p.Name, inputCount[p.Id], outputCount[p.Id])
-		}
+	if err := rows.Err(); err != nil {
+		panic(err)
 	}
-
-}
-
-// ================================READERS======================================
-func readProducts(data string) ([]models.Products, error) {
-	var products []models.Products
-
-	p, err := os.ReadFile(data)
-	if err != nil {
-		log.Printf("Error while Read data: %+v", err)
-		return nil, err
-	}
-	err = json.Unmarshal(p, &products)
-	if err != nil {
-		log.Printf("Error while Unmarshal data: %+v", err)
-		return nil, err
-	}
-	return products, nil
-}
-
-func readTransaction(data string) ([]models.Transaction, error) {
-	var transactions []models.Transaction
-
-	d, err := os.ReadFile(data)
-	if err != nil {
-		log.Printf("Error while Read data: %+v", err)
-		return nil, err
-	}
-	err = json.Unmarshal(d, &transactions)
-	if err != nil {
-		log.Printf("Error while Unmarshal data: %+v", err)
-		return nil, err
-	}
-	return transactions, nil
 }
