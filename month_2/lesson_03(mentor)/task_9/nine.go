@@ -1,11 +1,11 @@
 package task9
 
 import (
-	"encoding/json"
+	"database/sql"
 	"fmt"
-	"log"
-	"os"
 	"task/models"
+
+	_ "github.com/lib/pq"
 )
 
 // 9. Filialda qancha summalik product borligi jadvali:
@@ -13,73 +13,35 @@ import (
 // 2. Branch2      1 982 000
 
 func CalculateProductSum() {
-	branch_products, _ := readBranches("data/branch_products.json")
-	productes, _ := readProducts("data/products.json")
-	branches, _ := readBranch("data/branches.json")
-
-	prodIdPrice := make(map[int]int)
-	branchIdName := make(map[int]string)
-
-	for _, p := range productes {
-		prodIdPrice[p.Id] = p.Price
-	}
-	for _, b := range branches {
-		branchIdName[b.ID] = b.Name
-	}
-
-	branchSum := make(map[string]int)
-	for _, v := range branch_products {
-		branchSum[branchIdName[v.BranchId]] += (v.Quantity * prodIdPrice[v.ProductId])
-	}
-	for name, sum := range branchSum {
-		fmt.Printf("%s - %d\n", name, sum)
-	}
-}
-
-// ================================READERS======================================
-func readProducts(data string) ([]models.Products, error) {
-	var products []models.Products
-
-	p, err := os.ReadFile(data)
+	db, err := sql.Open("postgres", "postgres://postgres:Muhammad@localhost:5432/json?sslmode=disable")
 	if err != nil {
-		log.Printf("Error while Read data: %+v", err)
-		return nil, err
+		panic(err)
 	}
-	err = json.Unmarshal(p, &products)
-	if err != nil {
-		log.Printf("Error while Unmarshal data: %+v", err)
-		return nil, err
-	}
-	return products, nil
-}
+	defer db.Close()
 
-func readBranches(data string) ([]models.Product7task, error) {
-	var branches []models.Product7task
+	query := `
+		SELECT b.name, SUM(p.price*bp.quantity)
+		FROM branch_products bp
+		JOIN product p ON p.id = bp.product_id
+		JOIN branch b ON b.id = bp.branch_id 
+		GROUP BY b.name
+	`
+	rows, err := db.Query(query)
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
 
-	branch, err := os.ReadFile(data)
-	if err != nil {
-		log.Printf("Error while Read branch: %+v", err)
-		return nil, err
+	for rows.Next() {
+		var t models.Task2
+		err := rows.Scan(&t.BranchName, &t.Sum)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf("%s - %d\n", t.BranchName, t.Sum)
 	}
-	err = json.Unmarshal(branch, &branches)
-	if err != nil {
-		log.Printf("Error while Unmarshal branch: %+v", err)
-		return nil, err
-	}
-	return branches, nil
-}
-func readBranch(data string) ([]models.Branch, error) {
-	var branches []models.Branch
 
-	branch, err := os.ReadFile(data)
-	if err != nil {
-		log.Printf("Error while Read branch: %+v", err)
-		return nil, err
+	if err := rows.Err(); err != nil {
+		panic(err)
 	}
-	err = json.Unmarshal(branch, &branches)
-	if err != nil {
-		log.Printf("Error while Unmarshal branch: %+v", err)
-		return nil, err
-	}
-	return branches, nil
 }
