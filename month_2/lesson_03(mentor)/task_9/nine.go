@@ -20,7 +20,7 @@ func CalculateProductSum() {
 	defer db.Close()
 
 	query := `
-		SELECT b.name, SUM(p.price*bp.quantity)
+		SELECT b.name, SUM(p.price*bp.quantity) 
 		FROM branch_products bp
 		JOIN product p ON p.id = bp.product_id
 		JOIN branch b ON b.id = bp.branch_id 
