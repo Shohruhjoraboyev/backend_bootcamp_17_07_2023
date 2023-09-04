@@ -1,0 +1,19 @@
+
+2. json bo'yicha masalalarni birinchi 5tasini function bilan qilish(xohlaganlar hammasini qilsin)
+3.Masala: json data bo'yicha branchdan product_id lik productdan n quantity sotish kerak.
+Shunday plpgsql procedure/function yozing agar branchda product yetarli bo'lsa, 
+transaction create qilib branchdagi productlardan n quantity kamaytirsin, 
+agar kam bo'lsa 'product yetarli emas' xabari chiqsin
+4. array_agg() ishlatib branchda qanaqa categoriyadagi productlar borligini chiqaring
+Example:
+
+ branch      |  categories
+Chilonzor   | {meva, ichimlik, kiyim}
+MGorkiy     | {meva}  
+5.Block/function qiling: branchni productni sotilgan soniga qarab 50dan ko'p bo'lsa 'xit', 100dan ko'p bo'lsa 'top' aks holda 'yangi' deb chiqarsin.tartibi: top->xit->yangi
+Example:
+
+ product       |     status
+ Cola          |     top
+ Fanta         |     xit
+ Rio           |     yangi
