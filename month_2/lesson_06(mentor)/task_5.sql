@@ -5,30 +5,23 @@
 --  Cola          |     top
 --  Fanta         |     xit
 --  Rio           |     yangi
-DO $$
-DECLARE
-    products_data RECORD;
-    product_name VARCHAR;
-    product_sum INT;
-    product_status VARCHAR;
+CREATE OR REPLACE FUNCTION check_product() 
+    RETURNS TABLE (branch_name VARCHAR, product VARCHAR, status VARCHAR) 
+    LANGUAGE plpgsql
+    AS 
+$$
 BEGIN
-    FOR products_data IN
-        SELECT DISTINCT p.name, SUM(bt.quantity) AS total_quantity
-        FROM branch_transaction bt
-        JOIN product p ON p.id = bt.product_id
-        WHERE bt.type = 'minus'
-        GROUP BY p.name
-    LOOP
-        product_name := products_data.name; 
-        product_sum := products_data.total_quantity;
-
-        product_status := CASE
-            WHEN product_sum > 100 THEN 'top'
-            WHEN product_sum > 50 THEN 'hit'
-            ELSE 'yangi'
-        END;
-    
-        RAISE NOTICE 'Product: %, Status: %', product_name, product_status;
-    END LOOP;
+    RETURN QUERY
+    SELECT b.name AS branch_name, p.name AS product,
+        CASE WHEN bt.type = 'minus' THEN
+            CASE WHEN SUM(bt.quantity) > 100 THEN 'TOP'
+                 WHEN SUM(bt.quantity) > 20 THEN 'XIT'
+                 ELSE 'YANGI'
+            END
+        END::VARCHAR AS status
+    FROM branch b
+    JOIN branch_transaction bt ON bt.branch_id = b.id
+    JOIN product p ON p.id = bt.product_id
+    GROUP BY b.name, p.name, bt.type;
 END;
 $$;
