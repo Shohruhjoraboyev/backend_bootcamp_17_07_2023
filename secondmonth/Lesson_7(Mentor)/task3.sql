@@ -25,13 +25,11 @@ BEGIN
     UPDATE branch_products
     SET quantity = quantity - req_quantity
     WHERE branch_id = branchId AND product_id = productId;
-    COMMIT;
     RAISE NOTICE 'Muvaffaqiyatli sotildi, Qolgan Miqdor %', quantity;
       RETURN (SELECT * FROM branch_products WHERE branch_id = branchId AND product_id = productId);
 
   ELSE 
     RAISE NOTICE 'Maxsulot yetarli emas';
-    ROLLBACK;
   END IF;
   
 END;
