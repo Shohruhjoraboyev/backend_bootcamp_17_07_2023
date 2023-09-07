@@ -4,8 +4,8 @@
 -- quantity yetmasa error(exception) qaytarsin
 -- 1 ============================================================================================
 CREATE OR REPLACE FUNCTION check_quantity()
-   RETURNS TRIGGER 
-   LANGUAGE PLPGSQL
+RETURNS TRIGGER
+LANGUAGE plpgsql
 AS $$
 BEGIN
     IF NEW.type = 'minus' AND NEW.quantity > (
@@ -13,16 +13,16 @@ BEGIN
         FROM branch_products
         WHERE branch_id = NEW.branch_id
           AND product_id = NEW.product_id
+        LIMIT 1
     ) THEN
-        RAISE EXCEPTION 'not enought quantity in branch_products';
+        RAISE EXCEPTION 'Product quantity not available';
     END IF;
-    
     RETURN NEW;
 END;
 $$;
 
-CREATE TRIGGER check_quantity
-BEFORE INSERT OR UPDATE ON branch_transaction
+CREATE TRIGGER check_quantity_trigger
+BEFORE INSERT ON branch_transaction
 FOR EACH ROW
 EXECUTE FUNCTION check_quantity();
 -- update branch_transaction set type='minus', quantity = 200 where id = 18 and product_id = 2 and branch_id =1;
