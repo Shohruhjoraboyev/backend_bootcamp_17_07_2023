@@ -18,10 +18,13 @@ func (h *handler) BranchHandler(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path[len("/branch")] == '/' && r.URL.Path[len("/branch")+1:] != "" {
 			h.GetBranch(w, r)
 		}
-		if r.Method == http.MethodGet && r.URL.Path == "/branch/" {
+		if r.URL.Path == "/branch/" {
 			h.GetAllBranch(w, r)
 		}
-
+	case http.MethodPut:
+		h.UpdateBranch(w, r)
+	case http.MethodDelete:
+		h.DeleteBranch(w, r)
 	}
 
 }
@@ -105,29 +108,39 @@ func (h *handler) GetAllBranch(w http.ResponseWriter, r *http.Request) {
 	w.Write(respJSON)
 }
 
-// func (h *handler) UpdateBranch(id string, name, adress, founded_at string) {
-// 	resp, err := h.strg.Branch().UpdateBranch(models.Branch{
-// 		Id:        id,
-// 		Name:      name,
-// 		Adress:    adress,
-// 		FoundedAt: founded_at,
-// 	})
+func (h *handler) UpdateBranch(w http.ResponseWriter, r *http.Request) {
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "Failed to read request body", http.StatusBadRequest)
+		return
+	}
 
-// 	if err != nil {
-// 		fmt.Println("error from UpdateBranch: ", err.Error())
-// 		return
-// 	}
-// 	fmt.Println("Updated branch with id: ", resp)
-// }
+	var branch models.Branch
+	err = json.Unmarshal(body, &branch)
+	if err != nil {
+		http.Error(w, "Failed to parse request body", http.StatusBadRequest)
+		return
+	}
 
-// func (h *handler) DeleteBranch(id string) {
-// 	resp, err := h.strg.Branch().DeleteBranch(models.IdRequest{
-// 		Id: id,
-// 	})
+	resp, err := h.strg.Branch().UpdateBranch(branch)
+	if err != nil {
+		http.Error(w, "Failed to update branch", http.StatusInternalServerError)
+		return
+	}
 
-// 	if err != nil {
-// 		fmt.Println("error from DeleteBranch: ", err.Error())
-// 		return
-// 	}
-// 	fmt.Println("deleted branch with id: ", resp)
-// }
+	fmt.Fprintf(w, "Updated branch with ID: %s", resp)
+}
+
+func (h *handler) DeleteBranch(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Path[len("/branch/"):]
+	resp, err := h.strg.Branch().DeleteBranch(models.IdRequest{
+		Id: id,
+	})
+
+	if err != nil {
+		http.Error(w, "Failed to delete branch", http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Fprintf(w, "deleted branch with ID: %s", resp)
+}
