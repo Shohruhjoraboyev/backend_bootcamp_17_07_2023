@@ -52,11 +52,12 @@ func (b *branchRepo) UpdateBranch(req models.Branch) (string, error) {
 	for i, v := range branches {
 		if v.Id == req.Id {
 			branches[i] = req
+			branches[i].CreatedAt = time.Now().Format("2006-01-02 15:04:05")
 			err = b.write(branches)
 			if err != nil {
 				return "", err
 			}
-			return "updated", nil
+			return v.Id, nil
 		}
 	}
 
