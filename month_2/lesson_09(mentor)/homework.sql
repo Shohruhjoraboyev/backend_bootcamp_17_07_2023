@@ -47,10 +47,3 @@ ORDER BY exec_time DESC;
 SELECT relname, indexrelname, idx_scan
 FROM pg_stat_user_indexes
 ORDER BY idx_scan DESC;
-
--- Themes:
--- https://www.postgresqltutorial.com:
--- 12,13,14 sections
--- Functions
--- Variables
--- Views
