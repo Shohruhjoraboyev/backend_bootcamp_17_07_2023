@@ -6,20 +6,10 @@ type CreateSales struct {
 	Shop_asissent_id string
 	Cashier_id       string
 	Price            float64
-	Payment_Type     Payment
-	Status           Status
+	Payment_Type     int // 1 for card, 2 for cash
+	Status           int // 1 for success, 2 for cancel
 	Created_at       string
 }
-
-type Payment string
-type Status string
-
-const (
-	Card    Payment = "card"
-	Cash    Payment = "cash"
-	Success Status  = "success"
-	Cancel  Status  = "cancel"
-)
 
 type Sales struct {
 	Id               string
@@ -28,8 +18,8 @@ type Sales struct {
 	Shop_asissent_id string
 	Cashier_id       string
 	Price            float64
-	Payment_Type     Payment
-	Status           Status
+	Payment_Type     int // 1 for card, 2 for cash
+	Status           int // 1 for success, 2 for cancel
 	Created_at       string
 }
 

@@ -104,7 +104,7 @@ func main() {
 				fmt.Println("Client_name, Branch_id, Shop_asissent_id, Cashier_id, Price, Payment_Type(card, cash): ")
 				Branch_id, Shop_asissent_id, Cashier_id, client_name := "", "", "", ""
 				price := 0.0
-				var payment models.Payment
+				var payment int
 				fmt.Scan(&client_name, &Branch_id, &Shop_asissent_id, &Cashier_id, &price, &payment)
 				handler.CreateSale(client_name, Branch_id, Shop_asissent_id, Cashier_id, price, payment)
 			case "get":
@@ -117,15 +117,6 @@ func main() {
 				client_name := ""
 				fmt.Scan(&client_name)
 				handler.GetAllSale(1, 10, client_name)
-			case "update":
-				fmt.Println("Enter ID, Client_name, Branch_id, Shop_asissent_id, Cashier_id, Price, Payment_Type(card, cash), Status(seccess, cancel): ")
-
-				id, client_name, Branch_id, Shop_asissent_id, Cashier_id := "", "", "", "", ""
-				price := 0.0
-				var payment models.Payment
-				var status models.Status
-				fmt.Scan(&id, &client_name, &Branch_id, &Shop_asissent_id, &Cashier_id, &price, &payment, &status)
-				handler.UpdateSale(id, client_name, Branch_id, Shop_asissent_id, Cashier_id, price, payment, status)
 			case "delete":
 				fmt.Print("Enter ID that you want to delete: ")
 				id := ""
@@ -174,8 +165,8 @@ func main() {
 			switch method {
 			case "create":
 				fmt.Println("name, type(fixed, percent), amountCash, amountCard:")
-				amountforCard, AmountForCash := 0, 0
-				name, typ := "", ""
+				amountforCard, AmountForCash, typ := 0.0, 0.0, 0
+				name := ""
 				fmt.Scan(&name, &typ, &amountforCard, &AmountForCash)
 				handler.CreateStaffTarif(name, typ, amountforCard, AmountForCash)
 			case "get":
@@ -190,8 +181,8 @@ func main() {
 				handler.GetAllStaffTarif(1, 10, "")
 			case "update":
 				fmt.Println("Enter ID, name, type(fixed, percent), amountCash, amountCard:")
-				amountforCard, AmountForCash := 0, 0
-				id, name, typ := "", "", ""
+				amountforCard, AmountForCash, typ := 0.0, 0.0, 0
+				id, name := "", ""
 				fmt.Scan(&id, &name, &typ, &amountforCard, &AmountForCash)
 				handler.UpdateStaffTarif(id, name, typ, amountforCard, AmountForCash)
 			case "delete":

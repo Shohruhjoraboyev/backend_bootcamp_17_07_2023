@@ -30,7 +30,7 @@ func (c *saleRepo) CreateSale(req models.CreateSales) (string, error) {
 		Client_name:      req.Client_name,
 		Price:            req.Price,
 		Payment_Type:     req.Payment_Type,
-		Status:           "success",
+		Status:           1,
 		Branch_id:        req.Branch_id,
 		Shop_asissent_id: req.Shop_asissent_id,
 		Cashier_id:       req.Cashier_id,
@@ -131,6 +131,25 @@ func (c *saleRepo) DeleteSale(req models.IdRequest) (resp string, err error) {
 	return "", errors.New("not found")
 }
 
+func (s *saleRepo) CancelSale(req models.IdRequest) (string, error) {
+	sales, err := s.read()
+	if err != nil {
+		return "", err
+	}
+
+	for i, v := range sales {
+		if v.Id == req.Id {
+			sales[i].Status = 2
+		}
+	}
+
+	err = s.write(sales)
+	if err != nil {
+		return "", err
+	}
+	return "sale cancelled successfully", nil
+}
+
 func (u *saleRepo) GetTopSaleBranch() (resp map[string]models.SaleTopBranch, err error) {
 	sales, err := u.read()
 	if err != nil {
@@ -167,7 +186,7 @@ func (u *saleRepo) GetSaleCountBranch() (resp map[string]models.SaleCountSumBran
 	}
 	retMap := make(map[string]models.SaleCountSumBranch)
 	for _, sale := range sales {
-		if sale.Status == "success" {
+		if sale.Status == 1 {
 			v := retMap[sale.Id]
 			v.BranchId = sale.Branch_id
 			v.SalesAmount += sale.Price

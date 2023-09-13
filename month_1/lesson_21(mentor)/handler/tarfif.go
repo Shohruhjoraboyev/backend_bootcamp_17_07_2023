@@ -5,7 +5,7 @@ import (
 	"lesson_20/models"
 )
 
-func (h *handler) CreateStaffTarif(name, typ string, amountCash, amountCard int) {
+func (h *handler) CreateStaffTarif(name string, typ int, amountCash, amountCard float64) {
 	resp, err := h.strg.StaffTarif().CreateStaffTarif(models.CreateStaffTarif{
 		Name:          name,
 		Type:          typ,
@@ -20,7 +20,7 @@ func (h *handler) CreateStaffTarif(name, typ string, amountCash, amountCard int)
 	fmt.Println("created new tarif with id:", resp)
 }
 
-func (h *handler) UpdateStaffTarif(id, name, typ string, amountCash, amountCard int) {
+func (h *handler) UpdateStaffTarif(id, name string, typ int, amountCash, amountCard float64) {
 	resp, err := h.strg.StaffTarif().UpdateStaffTarif(models.StaffTarif{
 		Id:            id,
 		Name:          name,

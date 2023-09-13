@@ -12,6 +12,11 @@ const (
 	CancelStatus
 )
 
+const (
+	Fixed = iota + 1
+	Percent
+)
+
 func Load() *Config {
 	return &Config{
 		Limit: 10,

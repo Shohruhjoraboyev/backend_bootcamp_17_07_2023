@@ -2,17 +2,17 @@ package models
 
 type CreateStaffTarif struct {
 	Name          string
-	Type          string // (fixed, percent)
-	AmountForCash int
-	AmountForCard int
+	Type          int // (1-fixed, 2-percent)
+	AmountForCash float64
+	AmountForCard float64
 }
 
 type StaffTarif struct {
 	Id            string
 	Name          string
-	Type          string // (fixed, percent)
-	AmountForCash int
-	AmountForCard int
+	Type          int // (1-fixed, 2-percent)
+	AmountForCash float64
+	AmountForCard float64
 	CreatedAt     string
 }
 

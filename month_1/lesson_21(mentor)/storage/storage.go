@@ -48,6 +48,7 @@ type SalesI interface {
 	DeleteSale(models.IdRequest) (string, error)
 	GetTopSaleBranch() (resp map[string]models.SaleTopBranch, err error)
 	GetSaleCountBranch() (resp map[string]models.SaleCountSumBranch, err error)
+	CancelSale(req models.IdRequest) (string, error)
 }
 
 type StaffTarifsI interface {
