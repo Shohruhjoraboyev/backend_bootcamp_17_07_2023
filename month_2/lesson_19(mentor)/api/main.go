@@ -1,7 +1,7 @@
 package api
 
 import (
-	"app/api/docs"
+	_ "app/api/docs"
 	"app/api/handler"
 
 	"github.com/gin-gonic/gin"
@@ -9,21 +9,8 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-// @contact.name   API Support
-// @contact.url    http://www.swagger.io/support
-// @contact.email  support@swagger.io
-
-// @license.name  Apache 2.0
-// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 func NewServer(h *handler.Handler) *gin.Engine {
 	r := gin.Default()
-	// programmatically set swagger info
-	docs.SwaggerInfo.Title = "Swagger Example API"
-	docs.SwaggerInfo.Description = "This is a sample server Petstore server."
-	docs.SwaggerInfo.Version = "1.0"
-	docs.SwaggerInfo.Host = "petstore.swagger.io"
-	docs.SwaggerInfo.BasePath = "/v1"
-	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 
 	r.POST("/branch", h.CreateBranch)
 	r.GET("/branch/:id", h.GetBranch)

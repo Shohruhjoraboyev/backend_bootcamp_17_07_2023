@@ -6,6 +6,13 @@ type CreateBranch struct {
 	FoundedAt int    `json:"founded_at"`
 }
 
+type UpdateBranch struct {
+	ID        string `json:"id"`
+	Name      string `json:"name"`
+	Address   string `json:"address"`
+	FoundedAt int    `json:"founded_at"`
+}
+
 //	type Branch struct {
 //		ID        string `json:"id"`
 //		Name      string `json:"name"`
