@@ -1,17 +1,20 @@
--- Drop the branch_transaction table
-DROP TABLE IF EXISTS branch_transaction;
+DROP TABLE IF EXISTS "transactions";
 
--- Drop the branch_products table
-DROP TABLE IF EXISTS branch_products;
+DROP TABLE IF EXISTS "sales";
 
--- Drop the product table
-DROP TABLE IF EXISTS product;
+DROP TABLE IF EXISTS "staffs";
 
--- Drop the category table
-DROP TABLE IF EXISTS category;
+DROP TABLE IF EXISTS "tariffs";
 
--- Drop the user table
-DROP TABLE IF EXISTS "user";
+DROP TABLE IF EXISTS "branches";
 
--- Drop the branch table
-DROP TABLE IF EXISTS branch;
+DROP TYPE IF EXISTS "source_type";
+
+DROP TYPE IF EXISTS "transaction_type";
+
+DROP TYPE IF EXISTS "status_type";
+
+DROP TYPE IF EXISTS "payment_type";
+
+DROP TYPE IF EXISTS "staff_type";
+

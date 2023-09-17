@@ -1,57 +1,79 @@
-CREATE TABLE IF NOT EXISTS branch (
-    id UUID NOT NULL PRIMARY KEY,
-    name VARCHAR(30),
-    address VARCHAR(50),
-    year INT,
-    founded_at INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP
+CREATE TYPE "staff_type" AS ENUM (
+  'fixed',
+  'percent'
 );
 
-CREATE TABLE IF NOT EXISTS "user" (
-    id UUID NOT NULL PRIMARY KEY,
-    name VARCHAR(20) NOT NULL DEFAULT 'username',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP
+CREATE TYPE "payment_type" AS ENUM (
+  'card',
+  'cash'
 );
 
-CREATE TABLE IF NOT EXISTS category (
-    id UUID NOT NULL PRIMARY KEY,
-    name VARCHAR(20) NOT NULL DEFAULT 'category name',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP
+CREATE TYPE "status_type" AS ENUM (
+  'success',
+  'cancel'
 );
 
-CREATE TABLE IF NOT EXISTS product (
-    id UUID NOT NULL PRIMARY KEY,
-    name VARCHAR(20) NOT NULL DEFAULT 'product name',
-    price NUMERIC(20,2),
-    category_id UUID NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP,
-    FOREIGN KEY (category_id) REFERENCES category(id)
+CREATE TYPE "transaction_type" AS ENUM (
+  'withdraw',
+  'topup'
 );
 
-CREATE TABLE IF NOT EXISTS branch_products (
-    branch_id UUID NOT NULL,
-    product_id UUID NOT NULL,
-    quantity INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP,
-    FOREIGN KEY (branch_id) REFERENCES branch(id),
-    FOREIGN KEY (product_id) REFERENCES product(id)
+CREATE TYPE "source_type" AS ENUM (
+  'sales',
+  'bonus'
 );
 
-CREATE TABLE IF NOT EXISTS branch_transaction (
-    id UUID NOT NULL PRIMARY KEY,
-    branch_id UUID NOT NULL,
-    product_id UUID NOT NULL,
-    user_id UUID NOT NULL,
-    type VARCHAR(5) NOT NULL,
-    quantity INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP,
-    FOREIGN KEY (branch_id) REFERENCES branch(id),
-    FOREIGN KEY (product_id) REFERENCES product(id),
-    FOREIGN KEY (user_id) REFERENCES "user"(id)
+CREATE TABLE "branches" (
+  "id" uuid PRIMARY KEY,
+  "name" varchar NOT NULL,
+  "adress" varchar NOT NULL,
+  "year" int NOT NULL,
+  "founded_at" int,
+  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "updated_at" timestamptz NOT NULL DEFAULT (now())
+);
+
+CREATE TABLE "tariffs" (
+  "id" uuid PRIMARY KEY,
+  "name" varchar NOT NULL,
+  "type" staff_type NOT NULL,
+  "amount_for_cash" NUMERIC(12, 2),
+  "amount_for_card" NUMERIC(12, 2),
+  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "updated_at" timestamptz NOT NULL DEFAULT (now())
+);
+
+CREATE TABLE "staffs" (
+  "id" uuid PRIMARY KEY,
+  "branch_id" uuid NOT NULL REFERENCES "branches"("id"),
+  "tariff_id" uuid NOT NULL REFERENCES "tariffs"("id"),
+  "staff_type" staff_type NOT NULL,
+  "balance" NUMERIC(12, 2),
+  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "updated_at" timestamptz NOT NULL DEFAULT (now())
+);
+
+CREATE TABLE "sales" (
+  "id" uuid PRIMARY KEY,
+  "client_name" varchar NOT NULL,
+  "branch_id" uuid not null REFERENCES "branches"("id"),
+  "shop_assistant_id" uuid not null REFERENCES "staffs"("id"),
+  "cashier_id" uuid not null REFERENCES "staffs"("id"),
+  "price" NUMERIC(12, 2),
+  "payment_type" payment_type NOT NULL,
+  "status" status_type NOT NULL DEFAULT 'success',
+  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "updated_at" timestamptz NOT NULL DEFAULT (now())
+);
+
+CREATE TABLE "transactions" (
+  "id" uuid PRIMARY KEY,
+  "type" transaction_type NOT NULL,
+  "amount" NUMERIC(12, 2),
+  "source_type" source_type NOT NULL,
+  "text" varchar,
+  "sale_id" uuid not null REFERENCES "sales"("id"),
+  "staff_id" uuid not null REFERENCES "staffs"("id"),
+  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "updated_at" timestamptz NOT NULL DEFAULT (now())
 );
