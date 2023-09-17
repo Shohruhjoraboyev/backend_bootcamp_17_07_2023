@@ -166,7 +166,7 @@ func (s *staffTarifRepo) UpdateStaffTarif(req *models.StaffTarif) (string, error
 	}
 
 	if result.RowsAffected() == 0 {
-		return "", fmt.Errorf("staff tariff with ID %d not found", req.Id)
+		return "", fmt.Errorf("staff tariff with ID %s not found", req.Id)
 	}
 
 	return req.Id, nil
