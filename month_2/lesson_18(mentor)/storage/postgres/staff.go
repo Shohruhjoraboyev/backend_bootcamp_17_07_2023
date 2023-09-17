@@ -55,7 +55,7 @@ func (s *staffRepo) UpdateStaff(req *models.Staff) (string, error) {
 	}
 
 	if result.RowsAffected() == 0 {
-		return "", fmt.Errorf("staff with ID %d not found", req.ID)
+		return "", fmt.Errorf("staff with ID %s not found", req.ID)
 	}
 
 	return req.ID, nil
