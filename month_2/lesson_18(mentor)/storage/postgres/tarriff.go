@@ -2,13 +2,14 @@ package postgres
 
 import (
 	"app/models"
+	"app/pkg/helper"
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx"
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
@@ -65,10 +66,10 @@ func (s *staffTarifRepo) GetStaffTarif(req *models.IdRequest) (resp *models.Staf
 		&updated_at,
 	)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, fmt.Errorf("tariff not found")
+		if err == pgx.ErrNoRows {
+			return nil, fmt.Errorf("staff tariff not found")
 		}
-		return nil, fmt.Errorf("failed to retrieve tariff: %w", err)
+		return nil, fmt.Errorf("failed to get staff tariff: %w", err)
 	}
 
 	tariff.CreatedAt = created_at.Format(time.RFC3339)
@@ -84,10 +85,10 @@ func (s *staffTarifRepo) GetAllStaffTarif(req *models.GetAllStaffTarifRequest) (
 	created_at := time.Time{}
 	updated_at := sql.NullTime{}
 
-	query := `
+	sekect := `
 		SELECT
 		"id", "name", "type", "amount_for_cash", "amount_for_card", "created_at", "updated_at"
-		FROM "tariffs"
+		FROM "tariffs" ORDER BY "created_at" DESC
 	`
 
 	if req.Name != "" {
@@ -96,13 +97,23 @@ func (s *staffTarifRepo) GetAllStaffTarif(req *models.GetAllStaffTarifRequest) (
 	}
 
 	limit := req.Limit
+	if limit <= 0 {
+		limit = 10
+	}
+
+	page := req.Page
+	if page <= 0 {
+		page = 1
+	}
 	offset := (req.Page - 1) * limit
+
 	params["limit"] = limit
 	params["offset"] = offset
 
-	query = query + filter + " LIMIT :limit OFFSET :offset"
+	query := sekect + filter + " LIMIT :limit OFFSET :offset"
+	q, pArr := helper.ReplaceQueryParams(query, params)
 
-	rows, err := s.db.Query(context.Background(), query, params)
+	rows, err := s.db.Query(context.Background(), q, pArr...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute query: %w", err)
 	}
