@@ -124,7 +124,7 @@ func (c *saleRepo) GetAllSale(req *models.GetAllSalesRequest) (resp *models.GetA
 	`
 
 	if req.Client_name != "" {
-		filter += ` WHERE "name" ILIKE '%' || :search || '%' `
+		filter += ` WHERE "client_name" ILIKE '%' || :search || '%' `
 		params["search"] = req.Client_name
 	}
 
