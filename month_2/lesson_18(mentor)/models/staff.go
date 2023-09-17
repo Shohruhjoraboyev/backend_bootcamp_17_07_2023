@@ -1,56 +1,53 @@
 package models
 
+import "time"
+
 type CreateStaff struct {
-	BranchId string
-	TariffId string
-	TypeId   StaffType
-	Name     string
-	Balance  float64
+	BranchID  string    `json:"branch_id"`
+	TariffID  string    `json:"tariff_id"`
+	Name      string    `json:"name"`
+	Type      string    `json:"type"`
+	Balance   float64   `json:"balance"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 type Staff struct {
-	Id       string
-	BranchId string
-	TariffId string
-	TypeId   StaffType
-	Name     string
-	Balance  float64
-	Login    string
-	Password string
-	Phone    string
+	ID        string    `json:"id"`
+	BranchID  string    `json:"branch_id"`
+	TariffID  string    `json:"tariff_id"`
+	Type      string    `json:"type"`
+	Name      string    `json:"name"`
+	Balance   float64   `json:"balance"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type ExistsReq struct {
-	Phone string
+	Phone string `json:"phone"`
 }
+
 type StaffTop struct {
-	BranchId string
-	TypeId   StaffType
-	Name     string
-	Money    int
+	BranchID string `json:"branch_id"`
+	Type     string `json:"type"`
+	Name     string `json:"name"`
+	Money    int    `json:"money"`
 }
+
 type ChangeBalance struct {
-	Id      string
-	Balance float64
+	ID      string  `json:"id"`
+	Balance float64 `json:"balance"`
 }
-
-type StaffType string
-
-const (
-	Cashier       StaffType = "cashier"
-	ShopAssistant StaffType = "shop_assistant"
-)
 
 type GetAllStaffRequest struct {
-	Page        int
-	Limit       int
-	Type        StaffType
-	Name        string
-	BalanceFrom float64
-	BalanceTo   float64
+	Page        int     `json:"page"`
+	Limit       int     `json:"limit"`
+	Type        string  `json:"type"`
+	Name        string  `json:"name"`
+	BalanceFrom float64 `json:"balance_from"`
+	BalanceTo   float64 `json:"balance_to"`
 }
 
 type GetAllStaff struct {
-	Staffes []Staff
-	Count   int
+	Staffs []Staff `json:"staffs"`
+	Count  int     `json:"count"`
 }
