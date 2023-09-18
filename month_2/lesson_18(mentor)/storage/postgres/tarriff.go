@@ -88,7 +88,7 @@ func (s *staffTarifRepo) GetAllStaffTarif(req *models.GetAllStaffTarifRequest) (
 	sekect := `
 		SELECT
 		"id", "name", "type", "amount_for_cash", "amount_for_card", "created_at", "updated_at"
-		FROM "tariffs" ORDER BY "created_at" DESC
+		FROM "tariffs"
 	`
 
 	if req.Name != "" {
@@ -110,7 +110,7 @@ func (s *staffTarifRepo) GetAllStaffTarif(req *models.GetAllStaffTarifRequest) (
 	params["limit"] = limit
 	params["offset"] = offset
 
-	query := sekect + filter + " LIMIT :limit OFFSET :offset"
+	query := sekect + filter + " ORDER BY created_at DESC LIMIT :limit OFFSET :offset"
 	q, pArr := helper.ReplaceQueryParams(query, params)
 
 	rows, err := s.db.Query(context.Background(), q, pArr...)
