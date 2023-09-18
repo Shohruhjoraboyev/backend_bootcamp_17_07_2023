@@ -96,7 +96,7 @@ func (h *Handler) DeleteBranch(c *gin.Context) {
 	resp, err := h.storage.Branch().DeleteBranch(&models.IdRequest{Id: id})
 	if err != nil {
 		h.log.Error("error deleting branch:", logger.Error(err))
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete branch"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
