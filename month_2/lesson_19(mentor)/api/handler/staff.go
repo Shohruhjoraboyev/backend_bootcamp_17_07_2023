@@ -10,6 +10,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// CreateStaff godoc
+// @Router       /staff [POST]
+// @Summary      CREATES STAFF
+// @Description  CREATES STAFF BASED ON GIVEN DATA
+// @Tags         STAFF
+// @Accept       json
+// @Produce      json
+// @Param        data  body      models.CreateStaff  true  "staff data"
+// @Success      200  {string}  string
+// @Failure      400  {object}  response.ErrorResp
+// @Failure      404  {object}  response.ErrorResp
+// @Failure      500  {object}  response.ErrorResp
 func (h *Handler) CreateStaff(c *gin.Context) {
 	var staff models.CreateStaff
 	err := c.ShouldBind(&staff)
@@ -28,6 +40,18 @@ func (h *Handler) CreateStaff(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "staff successfully created", "id": resp})
 }
 
+// GetStaff godoc
+// @Router       /staff/{id} [GET]
+// @Summary      GET BY ID
+// @Description  get staff by ID
+// @Tags         STAFF
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "Staff ID" format(uuid)
+// @Success      200  {object}  models.Staff
+// @Failure      400  {object}  response.ErrorResp
+// @Failure      404  {object}  response.ErrorResp
+// @Failure      500  {object}  response.ErrorResp
 func (h *Handler) GetStaff(c *gin.Context) {
 	id := c.Param("id")
 
@@ -41,6 +65,20 @@ func (h *Handler) GetStaff(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "success", "data": resp})
 }
 
+// ListStaffes godoc
+// @Router       /staff [GET]
+// @Summary      GET  ALL STAFFS
+// @Description  gets all staffs based on limit, page and search by name
+// @Tags         STAFF
+// @Accept       json
+// @Produce      json
+// @Param   limit         query     int        false  "limit"          minimum(1)     default(10)
+// @Param   page         query     int        false  "page"          minimum(1)     default(1)
+// @Param   search         query     string        false  "search"
+// @Success      200  {object}  models.GetAllStaff
+// @Failure      400  {object}  response.ErrorResp
+// @Failure      404  {object}  response.ErrorResp
+// @Failure      500  {object}  response.ErrorResp
 func (h *Handler) GetAllStaff(c *gin.Context) {
 	h.log.Info("request GetALLstaff")
 	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
@@ -70,6 +108,19 @@ func (h *Handler) GetAllStaff(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
+// UpdateStaffs godoc
+// @Router       /branch/{id} [PUT]
+// @Summary      UPDATE STAFF BY ID
+// @Description  UPDATES STAFF BASED ON GIVEN DATA AND ID
+// @Tags         STAFF
+// @Accept       json
+// @Produce      json
+// @Param        id    path     string  true  "id of staff" format(uuid)
+// @Param        data  body      models.CreateStaff  true  "staff data"
+// @Success      200  {string}  string
+// @Failure      400  {object}  response.ErrorResp
+// @Failure      404  {object}  response.ErrorResp
+// @Failure      500  {object}  response.ErrorResp
 func (h *Handler) UpdateStaff(c *gin.Context) {
 	var staff models.Staff
 	err := c.ShouldBind(&staff)
@@ -90,6 +141,18 @@ func (h *Handler) UpdateStaff(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "staff successfully updated", "id": resp})
 }
 
+// DeleteStaff godoc
+// @Router       /staff/{id} [DELETE]
+// @Summary      DELETE STAFF BY ID
+// @Description  DELETES STAFF BASED ON ID
+// @Tags         STAFF
+// @Accept       json
+// @Produce      json
+// @Param        id    path     string  true  "id of staff" format(uuid)
+// @Success      200  {string}  string
+// @Failure      400  {object}  response.ErrorResp
+// @Failure      404  {object}  response.ErrorResp
+// @Failure      500  {object}  response.ErrorResp
 func (h *Handler) DeleteStaff(c *gin.Context) {
 	id := c.Param("id")
 

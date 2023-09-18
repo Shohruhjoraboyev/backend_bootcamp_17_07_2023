@@ -25,6 +25,33 @@ definitions:
       name:
         type: string
     type: object
+  models.CreateStaff:
+    properties:
+      balance:
+        type: number
+      branch_id:
+        type: string
+      created_at:
+        type: string
+      name:
+        type: string
+      staff_type:
+        type: string
+      tariff_id:
+        type: string
+    type: object
+  models.CreateStaffTarif:
+    properties:
+      amount_for_card:
+        type: number
+      amount_for_cash:
+        type: number
+      name:
+        type: string
+      type:
+        description: (fixed, percent)
+        type: string
+    type: object
   models.GetAllBranch:
     properties:
       branches:
@@ -33,6 +60,61 @@ definitions:
         type: array
       count:
         type: integer
+    type: object
+  models.GetAllStaff:
+    properties:
+      count:
+        type: integer
+      staffs:
+        items:
+          $ref: '#/definitions/models.Staff'
+        type: array
+    type: object
+  models.GetAllStaffTarif:
+    properties:
+      count:
+        type: integer
+      staff_tarifs:
+        items:
+          $ref: '#/definitions/models.StaffTarif'
+        type: array
+    type: object
+  models.Staff:
+    properties:
+      balance:
+        type: number
+      branch_id:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      staff_type:
+        type: string
+      tariff_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.StaffTarif:
+    properties:
+      amount_for_card:
+        type: number
+      amount_for_cash:
+        type: number
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      type:
+        description: (fixed, percent)
+        type: string
+      updated_at:
+        type: string
     type: object
   response.ErrorResp:
     properties:
@@ -191,20 +273,20 @@ paths:
     put:
       consumes:
       - application/json
-      description: UPDATES BRANCH BASED ON GIVEN DATA AND ID
+      description: UPDATES STAFF BASED ON GIVEN DATA AND ID
       parameters:
-      - description: id of branch
+      - description: id of staff
         format: uuid
         in: path
         name: id
         required: true
         type: string
-      - description: branch data
+      - description: staff data
         in: body
         name: data
         required: true
         schema:
-          $ref: '#/definitions/models.CreateBranch'
+          $ref: '#/definitions/models.CreateStaff'
       produces:
       - application/json
       responses:
@@ -224,7 +306,334 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorResp'
-      summary: UPDATE BRANCH BY ID
+      summary: UPDATE STAFF BY ID
       tags:
       - BRANCH
+  /staff:
+    get:
+      consumes:
+      - application/json
+      description: gets all staffs based on limit, page and search by name
+      parameters:
+      - default: 10
+        description: limit
+        in: query
+        minimum: 1
+        name: limit
+        type: integer
+      - default: 1
+        description: page
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      - description: search
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.GetAllStaff'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: GET  ALL STAFFS
+      tags:
+      - STAFF
+    post:
+      consumes:
+      - application/json
+      description: CREATES STAFF BASED ON GIVEN DATA
+      parameters:
+      - description: staff data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateStaff'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: CREATES STAFF
+      tags:
+      - STAFF
+  /staff/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: DELETES STAFF BASED ON ID
+      parameters:
+      - description: id of staff
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: DELETE STAFF BY ID
+      tags:
+      - STAFF
+    get:
+      consumes:
+      - application/json
+      description: get staff by ID
+      parameters:
+      - description: Staff ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Staff'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: GET BY ID
+      tags:
+      - STAFF
+  /tariff:
+    get:
+      consumes:
+      - application/json
+      description: gets all tariff based on limit, page and search by name
+      parameters:
+      - default: 10
+        description: limit
+        in: query
+        minimum: 1
+        name: limit
+        type: integer
+      - default: 1
+        description: page
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      - description: search
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.GetAllStaffTarif'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: GET  ALL BRANCHS
+      tags:
+      - TARIFF
+    post:
+      consumes:
+      - application/json
+      description: CREATES TARIFF BASED ON GIVEN DATA
+      parameters:
+      - description: tariff data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateStaffTarif'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: CREATES TARIFF
+      tags:
+      - TARIFF
+  /tariff/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: DELETES TARIFF BASED ON ID
+      parameters:
+      - description: id of tariff
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: DELETE TARIFF BY ID
+      tags:
+      - TARIFF
+    get:
+      consumes:
+      - application/json
+      description: get tariff by ID
+      parameters:
+      - description: Tariff ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.StaffTarif'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: GET BY ID
+      tags:
+      - TARIFF
+    put:
+      consumes:
+      - application/json
+      description: UPDATES TARIFF BASED ON GIVEN DATA AND ID
+      parameters:
+      - description: id of tariff
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: tariff data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateStaffTarif'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: UPDATE TARIFF BY ID
+      tags:
+      - TARIFF
 swagger: "2.0"
