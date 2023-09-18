@@ -10,7 +10,7 @@ type CreateStaffTarif struct {
 type StaffTarif struct {
 	Id            string  `json:"id"`
 	Name          string  `json:"name"`
-	Type          int     `json:"type"` // (fixed, percent)
+	Type          string  `json:"type"` // (fixed, percent)
 	AmountForCash float64 `json:"amount_for_cash"`
 	AmountForCard float64 `json:"amount_for_card"`
 	CreatedAt     string  `json:"created_at"`
