@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"app/models"
+	"app/pkg/helper"
 	"context"
 	"fmt"
 
@@ -67,9 +68,17 @@ func (s *staffRepo) GetStaff(req *models.IdRequest) (*models.Staff, error) {
 		WHERE "id" = $1
 	`
 
-	var staff *models.Staff
+	staff := models.Staff{}
 
-	err := s.db.QueryRow(context.Background(), query, req.Id).Scan(&staff.ID, &staff.BranchID, &staff.TariffID, &staff.Type, &staff.Name, &staff.Balance, &staff.CreatedAt, &staff.UpdatedAt)
+	err := s.db.QueryRow(context.Background(), query, req.Id).Scan(
+		&staff.ID,
+		&staff.BranchID,
+		&staff.TariffID,
+		&staff.Type,
+		&staff.Name,
+		&staff.Balance,
+		&staff.CreatedAt,
+		&staff.UpdatedAt)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			return &models.Staff{}, fmt.Errorf("staff not found")
@@ -77,7 +86,7 @@ func (s *staffRepo) GetStaff(req *models.IdRequest) (*models.Staff, error) {
 		return &models.Staff{}, fmt.Errorf("failed to get staff: %w", err)
 	}
 
-	return staff, nil
+	return &staff, nil
 }
 
 // func (u *staffRepo) GetByLogin(req models.LoginRequest) (models.Staff, error) {
@@ -98,9 +107,6 @@ func (s *staffRepo) GetAllStaff(req *models.GetAllStaffRequest) (*models.GetAllS
 		SELECT "id", "branch_id", "tariff_id", "staff_type", "name", "balance", "created_at", "updated_at"
 		FROM "staffs"
 	`
-	var staffs []models.Staff
-	var count int
-
 	if req.Name != "" {
 		filter += ` WHERE "name" ILIKE '%' || :search || '%' `
 		params["search"] = req.Name
@@ -120,36 +126,36 @@ func (s *staffRepo) GetAllStaff(req *models.GetAllStaffRequest) (*models.GetAllS
 	params["offset"] = offset
 
 	query = query + filter + " ORDER BY created_at DESC LIMIT :limit OFFSET :offset"
+	q, pArr := helper.ReplaceQueryParams(query, params)
 
-	err := s.db.QueryRow(context.Background(), fmt.Sprintf("SELECT COUNT(*) FROM (%s) AS count_query", query), req.Type, "%"+req.Name+"%", req.BalanceFrom, req.BalanceTo).Scan(&count)
+	rows, err := s.db.Query(context.Background(), q, pArr...)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get staff count: %w", err)
-	}
-
-	rows, err := s.db.Query(context.Background(), query, req.Type, "%"+req.Name+"%", req.BalanceFrom, req.BalanceTo, limit, offset)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get staffs: %w", err)
+		return nil, fmt.Errorf("failed to execute query: %w", err)
 	}
 	defer rows.Close()
 
+	resp := &models.GetAllStaff{}
+	count := 0
 	for rows.Next() {
 		var staff models.Staff
-		err := rows.Scan(&staff.ID, &staff.BranchID, &staff.TariffID, &staff.Type, &staff.Name, &staff.Balance, &staff.CreatedAt, &staff.UpdatedAt)
+		count++
+		err := rows.Scan(
+			&staff.ID,
+			&staff.BranchID,
+			&staff.TariffID,
+			&staff.Type,
+			&staff.Name,
+			&staff.Balance,
+			&staff.CreatedAt,
+			&staff.UpdatedAt)
 		if err != nil {
-			return nil, fmt.Errorf("failed to scan staff row: %w", err)
+			return nil, fmt.Errorf("failed to scan row: %w", err)
 		}
-
-		staffs = append(staffs, staff)
+		resp.Staffs = append(resp.Staffs, staff)
 	}
 
-	if err = rows.Err(); err != nil {
-		return nil, fmt.Errorf("error occurred while iterating staff rows: %w", err)
-	}
-
-	return &models.GetAllStaff{
-		Staffs: staffs,
-		Count:  count,
-	}, nil
+	resp.Count = count
+	return resp, nil
 }
 
 func (s *staffRepo) DeleteStaff(req *models.IdRequest) (string, error) {

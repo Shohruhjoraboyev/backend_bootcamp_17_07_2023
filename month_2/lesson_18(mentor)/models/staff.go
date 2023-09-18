@@ -15,7 +15,7 @@ type Staff struct {
 	ID        string    `json:"id"`
 	BranchID  string    `json:"branch_id"`
 	TariffID  string    `json:"tariff_id"`
-	Type      string    `json:"type"`
+	Type      string    `json:"staff_type"`
 	Name      string    `json:"name"`
 	Balance   float64   `json:"balance"`
 	CreatedAt time.Time `json:"created_at"`
