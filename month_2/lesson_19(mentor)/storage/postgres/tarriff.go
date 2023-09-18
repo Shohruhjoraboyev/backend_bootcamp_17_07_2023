@@ -2,162 +2,190 @@ package postgres
 
 import (
 	"app/models"
-	"encoding/json"
-	"errors"
-	"log"
-	"os"
-	"strings"
+	"app/pkg/helper"
+	"context"
+	"database/sql"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx"
+	"github.com/jackc/pgx/v4/pgxpool"
 )
 
 type staffTarifRepo struct {
-	fileName string
+	db *pgxpool.Pool
 }
 
-func NewStaffTarifRepo(fileName string) *staffTarifRepo {
-	return &staffTarifRepo{fileName: fileName}
+func NewStaffTarifRepo(db *pgxpool.Pool) *staffTarifRepo {
+	return &staffTarifRepo{db: db}
 }
 
-func (s *staffTarifRepo) CreateStaffTarif(req models.CreateStaffTarif) (string, error) {
-	staffTarifs, err := s.read()
-	if err != nil {
-		return "", err
-	}
-
+func (s *staffTarifRepo) CreateStaffTarif(req *models.CreateStaffTarif) (string, error) {
 	id := uuid.NewString()
-	staffTarifs = append(staffTarifs, models.StaffTarif{
-		Id:            id,
-		Name:          req.Name,
-		Type:          req.Type,
-		AmountForCash: req.AmountForCash,
-		AmountForCard: req.AmountForCard,
-		CreatedAt:     time.Now().Format("2006-01-02 15:04:05"),
-	})
 
-	err = s.write(staffTarifs)
+	query := `
+		INSERT INTO "tariffs" 
+		("id", "name", "type", "amount_for_cash", "amount_for_card", "created_at")
+		VALUES 
+		($1, $2, $3, $4, $5, NOW())
+	`
+
+	_, err := s.db.Exec(context.Background(), query,
+		id,
+		req.Name,
+		req.Type,
+		req.AmountForCash,
+		req.AmountForCard,
+	)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to create staff tariff: %w", err)
 	}
 
 	return id, nil
 }
 
-func (s *staffTarifRepo) UpdateStaffTarif(req models.StaffTarif) (string, error) {
-	staffTarifs, err := s.read()
-	if err != nil {
-		return "", err
-	}
+func (s *staffTarifRepo) GetStaffTarif(req *models.IdRequest) (resp *models.StaffTarif, err error) {
+	query := `
+		SELECT  "id", "name", "type", "amount_for_cash", "amount_for_card", "created_at", "updated_at"
+		FROM "tariffs" WHERE "id" = $1
+	`
+	var (
+		created_at time.Time
+		updated_at sql.NullTime
+	)
 
-	for i, v := range staffTarifs {
-		if v.Id == req.Id {
-			staffTarifs[i].Name = req.Name
-			staffTarifs[i].Type = req.Type
-			staffTarifs[i].AmountForCash = req.AmountForCash
-			staffTarifs[i].AmountForCard = req.AmountForCard
-			err = s.write(staffTarifs)
-			if err != nil {
-				return "", err
-			}
-			return "updated successfully", nil
+	tariff := models.StaffTarif{}
+	err = s.db.QueryRow(context.Background(), query, req.Id).Scan(
+		&tariff.Id,
+		&tariff.Name,
+		&tariff.Type,
+		&tariff.AmountForCard,
+		&tariff.AmountForCash,
+		&created_at,
+		&updated_at,
+	)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, fmt.Errorf("staff tariff not found")
 		}
+		return nil, fmt.Errorf("failed to get staff tariff: %w", err)
 	}
-	return "", errors.New("not found")
+
+	tariff.CreatedAt = created_at.Format(time.RFC3339)
+	if updated_at.Valid {
+		tariff.UpdatedAt = updated_at.Time.Format(time.RFC3339)
+	}
+
+	return &tariff, nil
 }
+func (s *staffTarifRepo) GetAllStaffTarif(req *models.GetAllStaffTarifRequest) (resp *models.GetAllStaffTarif, err error) {
+	params := make(map[string]interface{})
+	filter := ""
+	created_at := time.Time{}
+	updated_at := sql.NullTime{}
 
-func (s *staffTarifRepo) GetStaffTarif(req models.IdRequest) (resp models.StaffTarif, err error) {
-	staffTarifs, err := s.read()
-	if err != nil {
-		return resp, err
+	sekect := `
+		SELECT
+		"id", "name", "type", "amount_for_cash", "amount_for_card", "created_at", "updated_at"
+		FROM "tariffs"
+	`
+
+	if req.Name != "" {
+		filter += ` WHERE "name" ILIKE '%' || :search || '%' `
+		params["search"] = req.Name
 	}
 
-	for _, v := range staffTarifs {
-		if v.Id == req.Id {
-			return v, nil
+	limit := req.Limit
+	if limit <= 0 {
+		limit = 10
+	}
+
+	page := req.Page
+	if page <= 0 {
+		page = 1
+	}
+	offset := (req.Page - 1) * limit
+
+	params["limit"] = limit
+	params["offset"] = offset
+
+	query := sekect + filter + " ORDER BY created_at DESC LIMIT :limit OFFSET :offset"
+	q, pArr := helper.ReplaceQueryParams(query, params)
+
+	rows, err := s.db.Query(context.Background(), q, pArr...)
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute query: %w", err)
+	}
+	defer rows.Close()
+
+	resp = &models.GetAllStaffTarif{}
+	count := 0
+	for rows.Next() {
+		var tariff models.StaffTarif
+		count++
+		err := rows.Scan(
+			&tariff.Id,
+			&tariff.Name,
+			&tariff.Type,
+			&tariff.AmountForCard,
+			&tariff.AmountForCash,
+			&created_at,
+			&updated_at,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan row: %w", err)
 		}
-	}
-	return resp, errors.New("not found")
-}
-
-func (s *staffTarifRepo) GetAllStaffTarif(req models.GetAllStaffTarifRequest) (resp models.GetAllStaffTarif, err error) {
-	staffTarifs, err := s.read()
-	if err != nil {
-		return resp, err
-	}
-
-	filtered := []models.StaffTarif{}
-	for _, v := range staffTarifs {
-		if strings.Contains(v.Name, req.Name) {
-			filtered = append(filtered, v)
+		tariff.CreatedAt = created_at.Format(time.RFC3339)
+		if updated_at.Valid {
+			tariff.UpdatedAt = updated_at.Time.Format(time.RFC3339)
 		}
+		resp.StaffTarifs = append(resp.StaffTarifs, tariff)
 	}
 
-	start := req.Limit * (req.Page - 1)
-	end := start + req.Limit
-
-	if start > len(filtered) {
-		resp.StaffTarifs = []models.StaffTarif{}
-		resp.Count = len(filtered)
-		return resp, nil
-	} else if end > len(filtered) {
-		return models.GetAllStaffTarif{
-			StaffTarifs: filtered[start:],
-			Count:       len(filtered),
-		}, nil
-	}
-
-	return models.GetAllStaffTarif{
-		StaffTarifs: filtered[start:end],
-		Count:       len(filtered)}, nil
+	resp.Count = count
+	return resp, nil
 }
 
-func (s *staffTarifRepo) DeleteStaffTarif(req models.IdRequest) (string, error) {
-	staffTarifs, err := s.read()
+func (s *staffTarifRepo) UpdateStaffTarif(req *models.StaffTarif) (string, error) {
+	query := `
+		UPDATE "tariffs"
+		SET "name" = $1, "type" = $2, "amount_for_cash" = $3, "amount_for_card" = $4, "updated_at" = NOW()
+		WHERE "id" = $5
+	`
+
+	result, err := s.db.Exec(context.Background(), query,
+		req.Name,
+		req.Type,
+		req.AmountForCash,
+		req.AmountForCard,
+		req.Id,
+	)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to update staff tariff: %w", err)
 	}
-	for i, v := range staffTarifs {
-		if v.Id == req.Id {
-			staffTarifs = append(staffTarifs[:i], staffTarifs[i+1:]...)
-			err = s.write(staffTarifs)
-			if err != nil {
-				return "", err
-			}
-			return "deleted", nil
-		}
+
+	if result.RowsAffected() == 0 {
+		return "", fmt.Errorf("staff tariff with ID %s not found", req.Id)
 	}
-	return "", errors.New("not found id")
+
+	return req.Id, nil
 }
 
-func (u *staffTarifRepo) read() ([]models.StaffTarif, error) {
-	var staffTarifs []models.StaffTarif
+func (s *staffTarifRepo) DeleteStaffTarif(req *models.IdRequest) (string, error) {
+	query := `
+		DELETE FROM "tariffs"
+		WHERE "id" = $1
+	`
 
-	data, err := os.ReadFile(u.fileName)
+	result, err := s.db.Exec(context.Background(), query, req.Id)
 	if err != nil {
-		log.Printf("Error while Read data: %+v", err)
-		return nil, err
+		return "", fmt.Errorf("failed to delete staff tariff: %w", err)
 	}
 
-	err = json.Unmarshal(data, &staffTarifs)
-	if err != nil {
-		log.Printf("Error while Unmarshal data: %+v", err)
-		return nil, err
+	if result.RowsAffected() == 0 {
+		return "", fmt.Errorf("staff tariff with ID %s not found", req.Id)
 	}
 
-	return staffTarifs, nil
-}
-
-func (u *staffTarifRepo) write(staffTarifs []models.StaffTarif) error {
-	body, err := json.Marshal(staffTarifs)
-	if err != nil {
-		return err
-	}
-
-	err = os.WriteFile(u.fileName, body, os.ModePerm)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return req.Id, nil
 }

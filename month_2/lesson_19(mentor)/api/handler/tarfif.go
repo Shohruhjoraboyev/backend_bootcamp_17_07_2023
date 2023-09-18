@@ -1,74 +1,104 @@
 package handler
 
-/*
-func (h *handler) CreateStaffTarif(name string, typ int, amountCash, amountCard float64) {
-	resp, err := h.strg.StaffTarif().CreateStaffTarif(models.CreateStaffTarif{
-		Name:          name,
-		Type:          typ,
-		AmountForCash: amountCash,
-		AmountForCard: amountCard,
-	})
+import (
+	"app/models"
+	"app/pkg/logger"
+	"fmt"
+	"net/http"
+	"strconv"
 
+	"github.com/gin-gonic/gin"
+)
+
+func (h *Handler) CreateStaffTarif(c *gin.Context) {
+	var tariff models.CreateStaffTarif
+	err := c.ShouldBind(&tariff)
 	if err != nil {
-		fmt.Println("error from CreateStaffTarif:", err.Error())
-		return
-	}
-	fmt.Println("created new tarif with id:", resp)
-}
-
-func (h *handler) UpdateStaffTarif(id, name string, typ int, amountCash, amountCard float64) {
-	resp, err := h.strg.StaffTarif().UpdateStaffTarif(models.StaffTarif{
-		Id:            id,
-		Name:          name,
-		Type:          typ,
-		AmountForCash: amountCash,
-		AmountForCard: amountCard,
-	})
-
-	if err != nil {
-		fmt.Println("error from UpdateStaffTarif:", err.Error())
-		return
-	}
-	fmt.Println(resp)
-}
-
-func (h *handler) GetStaffTarif(id string) {
-	resp, err := h.strg.StaffTarif().GetStaffTarif(models.IdRequest{Id: id})
-	if err != nil {
-		fmt.Println("error from GetStaffTarif:", err.Error())
+		h.log.Error("error while binding:", logger.Error(err))
+		c.JSON(http.StatusBadRequest, "invalid body")
 		return
 	}
 
-	fmt.Println(resp)
+	resp, err := h.storage.Tariff().CreateStaffTarif(&tariff)
+	if err != nil {
+		fmt.Println("error Tariff Create:", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusCreated, gin.H{"message": "Tariff successfully created", "id": resp})
 }
 
-func (h *handler) GetAllStaffTarif(page, limit int, search string) {
-	if page < 1 {
-		page = h.cfg.Page
-	}
-	if limit < 1 {
-		limit = h.cfg.Limit
+func (h *Handler) GetStaffTarif(c *gin.Context) {
+	id := c.Param("id")
+
+	resp, err := h.storage.Tariff().GetStaffTarif(&models.IdRequest{Id: id})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		fmt.Println("error tariff Get:", err.Error())
+		return
 	}
 
-	resp, err := h.strg.StaffTarif().GetAllStaffTarif(models.GetAllStaffTarifRequest{
+	c.JSON(http.StatusOK, gin.H{"message": "success", "data": resp})
+}
+
+func (h *Handler) GetAllStaffTarif(c *gin.Context) {
+	h.log.Info("request GetAllTariff")
+	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
+	if err != nil {
+		h.log.Error("error get page:", logger.Error(err))
+		c.JSON(http.StatusBadRequest, "invalid page param")
+		return
+	}
+	limit, err := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	if err != nil {
+		h.log.Error("error get limit:", logger.Error(err))
+		c.JSON(http.StatusBadRequest, "invalid page param")
+		return
+	}
+
+	resp, err := h.storage.Tariff().GetAllStaffTarif(&models.GetAllStaffTarifRequest{
 		Page:  page,
 		Limit: limit,
-		Name:  search,
+		Name:  c.Query("search"),
 	})
-
 	if err != nil {
-		fmt.Println("error from GetAllStaff:", err.Error())
+		h.log.Error("error Branch GetAllTariff:", logger.Error(err))
+		c.JSON(http.StatusInternalServerError, "internal server error")
 		return
 	}
-	fmt.Println(resp)
+	h.log.Warn("response to GetAllTariff")
+	c.JSON(http.StatusOK, resp)
 }
 
-func (h *handler) DeleteStaffTarif(id string) {
-	resp, err := h.strg.StaffTarif().DeleteStaffTarif(models.IdRequest{Id: id})
+func (h *Handler) UpdateStaffTarif(c *gin.Context) {
+	var tariff models.StaffTarif
+	err := c.ShouldBind(&tariff)
 	if err != nil {
-		fmt.Println("error from DeleteStaffTarif:", err.Error())
+		h.log.Error("error while binding:", logger.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 		return
 	}
-	fmt.Println(resp)
+
+	tariff.Id = c.Param("id")
+	resp, err := h.storage.Tariff().UpdateStaffTarif(&tariff)
+	if err != nil {
+		h.log.Error("error Tariff Update:", logger.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Tariff successfully updated", "id": resp})
 }
-*/
+
+func (h *Handler) DeleteStaffTarif(c *gin.Context) {
+	id := c.Param("id")
+
+	resp, err := h.storage.Tariff().DeleteStaffTarif(&models.IdRequest{Id: id})
+	if err != nil {
+		h.log.Error("error deleting tarif:", logger.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "tariff successfully deleted", "id": resp})
+}

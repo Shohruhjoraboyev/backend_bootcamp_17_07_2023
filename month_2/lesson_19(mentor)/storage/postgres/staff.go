@@ -2,192 +2,206 @@ package postgres
 
 import (
 	"app/models"
-	"encoding/json"
-	"errors"
-	"log"
-	"os"
-	"strings"
+	"app/pkg/helper"
+	"context"
+	"fmt"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx"
+	"github.com/jackc/pgx/v4/pgxpool"
 )
 
 type staffRepo struct {
-	fileName string
+	db *pgxpool.Pool
 }
 
-func NewStaffRepo(fileName string) *staffRepo {
-	return &staffRepo{fileName: fileName}
+func NewStaffRepo(db *pgxpool.Pool) *staffRepo {
+	return &staffRepo{db: db}
 }
 
-func (s *staffRepo) CreateStaff(req models.CreateStaff) (string, error) {
-	staffes, err := s.read()
-	if err != nil {
-		return "", err
-	}
+func (s *staffRepo) CreateStaff(req *models.CreateStaff) (string, error) {
 	id := uuid.NewString()
-	staffes = append(staffes, models.Staff{
-		Id:       id,
-		BranchId: req.BranchId,
-		TariffId: req.TariffId,
-		TypeId:   req.TypeId,
-		Name:     req.Name,
-		Balance:  req.Balance,
-	})
-	err = s.write(staffes)
-	if err != nil {
-		return "", err
+
+	query := `
+		INSERT INTO "staffs" ("id", "branch_id", "tariff_id", "staff_type", "name", "balance", "created_at", "updated_at")
+		VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
+		RETURNING "id"
+	`
+
+	result := s.db.QueryRow(context.Background(), query, id, req.BranchID, req.TariffID, req.Type, req.Name, req.Balance)
+
+	var createdID string
+	if err := result.Scan(&createdID); err != nil {
+		return "", fmt.Errorf("failed to create staff: %w", err)
 	}
-	return id, nil
+
+	return createdID, nil
 }
 
-func (s *staffRepo) UpdateStaff(req models.Staff) (string, error) {
-	staffes, err := s.read()
+func (s *staffRepo) UpdateStaff(req *models.Staff) (string, error) {
+	query := `
+		UPDATE "staffs"
+		SET "branch_id" = $1, "tariff_id" = $2, 
+		"staff_type" = $3, "balance" = $4, 
+		"name" = $5, "updated_at" = NOW()
+		WHERE "id" = $6
+		RETURNING "id"
+	`
+
+	result, err := s.db.Exec(context.Background(),
+		query, req.BranchID, req.TariffID, req.Type, req.Balance, req.Name, req.ID)
+
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to update staff: %w", err)
 	}
-	for i, v := range staffes {
-		if v.Id == req.Id {
-			staffes[i] = req
-			err = s.write(staffes)
-			if err != nil {
-				return "", err
-			}
-			return "updated", nil
+
+	if result.RowsAffected() == 0 {
+		return "", fmt.Errorf("staff with ID %s not found", req.ID)
+	}
+
+	return req.ID, nil
+}
+func (s *staffRepo) GetStaff(req *models.IdRequest) (*models.Staff, error) {
+	query := `
+		SELECT "id", "branch_id", "tariff_id", "staff_type", "name", "balance", "created_at", "updated_at"
+		FROM "staffs"
+		WHERE "id" = $1
+	`
+
+	staff := models.Staff{}
+
+	err := s.db.QueryRow(context.Background(), query, req.Id).Scan(
+		&staff.ID,
+		&staff.BranchID,
+		&staff.TariffID,
+		&staff.Type,
+		&staff.Name,
+		&staff.Balance,
+		&staff.CreatedAt,
+		&staff.UpdatedAt)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return &models.Staff{}, fmt.Errorf("staff not found")
 		}
+		return &models.Staff{}, fmt.Errorf("failed to get staff: %w", err)
 	}
-	return "", errors.New("not staff found with ID")
+
+	return &staff, nil
 }
 
-func (s *staffRepo) GetStaff(req models.IdRequest) (models.Staff, error) {
-	staffes, err := s.read()
-	if err != nil {
-		return models.Staff{}, err
+// func (u *staffRepo) GetByLogin(req models.LoginRequest) (models.Staff, error) {
+// 	staffes := []models.Staff{}
+// 	for _, s := range staffes {
+// 		if req.Login == s.Login {
+// 			return s, nil
+// 		}
+// 	}
+// 	return models.Staff{}, nil
+// }
+
+func (s *staffRepo) GetAllStaff(req *models.GetAllStaffRequest) (*models.GetAllStaff, error) {
+	params := make(map[string]interface{})
+	filter := ""
+
+	query := `
+		SELECT "id", "branch_id", "tariff_id", "staff_type", "name", "balance", "created_at", "updated_at"
+		FROM "staffs"
+	`
+	if req.Name != "" {
+		filter += ` WHERE "name" ILIKE '%' || :search || '%' `
+		params["search"] = req.Name
 	}
-	for _, v := range staffes {
-		if v.Id == req.Id {
-			return v, nil
+	limit := req.Limit
+	if limit <= 0 {
+		limit = 10
+	}
+
+	page := req.Page
+	if page <= 0 {
+		page = 1
+	}
+
+	offset := (req.Page - 1) * limit
+	params["limit"] = limit
+	params["offset"] = offset
+
+	query = query + filter + " ORDER BY created_at DESC LIMIT :limit OFFSET :offset"
+	q, pArr := helper.ReplaceQueryParams(query, params)
+
+	rows, err := s.db.Query(context.Background(), q, pArr...)
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute query: %w", err)
+	}
+	defer rows.Close()
+
+	resp := &models.GetAllStaff{}
+	count := 0
+	for rows.Next() {
+		var staff models.Staff
+		count++
+		err := rows.Scan(
+			&staff.ID,
+			&staff.BranchID,
+			&staff.TariffID,
+			&staff.Type,
+			&staff.Name,
+			&staff.Balance,
+			&staff.CreatedAt,
+			&staff.UpdatedAt)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan row: %w", err)
 		}
+		resp.Staffs = append(resp.Staffs, staff)
 	}
-	return models.Staff{}, errors.New("not staff found with ID")
+
+	resp.Count = count
+	return resp, nil
 }
 
-func (u *staffRepo) GetByLogin(req models.LoginRequest) (models.Staff, error) {
-	staffes := []models.Staff{}
-	for _, s := range staffes {
-		if req.Login == s.Login {
-			return s, nil
+func (s *staffRepo) DeleteStaff(req *models.IdRequest) (string, error) {
+	query := `
+		DELETE FROM "staffs"
+		WHERE "id" = $1
+		RETURNING "id"
+	`
+
+	var deletedID string
+
+	err := s.db.QueryRow(context.Background(), query, req.Id).Scan(&deletedID)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return "", fmt.Errorf("staff not found")
 		}
+		return "", fmt.Errorf("failed to delete staff: %w", err)
 	}
-	return models.Staff{}, nil
+
+	return deletedID, nil
 }
 
-func (s *staffRepo) GetAllStaff(req models.GetAllStaffRequest) (resp models.GetAllStaff, err error) {
-	staffes, err := s.read()
-	if err != nil {
-		return models.GetAllStaff{}, err
-	}
-	var filtered []models.Staff
-	start := req.Limit * (req.Page - 1)
-	end := start + req.Limit
+// func (u *staffRepo) ChangeBalance(req models.ChangeBalance) (string, error) {
+// 	staffes, err := u.read()
+// 	if err != nil {
+// 		return "", err
+// 	}
+// 	for i, v := range staffes {
+// 		if v.Id == req.Id {
+// 			staffes[i].Balance = req.Balance
+// 			err = u.write(staffes)
+// 			if err != nil {
+// 				return "", err
+// 			}
+// 			return "updated balance", nil
+// 		}
+// 	}
+// 	return "", errors.New("not staff balance found with ID")
+// }
 
-	for _, v := range staffes {
-		if strings.Contains(v.Name, req.Name) || v.TypeId == req.Type && req.BalanceFrom >= v.Balance && req.BalanceTo <= v.Balance {
-			filtered = append(filtered, v)
-		}
-	}
-
-	if start > len(filtered) {
-		resp.Staffes = []models.Staff{}
-		resp.Count = len(filtered)
-		return
-	} else if end > len(filtered) {
-		return models.GetAllStaff{
-			Staffes: filtered[start:],
-			Count:   len(filtered),
-		}, nil
-	}
-
-	return models.GetAllStaff{
-		Staffes: filtered[start:end],
-		Count:   len(filtered),
-	}, nil
-
-}
-
-func (s *staffRepo) DeleteStaff(req models.IdRequest) (resp string, err error) {
-	staffes, err := s.read()
-	if err != nil {
-		return "", err
-	}
-
-	for i, v := range staffes {
-		if v.Id == req.Id {
-			staffes = append(staffes[:i], staffes[i+1:]...)
-			err = s.write(staffes)
-			if err != nil {
-				return "", err
-			}
-			return "deleted", nil
-		}
-	}
-	return "", errors.New("not found")
-}
-
-func (u *staffRepo) ChangeBalance(req models.ChangeBalance) (string, error) {
-	staffes, err := u.read()
-	if err != nil {
-		return "", err
-	}
-	for i, v := range staffes {
-		if v.Id == req.Id {
-			staffes[i].Balance = req.Balance
-			err = u.write(staffes)
-			if err != nil {
-				return "", err
-			}
-			return "updated balance", nil
-		}
-	}
-	return "", errors.New("not staff balance found with ID")
-}
-
-func (u *staffRepo) Exists(req models.ExistsReq) bool {
-	staffes := []models.Staff{}
-	for _, s := range staffes {
-		if req.Phone == s.Phone {
-			return true
-		}
-	}
-	return false
-}
-
-func (u *staffRepo) read() ([]models.Staff, error) {
-	var staffes []models.Staff
-
-	data, err := os.ReadFile(u.fileName)
-	if err != nil {
-		log.Printf("Error while Read data: %+v", err)
-		return nil, err
-	}
-
-	err = json.Unmarshal(data, &staffes)
-	if err != nil {
-		log.Printf("Error while Unmarshal data: %+v", err)
-		return nil, err
-	}
-	return staffes, nil
-}
-
-func (u *staffRepo) write(staffes []models.Staff) error {
-
-	body, err := json.Marshal(staffes)
-	if err != nil {
-		return err
-	}
-
-	err = os.WriteFile(u.fileName, body, os.ModePerm)
-	if err != nil {
-		return err
-	}
-	return nil
-}
+// func (u *staffRepo) Exists(req models.ExistsReq) bool {
+// 	staffes := []models.Staff{}
+// 	for _, s := range staffes {
+// 		if req.Phone == s.Phone {
+// 			return true
+// 		}
+// 	}
+// 	return false
+// }

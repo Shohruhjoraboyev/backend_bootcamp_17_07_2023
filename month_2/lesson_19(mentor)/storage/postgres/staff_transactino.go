@@ -1,18 +1,6 @@
 package postgres
 
-import (
-	"app/models"
-	"encoding/json"
-	"errors"
-	"fmt"
-	"log"
-	"os"
-	"strings"
-	"time"
-
-	"github.com/google/uuid"
-)
-
+/*
 type transactionRepo struct {
 	fileName string
 }
@@ -226,3 +214,4 @@ func (t *transactionRepo) GetTopStaffs(req models.TopWorkerRequest) (resp map[st
 	}
 	return result, nil
 }
+*/
