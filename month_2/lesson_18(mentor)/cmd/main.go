@@ -21,5 +21,5 @@ func main() {
 	h := handler.NewHandler(strg, log)
 
 	r := api.NewServer(h)
-	r.Run(":8080")
+	r.Run(":8000")
 }
