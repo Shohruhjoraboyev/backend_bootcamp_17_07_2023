@@ -120,7 +120,7 @@ func (c *saleRepo) GetAllSale(req *models.GetAllSalesRequest) (resp *models.GetA
 	sekect := `
 	SELECT "id", "client_name", "branch_id", "shop_assistant_id",
 	"cashier_id", "price", "payment_type", "status", "created_at", "updated_at"
-	FROM "sales" ORDER BY "created_at" DESC
+	FROM "sales"
 	`
 
 	if req.Client_name != "" {
@@ -142,7 +142,7 @@ func (c *saleRepo) GetAllSale(req *models.GetAllSalesRequest) (resp *models.GetA
 	params["limit"] = limit
 	params["offset"] = offset
 
-	query := sekect + filter + " LIMIT :limit OFFSET :offset"
+	query := sekect + filter + " ORDER BY created_at DESC LIMIT :limit OFFSET :offset"
 	q, pArr := helper.ReplaceQueryParams(query, params)
 
 	rows, err := c.db.Query(context.Background(), q, pArr...)

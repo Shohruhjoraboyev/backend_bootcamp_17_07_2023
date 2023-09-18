@@ -96,7 +96,7 @@ func (s *staffRepo) GetAllStaff(req *models.GetAllStaffRequest) (*models.GetAllS
 
 	query := `
 		SELECT "id", "branch_id", "tariff_id", "staff_type", "name", "balance", "created_at", "updated_at"
-		FROM "staffs" ORDER BY "created_at" DESC
+		FROM "staffs"
 	`
 	var staffs []models.Staff
 	var count int
@@ -119,7 +119,7 @@ func (s *staffRepo) GetAllStaff(req *models.GetAllStaffRequest) (*models.GetAllS
 	params["limit"] = limit
 	params["offset"] = offset
 
-	query = query + filter + " LIMIT :limit OFFSET :offset"
+	query = query + filter + " ORDER BY created_at DESC LIMIT :limit OFFSET :offset"
 
 	err := s.db.QueryRow(context.Background(), fmt.Sprintf("SELECT COUNT(*) FROM (%s) AS count_query", query), req.Type, "%"+req.Name+"%", req.BalanceFrom, req.BalanceTo).Scan(&count)
 	if err != nil {
