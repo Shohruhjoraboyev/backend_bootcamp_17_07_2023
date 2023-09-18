@@ -22,8 +22,8 @@ func (s *staffRepo) CreateStaff(req *models.CreateStaff) (string, error) {
 	id := uuid.NewString()
 
 	query := `
-		INSERT INTO "staffs" ("id", "branch_id", "tariff_id", "staff_type", "name" "balance", "created_at", "updated_at")
-		VALUES ($1, $2, $3, $4, $5, $6 NOW(), NOW())
+		INSERT INTO "staffs" ("id", "branch_id", "tariff_id", "staff_type", "name", "balance", "created_at", "updated_at")
+		VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
 		RETURNING "id"
 	`
 
