@@ -21,7 +21,7 @@ func NewStaffTarifRepo(db *pgxpool.Pool) *staffTarifRepo {
 	return &staffTarifRepo{db: db}
 }
 
-func (s *staffTarifRepo) CreateStaffTarif(req models.CreateStaffTarif) (string, error) {
+func (s *staffTarifRepo) CreateStaffTarif(req *models.CreateStaffTarif) (string, error) {
 	id := uuid.NewString()
 
 	query := `

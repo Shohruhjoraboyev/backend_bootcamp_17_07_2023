@@ -12,6 +12,7 @@ import (
 type store struct {
 	db       *pgxpool.Pool
 	branches *branchRepo
+	tariffs  *staffTarifRepo
 	// staffes     *staffRepo
 	// sales       *saleRepo
 	// transaction *transactionRepo
@@ -49,6 +50,14 @@ func (b *store) Branch() storage.BranchesI {
 	}
 	return b.branches
 }
+
+func (b *store) Tariff() storage.TariffsI {
+	if b.tariffs == nil {
+		b.tariffs = NewStaffTarifRepo(b.db)
+	}
+	return b.tariffs
+}
+
 func (s *store) Close() {
 	s.db.Close()
 }
