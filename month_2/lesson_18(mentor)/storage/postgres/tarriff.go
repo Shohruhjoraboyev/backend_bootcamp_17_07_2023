@@ -151,7 +151,7 @@ func (s *staffTarifRepo) UpdateStaffTarif(req *models.StaffTarif) (string, error
 	query := `
 		UPDATE "tariffs"
 		SET "name" = $1, "type" = $2, "amount_for_cash" = $3, "amount_for_card" = $4, "updated_at" = NOW()
-		WHERE "id" = $6
+		WHERE "id" = $5
 	`
 
 	result, err := s.db.Exec(context.Background(), query,
