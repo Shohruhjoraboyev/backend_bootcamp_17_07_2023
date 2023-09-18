@@ -14,7 +14,7 @@ type store struct {
 	branches *branchRepo
 	tariffs  *staffTarifRepo
 	staffes  *staffRepo
-	// sales       *saleRepo
+	sales    *saleRepo
 	// transaction *transactionRepo
 	// staffTarifs *staffTarifRepo
 }
@@ -69,9 +69,12 @@ func (s *store) Close() {
 	s.db.Close()
 }
 
-// func (s *store) Sales() storage.SalesI {
-// 	return s.sales
-// }
+func (s *store) Sales() storage.SalesI {
+	if s.sales == nil {
+		s.sales = NewSaleRepo(s.db)
+	}
+	return s.sales
+}
 
 // func (s *store) Transaction() storage.TransactionI {
 // 	return s.transaction

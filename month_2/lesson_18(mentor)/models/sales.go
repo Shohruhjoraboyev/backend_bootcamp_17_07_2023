@@ -8,7 +8,6 @@ type CreateSales struct {
 	Price             float64 `json:"price"`
 	Payment_Type      string  `json:"payment_type"` // card, cash
 	Status            string  `json:"status"`       // success, cancel
-	Created_at        string  `json:"created_at"`
 }
 
 type Sales struct {

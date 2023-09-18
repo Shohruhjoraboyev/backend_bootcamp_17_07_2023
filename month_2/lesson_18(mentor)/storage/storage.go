@@ -8,7 +8,7 @@ type StorageI interface {
 	Branch() BranchesI
 	Tariff() TariffsI
 	Staff() StaffesI
-	// Sales() SalesI
+	Sales() SalesI
 	// Transaction() TransactionI
 	// StaffTarif() StaffTarifsI
 	Close()
@@ -41,6 +41,17 @@ type StaffesI interface {
 	// Exists(models.ExistsReq) bool
 }
 
+type SalesI interface {
+	CreateSale(*models.CreateSales) (string, error)
+	UpdateSale(*models.Sales) (string, error)
+	GetSale(*models.IdRequest) (*models.Sales, error)
+	GetAllSale(*models.GetAllSalesRequest) (*models.GetAllSalesResponse, error)
+	DeleteSale(*models.IdRequest) (string, error)
+	// GetTopSaleBranch() (resp map[string]models.SaleTopBranch, err error)
+	// GetSaleCountBranch() (resp map[string]models.SaleCountSumBranch, err error)
+	// CancelSale(*models.IdRequest) (string, error)
+}
+
 // type TransactionI interface {
 // 	CreateTransaction(models.CreateTransaction) (string, error)
 // 	UpdateTransaction(models.Transaction) (string, error)
@@ -48,23 +59,4 @@ type StaffesI interface {
 // 	GetAllTransaction(models.GetAllTransactionRequest) (models.GetAllTransactionResponse, error)
 // 	DeleteTransaction(models.IdRequest) (string, error)
 // 	GetTopStaffs(models.TopWorkerRequest) (map[string]models.StaffTop, error)
-// }
-
-// type SalesI interface {
-// 	CreateSale(models.CreateSales) (string, error)
-// 	UpdateSale(models.Sales) (string, error)
-// 	GetSale(models.IdRequest) (models.Sales, error)
-// 	GetAllSale(models.GetAllSalesRequest) (models.GetAllSalesResponse, error)
-// 	DeleteSale(models.IdRequest) (string, error)
-// 	GetTopSaleBranch() (resp map[string]models.SaleTopBranch, err error)
-// 	GetSaleCountBranch() (resp map[string]models.SaleCountSumBranch, err error)
-// 	CancelSale(req models.IdRequest) (string, error)
-// }
-
-// type StaffTarifsI interface {
-// 	CreateStaffTarif(models.CreateStaffTarif) (string, error)
-// 	UpdateStaffTarif(req models.StaffTarif) (string, error)
-// 	GetStaffTarif(req models.IdRequest) (resp models.StaffTarif, err error)
-// 	GetAllStaffTarif(req models.GetAllStaffTarifRequest) (resp models.GetAllStaffTarif, err error)
-// 	DeleteStaffTarif(req models.IdRequest) (string, error)
 // }
