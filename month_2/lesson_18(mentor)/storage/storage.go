@@ -7,7 +7,7 @@ import (
 type StorageI interface {
 	Branch() BranchesI
 	Tariff() TariffsI
-	// Staff() StaffesI
+	Staff() StaffesI
 	// Sales() SalesI
 	// Transaction() TransactionI
 	// StaffTarif() StaffTarifsI
@@ -30,16 +30,16 @@ type TariffsI interface {
 	DeleteStaffTarif(*models.IdRequest) (string, error)
 }
 
-// type StaffesI interface {
-// 	CreateStaff(models.CreateStaff) (string, error)
-// 	UpdateStaff(models.Staff) (string, error)
-// 	GetStaff(models.IdRequest) (models.Staff, error)
-// 	GetByLogin(models.LoginRequest) (models.Staff, error)
-// 	GetAllStaff(models.GetAllStaffRequest) (models.GetAllStaff, error)
-// 	DeleteStaff(models.IdRequest) (string, error)
-// 	ChangeBalance(models.ChangeBalance) (string, error)
-// 	Exists(models.ExistsReq) bool
-// }
+type StaffesI interface {
+	CreateStaff(*models.CreateStaff) (string, error)
+	UpdateStaff(*models.Staff) (string, error)
+	GetStaff(*models.IdRequest) (*models.Staff, error)
+	// GetByLogin(models.LoginRequest) (models.Staff, error)
+	GetAllStaff(*models.GetAllStaffRequest) (*models.GetAllStaff, error)
+	DeleteStaff(*models.IdRequest) (string, error)
+	// ChangeBalance(models.ChangeBalance) (string, error)
+	// Exists(models.ExistsReq) bool
+}
 
 // type TransactionI interface {
 // 	CreateTransaction(models.CreateTransaction) (string, error)
