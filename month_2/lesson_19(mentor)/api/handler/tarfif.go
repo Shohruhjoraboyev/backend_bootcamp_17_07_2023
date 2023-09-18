@@ -10,6 +10,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// CreateTariff godoc
+// @Router       /tariff [POST]
+// @Summary      CREATES TARIFF
+// @Description  CREATES TARIFF BASED ON GIVEN DATA
+// @Tags         TARIFF
+// @Accept       json
+// @Produce      json
+// @Param        data  body      models.CreateStaffTarif  true  "tariff data"
+// @Success      200  {string}  string
+// @Failure      400  {object}  response.ErrorResp
+// @Failure      404  {object}  response.ErrorResp
+// @Failure      500  {object}  response.ErrorResp
 func (h *Handler) CreateStaffTarif(c *gin.Context) {
 	var tariff models.CreateStaffTarif
 	err := c.ShouldBind(&tariff)
