@@ -40,6 +40,18 @@ func (h *Handler) CreateStaffTarif(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "Tariff successfully created", "id": resp})
 }
 
+// CreateTariff godoc
+// @Router       /tariff/{id} [GET]
+// @Summary      GET BY ID
+// @Description  get tariff by ID
+// @Tags         TARIFF
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "Tariff ID" format(uuid)
+// @Success      200  {object}  models.StaffTarif
+// @Failure      400  {object}  response.ErrorResp
+// @Failure      404  {object}  response.ErrorResp
+// @Failure      500  {object}  response.ErrorResp
 func (h *Handler) GetStaffTarif(c *gin.Context) {
 	id := c.Param("id")
 
@@ -53,6 +65,20 @@ func (h *Handler) GetStaffTarif(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "success", "data": resp})
 }
 
+// ListTariffs godoc
+// @Router       /tariff [GET]
+// @Summary      GET  ALL BRANCHS
+// @Description  gets all tariff based on limit, page and search by name
+// @Tags         TARIFF
+// @Accept       json
+// @Produce      json
+// @Param   limit         query     int        false  "limit"          minimum(1)     default(10)
+// @Param   page         query     int        false  "page"          minimum(1)     default(1)
+// @Param   search         query     string        false  "search"
+// @Success      200  {object}  models.GetAllStaffTarif
+// @Failure      400  {object}  response.ErrorResp
+// @Failure      404  {object}  response.ErrorResp
+// @Failure      500  {object}  response.ErrorResp
 func (h *Handler) GetAllStaffTarif(c *gin.Context) {
 	h.log.Info("request GetAllTariff")
 	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
@@ -82,6 +108,19 @@ func (h *Handler) GetAllStaffTarif(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
+// UpdateTariff godoc
+// @Router       /tariff/{id} [PUT]
+// @Summary      UPDATE TARIFF BY ID
+// @Description  UPDATES TARIFF BASED ON GIVEN DATA AND ID
+// @Tags         TARIFF
+// @Accept       json
+// @Produce      json
+// @Param        id    path     string  true  "id of tariff" format(uuid)
+// @Param        data  body      models.CreateStaffTarif  true  "tariff data"
+// @Success      200  {string}  string
+// @Failure      400  {object}  response.ErrorResp
+// @Failure      404  {object}  response.ErrorResp
+// @Failure      500  {object}  response.ErrorResp
 func (h *Handler) UpdateStaffTarif(c *gin.Context) {
 	var tariff models.StaffTarif
 	err := c.ShouldBind(&tariff)
@@ -102,6 +141,18 @@ func (h *Handler) UpdateStaffTarif(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Tariff successfully updated", "id": resp})
 }
 
+// DeleteTariff godoc
+// @Router       /tariff/{id} [DELETE]
+// @Summary      DELETE TARIFF BY ID
+// @Description  DELETES TARIFF BASED ON ID
+// @Tags         TARIFF
+// @Accept       json
+// @Produce      json
+// @Param        id    path     string  true  "id of tariff" format(uuid)
+// @Success      200  {string}  string
+// @Failure      400  {object}  response.ErrorResp
+// @Failure      404  {object}  response.ErrorResp
+// @Failure      500  {object}  response.ErrorResp
 func (h *Handler) DeleteStaffTarif(c *gin.Context) {
 	id := c.Param("id")
 
