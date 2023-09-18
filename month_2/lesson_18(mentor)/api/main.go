@@ -27,5 +27,11 @@ func NewServer(h *handler.Handler) *gin.Engine {
 	r.GET("/staff", h.GetAllStaff)
 	r.PUT("/staff/:id", h.UpdateStaff)
 	r.DELETE("/staff/:id", h.DeleteStaff)
+
+	r.POST("/sale", h.CreateSale)
+	r.GET("/sale/:id", h.GetSale)
+	r.GET("/sale", h.GetAllSale)
+	r.PUT("/sale/:id", h.UpdateSale)
+	r.DELETE("/sale/:id", h.DeleteSale)
 	return r
 }

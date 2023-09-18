@@ -4,6 +4,8 @@ import (
 	"app/models"
 	"app/pkg/helper"
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -22,45 +24,81 @@ func NewSaleRepo(db *pgxpool.Pool) *saleRepo {
 func (c *saleRepo) CreateSale(req *models.CreateSales) (string, error) {
 	id := uuid.NewString()
 
-	query := `	
-	INSERT INTO "sales" 
-	("id", "client_name", "branch_id", "shop_assistant_id",
-	"cashier_id", "price", "payment_type", "status", "created_at")
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
-	`
-	_, err := c.db.Exec(context.Background(),
-		query,
-		id,
-		req.Client_name,
-		req.Branch_id,
-		req.Shop_assistant_id,
-		req.Cashier_id,
-		req.Price,
-		req.Payment_Type,
-		req.Status,
-	)
+	query := `
+        INSERT INTO "sales" 
+        ("id", "client_name", "branch_id", "shop_assistant_id",
+        "cashier_id", "price", "payment_type", "created_at")
+        VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
+    `
+
+	var err error
+	var insertedID string
+
+	if req.Cashier_id != "" && req.Shop_assistant_id != "" {
+		// Both cashier_id and shop_assistant_id have values
+		_, err = c.db.Exec(context.Background(),
+			query,
+			id,
+			req.Client_name,
+			req.Branch_id,
+			req.Shop_assistant_id,
+			req.Cashier_id,
+			req.Price,
+			req.Payment_Type,
+		)
+		insertedID = id
+	} else if req.Cashier_id != "" {
+		// Only cashier_id has a value
+		_, err = c.db.Exec(context.Background(),
+			query,
+			id,
+			req.Client_name,
+			req.Branch_id,
+			nil,
+			req.Cashier_id,
+			req.Price,
+			req.Payment_Type,
+		)
+		insertedID = req.Cashier_id
+	} else if req.Shop_assistant_id != "" {
+		// Only shop_assistant_id has a value
+		_, err = c.db.Exec(context.Background(),
+			query,
+			id,
+			req.Client_name,
+			req.Branch_id,
+			req.Shop_assistant_id,
+			nil,
+			req.Price,
+			req.Payment_Type,
+		)
+		insertedID = req.Shop_assistant_id
+	} else {
+		return "", errors.New("either cashier_id or shop_assistant_id should be provided")
+	}
 
 	if err != nil {
 		return "", fmt.Errorf("failed to create sale: %w", err)
 	}
 
-	return id, nil
+	return insertedID, nil
 }
 
 func (c *saleRepo) GetSale(req *models.IdRequest) (resp *models.Sales, err error) {
 	query := `
-	SELECT "id", "client_name", "branch_id", "shop_assistant_id",
-	"cashier_id", "price", "payment_type", "status", "created_at", "updated_at"
-	FROM "sales" WHERE "id" = $1
-	`
-
+    SELECT "id", "client_name", "branch_id", "shop_assistant_id",
+    "cashier_id", "price", "payment_type", "status", "created_at", "updated_at"
+    FROM "sales" WHERE "id" = $1
+    `
+	var cashier_id sql.NullString
+	var shop_assistant_id sql.NullString
 	sale := models.Sales{}
 	err = c.db.QueryRow(context.Background(), query, req.Id).Scan(
 		&sale.Id,
 		&sale.Client_name,
 		&sale.Branch_id,
-		&sale.Shop_assistant_id,
-		&sale.Cashier_id,
+		&shop_assistant_id,
+		&cashier_id,
 		&sale.Price,
 		&sale.Payment_Type,
 		&sale.Status,
@@ -74,54 +112,29 @@ func (c *saleRepo) GetSale(req *models.IdRequest) (resp *models.Sales, err error
 		return nil, fmt.Errorf("failed to get sale: %w", err)
 	}
 
+	// Check if the fields are null and set them to empty strings if necessary
+	if cashier_id.Valid {
+		sale.Cashier_id = cashier_id.String
+	}
+	if shop_assistant_id.Valid {
+		sale.Shop_assistant_id = shop_assistant_id.String
+	}
+
 	return &sale, nil
 }
 
-func (c *saleRepo) UpdateSale(req *models.Sales) (string, error) {
-	query := `
-	UPDATE "sales"  SET  
-	"client_name" = $1,
-	"branch_id" = $2, 
-	"shop_assistant_id" = $3,
-	"cashier_id" = $4, 
-	"price" = $5, 
-	"payment_type" = $6, 
-	"status" = $7, 
-	"updated_at" = NOW()
-	WHERE "id" = $8
-	RETURNING "id"
-	`
-
-	result, err := c.db.Exec(context.Background(), query,
-		req.Client_name,
-		req.Branch_id,
-		req.Shop_assistant_id,
-		req.Cashier_id,
-		req.Price,
-		req.Payment_Type,
-		req.Status,
-		req.Id,
-	)
-	if err != nil {
-		return "", fmt.Errorf("failed to update sale: %w", err)
-	}
-
-	if result.RowsAffected() == 0 {
-		return "", fmt.Errorf("sale with ID %s not found", req.Id)
-	}
-
-	return req.Id, nil
-}
-
-func (c *saleRepo) GetAllSale(req *models.GetAllSalesRequest) (resp *models.GetAllSalesResponse, err error) {
+func (c *saleRepo) GetAllSale(req *models.GetAllSalesRequest) (*models.GetAllSalesResponse, error) {
 	params := make(map[string]interface{})
 	filter := ""
 
-	sekect := `
-	SELECT "id", "client_name", "branch_id", "shop_assistant_id",
-	"cashier_id", "price", "payment_type", "status", "created_at", "updated_at"
-	FROM "sales"
-	`
+	var cashier_id sql.NullString
+	var shop_assistant_id sql.NullString
+
+	selectQuery := `
+    SELECT "id", "client_name", "branch_id", "shop_assistant_id",
+    "cashier_id", "price", "payment_type", "status", "created_at", "updated_at"
+    FROM "sales"
+    `
 
 	if req.Client_name != "" {
 		filter += ` WHERE "client_name" ILIKE '%' || :search || '%' `
@@ -142,7 +155,7 @@ func (c *saleRepo) GetAllSale(req *models.GetAllSalesRequest) (resp *models.GetA
 	params["limit"] = limit
 	params["offset"] = offset
 
-	query := sekect + filter + " ORDER BY created_at DESC LIMIT :limit OFFSET :offset"
+	query := selectQuery + filter + " ORDER BY created_at DESC LIMIT :limit OFFSET :offset"
 	q, pArr := helper.ReplaceQueryParams(query, params)
 
 	rows, err := c.db.Query(context.Background(), q, pArr...)
@@ -151,7 +164,7 @@ func (c *saleRepo) GetAllSale(req *models.GetAllSalesRequest) (resp *models.GetA
 	}
 	defer rows.Close()
 
-	resp = &models.GetAllSalesResponse{}
+	resp := &models.GetAllSalesResponse{}
 	count := 0
 	for rows.Next() {
 		var sale models.Sales
@@ -160,8 +173,8 @@ func (c *saleRepo) GetAllSale(req *models.GetAllSalesRequest) (resp *models.GetA
 			&sale.Id,
 			&sale.Client_name,
 			&sale.Branch_id,
-			&sale.Shop_assistant_id,
-			&sale.Cashier_id,
+			&shop_assistant_id,
+			&cashier_id,
 			&sale.Price,
 			&sale.Payment_Type,
 			&sale.Status,
@@ -172,6 +185,14 @@ func (c *saleRepo) GetAllSale(req *models.GetAllSalesRequest) (resp *models.GetA
 			return nil, fmt.Errorf("failed to scan row: %w", err)
 		}
 
+		// Check if the fields are null and set them to empty strings if necessary
+		if cashier_id.Valid {
+			sale.Cashier_id = cashier_id.String
+		}
+		if shop_assistant_id.Valid {
+			sale.Shop_assistant_id = shop_assistant_id.String
+		}
+
 		resp.Sales = append(resp.Sales, sale)
 	}
 
@@ -179,39 +200,104 @@ func (c *saleRepo) GetAllSale(req *models.GetAllSalesRequest) (resp *models.GetA
 	return resp, nil
 }
 
+func (c *saleRepo) UpdateSale(req *models.Sales) (string, error) {
+	query := `
+	UPDATE "sales" SET
+	"client_name" = $1,
+	"branch_id" = $2,
+	"shop_assistant_id" = $3,
+	"cashier_id" = $4,
+	"price" = $5,
+	"payment_type" = $6,
+	"updated_at" = NOW()
+	WHERE "id" = $7
+	RETURNING "id"
+	`
+
+	var updatedID string
+	err := error(nil)
+
+	if req.Shop_assistant_id != "" && req.Cashier_id != "" {
+		// update both shop_assistant_id and cashier_id,
+		err = c.db.QueryRow(
+			context.Background(),
+			query,
+			req.Client_name,
+			req.Branch_id,
+			req.Shop_assistant_id,
+			req.Cashier_id,
+			req.Price,
+			req.Payment_Type,
+			req.Id,
+		).Scan(&updatedID)
+	} else if req.Shop_assistant_id == "" {
+		// shop_assistant_id is empty, update only cashier_id
+		err = c.db.QueryRow(
+			context.Background(),
+			query,
+			req.Client_name,
+			req.Branch_id,
+			nil,
+			req.Cashier_id,
+			req.Price,
+			req.Payment_Type,
+			req.Id,
+		).Scan(&updatedID)
+	} else if req.Cashier_id == "" {
+		// cashier_id is empty, update only shop_assistant_id
+		err = c.db.QueryRow(
+			context.Background(),
+			query,
+			req.Client_name,
+			req.Branch_id,
+			req.Shop_assistant_id,
+			nil,
+			req.Price,
+			req.Payment_Type,
+			req.Id,
+		).Scan(&updatedID)
+	}
+
+	if err != nil {
+		return "", fmt.Errorf("failed to update sale: %w", err)
+	}
+
+	return updatedID, nil
+}
+
 func (c *saleRepo) DeleteSale(req *models.IdRequest) (resp string, err error) {
 	query := `DELETE FROM "sales" WHERE "id" = $1`
 
 	resul, err := c.db.Exec(context.Background(), query, req.Id)
 	if err != nil {
-		return "", fmt.Errorf("failed to delete staff tariff: %w", err)
+		return "", fmt.Errorf("failed to delete sale: %w", err)
 	}
 
 	if resul.RowsAffected() == 0 {
-		return "", fmt.Errorf("staff tariff with ID %s not found", req.Id)
+		return "", fmt.Errorf("sale with ID %s not found", req.Id)
 	}
 
 	return req.Id, nil
 }
 
-func (s *saleRepo) CancelSale(req *models.IdRequest) (string, error) {
-	// sales, err := s.read()
-	// if err != nil {
-	// 	return "", err
-	// }
+// func (s *saleRepo) CancelSale(req *models.IdRequest) (string, error) {
+// 	// sales, err := s.read()
+// 	// if err != nil {
+// 	// 	return "", err
+// 	// }
 
-	// for i, v := range sales {
-	// 	if v.Id == req.Id {
-	// 		sales[i].Status = 2
-	// 	}
-	// }
+// 	// for i, v := range sales {
+// 	// 	if v.Id == req.Id {
+// 	// 		sales[i].Status = 2
+// 	// 	}
+// 	// }
 
-	// err = s.write(sales)
-	// if err != nil {
-	// 	return "", err
-	// }
-	return "sale cancelled successfully", nil
-}
+// 	// err = s.write(sales)
+// 	// if err != nil {
+// 	// 	return "", err
+// 	// }
+// 	return "sale cancelled successfully", nil
+// }
 
 // func (u *saleRepo) GetTopSaleBranch() (resp map[string]models.SaleTopBranch, err error) {
 // 	sales, err := u.read()

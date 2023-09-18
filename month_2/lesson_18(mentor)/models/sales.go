@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type CreateSales struct {
 	Client_name       string  `json:"client_name"`
 	Branch_id         string  `json:"branch_id"`
@@ -11,16 +13,16 @@ type CreateSales struct {
 }
 
 type Sales struct {
-	Id                string  `json:"id"`
-	Client_name       string  `json:"client_name"`
-	Branch_id         string  `json:"branch_id"`
-	Shop_assistant_id string  `json:"shop_assistant_id"`
-	Cashier_id        string  `json:"cashier_id"`
-	Price             float64 `json:"price"`
-	Payment_Type      string  `json:"payment_type"` // card, cash
-	Status            string  `json:"status"`       // success, cancel
-	Created_at        string  `json:"created_at"`
-	Updated_at        string  `json:"updated_at"`
+	Id                string    `json:"id"`
+	Client_name       string    `json:"client_name"`
+	Branch_id         string    `json:"branch_id"`
+	Shop_assistant_id string    `json:"shop_assistant_id"`
+	Cashier_id        string    `json:"cashier_id"`
+	Price             float64   `json:"price"`
+	Payment_Type      string    `json:"payment_type"` // card, cash
+	Status            string    `json:"status"`       // success, cancel
+	Created_at        time.Time `json:"created_at"`
+	Updated_at        time.Time `json:"updated_at"`
 }
 
 type GetAllSalesRequest struct {
