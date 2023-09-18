@@ -109,7 +109,7 @@ func (h *Handler) GetAllStaff(c *gin.Context) {
 }
 
 // UpdateStaffs godoc
-// @Router       /branch/{id} [PUT]
+// @Router       /staff/{id} [PUT]
 // @Summary      UPDATE STAFF BY ID
 // @Description  UPDATES STAFF BASED ON GIVEN DATA AND ID
 // @Tags         STAFF
