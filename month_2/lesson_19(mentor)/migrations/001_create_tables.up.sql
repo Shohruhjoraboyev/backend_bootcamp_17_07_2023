@@ -1,6 +1,11 @@
-CREATE TYPE "staff_type" AS ENUM (
+CREATE TYPE "tariff_type" AS ENUM (
   'fixed',
   'percent'
+);
+
+CREATE TYPE "staff_type" AS ENUM (
+  'cashier',
+  'shop_assistant'
 );
 
 CREATE TYPE "payment_type" AS ENUM (
@@ -36,7 +41,7 @@ CREATE TABLE "branches" (
 CREATE TABLE "tariffs" (
   "id" uuid PRIMARY KEY,
   "name" varchar NOT NULL,
-  "type" staff_type NOT NULL,
+  "type" tariff_type NOT NULL,
   "amount_for_cash" NUMERIC(12, 2),
   "amount_for_card" NUMERIC(12, 2),
   "created_at" timestamptz NOT NULL DEFAULT (now()),
@@ -45,6 +50,7 @@ CREATE TABLE "tariffs" (
 
 CREATE TABLE "staffs" (
   "id" uuid PRIMARY KEY,
+  "name" varchar not null,
   "branch_id" uuid NOT NULL REFERENCES "branches"("id"),
   "tariff_id" uuid NOT NULL REFERENCES "tariffs"("id"),
   "staff_type" staff_type NOT NULL,
@@ -57,7 +63,7 @@ CREATE TABLE "sales" (
   "id" uuid PRIMARY KEY,
   "client_name" varchar NOT NULL,
   "branch_id" uuid not null REFERENCES "branches"("id"),
-  "shop_assistant_id" uuid not null REFERENCES "staffs"("id"),
+  "shop_assistant_id" uuid REFERENCES "staffs"("id"),
   "cashier_id" uuid not null REFERENCES "staffs"("id"),
   "price" NUMERIC(12, 2),
   "payment_type" payment_type NOT NULL,

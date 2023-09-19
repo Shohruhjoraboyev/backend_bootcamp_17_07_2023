@@ -16,5 +16,5 @@ DROP TYPE IF EXISTS "status_type";
 
 DROP TYPE IF EXISTS "payment_type";
 
-DROP TYPE IF EXISTS "staff_type";
+DROP TYPE IF EXISTS "tariff_type";
 
