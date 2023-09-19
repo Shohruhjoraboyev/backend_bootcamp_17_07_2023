@@ -10,12 +10,12 @@ import (
 )
 
 type store struct {
-	db       *pgxpool.Pool
-	branches *branchRepo
-	tariffs  *staffTarifRepo
-	staffes  *staffRepo
-	// sales       *saleRepo
-	// transaction *transactionRepo
+	db          *pgxpool.Pool
+	branches    *branchRepo
+	tariffs     *staffTarifRepo
+	staffes     *staffRepo
+	sales       *saleRepo
+	transaction *transactionRepo
 	// staffTarifs *staffTarifRepo
 }
 
@@ -69,14 +69,16 @@ func (s *store) Close() {
 	s.db.Close()
 }
 
-// func (s *store) Sales() storage.SalesI {
-// 	return s.sales
-// }
+func (s *store) Sales() storage.SalesI {
+	if s.sales == nil {
+		s.sales = NewSaleRepo(s.db)
+	}
+	return s.sales
+}
 
-// func (s *store) Transaction() storage.TransactionI {
-// 	return s.transaction
-// }
-
-// func (s *store) StaffTarif() storage.StaffTarifsI {
-// 	return s.staffTarifs
-// }
+func (s *store) Transaction() storage.TransactionI {
+	if s.transaction == nil {
+		s.transaction = NewTransactionRepo(s.db)
+	}
+	return s.transaction
+}

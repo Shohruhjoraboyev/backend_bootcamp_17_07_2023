@@ -1,311 +1,257 @@
 package handler
 
-/*
-func (h *handler) CreateSale(Client_name string, Branch_id, Shop_asissent_id, Cashier_id string, Price float64, Payment_Type int) {
-	id, err := h.strg.Sales().CreateSale(models.CreateSales{
-		Client_name:      Client_name,
-		Branch_id:        Branch_id,
-		Shop_asissent_id: Shop_asissent_id,
-		Cashier_id:       Cashier_id,
-		Price:            Price,
-		Payment_Type:     Payment_Type,
-	})
+import (
+	"app/models"
+	"app/pkg/logger"
+	"fmt"
+	"net/http"
+	"strconv"
+
+	"github.com/gin-gonic/gin"
+)
+
+func (h *Handler) CreateSale(c *gin.Context) {
+	var sale models.CreateSales
+	err := c.ShouldBind(&sale)
 	if err != nil {
-		fmt.Println("error from CreateSale:", err.Error())
-		return
-	}
-	// ============================================
-	amount := 0.0
-	if Shop_asissent_id != "" {
-		shopAssistant, err := h.strg.Staff().GetStaff(models.IdRequest{Id: Shop_asissent_id})
-		if err == nil {
-			tarif, err := h.strg.StaffTarif().GetStaffTarif(models.IdRequest{Id: shopAssistant.TariffId})
-			if err != nil {
-				fmt.Println("error while get staff tarif")
-				fmt.Println(err)
-				return
-			}
-
-			if tarif.Type == config.Fixed {
-				if Payment_Type == 2 {
-					amount = tarif.AmountForCash
-				} else {
-					amount = tarif.AmountForCard
-				}
-			} else if tarif.Type == config.Percent {
-				if Payment_Type == 2 {
-					amount = Price * tarif.AmountForCash / 100
-				} else {
-					amount = Price * tarif.AmountForCard / 100
-				}
-			}
-
-			// shop assitant uchun transaction
-			_, err = h.strg.Transaction().CreateTransaction(models.CreateTransaction{
-				Sale_id:     id,
-				Staff_id:    Shop_asissent_id,
-				Type:        "shop_assistant",
-				Source_type: "sales",
-				Amount:      int(Price),
-				Text:        fmt.Sprintf("transcatiion successfull, summa: %.2f", Price),
-			})
-			if err != nil {
-				fmt.Println("Error while create transaction")
-				return
-			}
-
-			_, err = h.strg.Staff().ChangeBalance(models.ChangeBalance{Id: shopAssistant.Id, Balance: amount})
-			if err != nil {
-				fmt.Println("Error while change balance")
-				return
-			}
-		} else {
-			fmt.Println("shopAssistant not found")
-		}
-
-		cashier, err := h.strg.Staff().GetStaff(models.IdRequest{Id: Cashier_id})
-		if err == nil {
-			tarif, err := h.strg.StaffTarif().GetStaffTarif(models.IdRequest{Id: cashier.TariffId})
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
-
-			if tarif.Type == config.Fixed {
-				if Payment_Type == 2 {
-					amount = tarif.AmountForCash
-				} else {
-					amount = tarif.AmountForCard
-				}
-			} else if tarif.Type == config.Percent {
-				if Payment_Type == 2 {
-					amount = Price * tarif.AmountForCash / 100
-				} else {
-					amount = Price * tarif.AmountForCard / 100
-				}
-			}
-		}
-
-		// cashier uchun transaction create qilish
-		_, err = h.strg.Transaction().CreateTransaction(models.CreateTransaction{
-			Sale_id:     id,
-			Staff_id:    Cashier_id,
-			Type:        "cashier",
-			Source_type: "sales",
-			Amount:      int(Price),
-			Text:        fmt.Sprintf("transcatiion successfull, summa: %.2f", Price),
-		})
-		if err != nil {
-			fmt.Println("Error while create transaction")
-			return
-		}
-		// cashier change balance
-		_, err = h.strg.Staff().ChangeBalance(models.ChangeBalance{Id: cashier.Id, Balance: amount})
-		if err != nil {
-			fmt.Println("Error while change balance")
-			return
-		}
-	} else {
-		fmt.Println("error while get cashier data")
+		h.log.Error("error while binding:", logger.Error(err))
+		c.JSON(http.StatusBadRequest, "invalid body")
 		return
 	}
 
-	fmt.Println("created new sale with id:", id)
+	resp, err := h.storage.Sales().CreateSale(&sale)
+	if err != nil {
+		fmt.Println("error sale Create:", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusCreated, gin.H{"message": "created", "id": resp})
 }
 
-func (h *handler) GetSale(id string) {
-	resp, err := h.strg.Sales().GetSale(models.IdRequest{Id: id})
+func (h *Handler) GetSale(c *gin.Context) {
+	id := c.Param("id")
+
+	resp, err := h.storage.Sales().GetSale(&models.IdRequest{Id: id})
 	if err != nil {
-		fmt.Println("error from GetSale:", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		fmt.Println("error sale get:", err.Error())
 		return
 	}
-	fmt.Println(resp)
+
+	c.JSON(http.StatusOK, gin.H{"message": "success", "data": resp})
 }
 
-func (h *handler) GetAllSale(page, limit int, clientName string) {
-	if page < 1 {
-		page = h.cfg.Page
+func (h *Handler) GetAllSale(c *gin.Context) {
+	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
+	if err != nil {
+		h.log.Error("error get page:", logger.Error(err))
+		c.JSON(http.StatusBadRequest, "invalid page param")
+		return
 	}
-	if limit < 1 {
-		limit = h.cfg.Limit
+	limit, err := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	if err != nil {
+		h.log.Error("error get limit:", logger.Error(err))
+		c.JSON(http.StatusBadRequest, "invalid page param")
+		return
 	}
 
-	resp, err := h.strg.Sales().GetAllSale(models.GetAllSalesRequest{
+	resp, err := h.storage.Sales().GetAllSale(&models.GetAllSalesRequest{
 		Page:        page,
 		Limit:       limit,
-		Client_name: clientName,
+		Client_name: c.Query("search"),
 	})
-
 	if err != nil {
-		fmt.Println("error from GetAllSale:", err.Error())
+		h.log.Error("error sale getall:", logger.Error(err))
+		c.JSON(http.StatusInternalServerError, "internal server error")
 		return
 	}
-	fmt.Println(resp)
+	c.JSON(http.StatusOK, resp)
 }
 
-func (h *handler) DeleteSale(id string) {
-	resp, err := h.strg.Sales().DeleteSale(models.IdRequest{
-		Id: id,
-	})
-
+func (h *Handler) UpdateSale(c *gin.Context) {
+	var sale models.Sales
+	err := c.ShouldBind(&sale)
 	if err != nil {
-		fmt.Println("error from DeleteSales: ", err.Error())
+		h.log.Error("error while binding:", logger.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 		return
 	}
-	fmt.Println("deleted staff with id: ", resp)
+
+	sale.Id = c.Param("id")
+	resp, err := h.storage.Sales().UpdateSale(&sale)
+	if err != nil {
+		h.log.Error("error sale update:", logger.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "sale successfully updated", "id": resp})
 }
 
-func (h *handler) GetTopSaleBranch() {
-	resp, err := h.strg.Sales().GetTopSaleBranch()
+func (h *Handler) DeleteSale(c *gin.Context) {
+	id := c.Param("id")
+
+	resp, err := h.storage.Sales().DeleteSale(&models.IdRequest{Id: id})
 	if err != nil {
-		fmt.Println(err)
+		h.log.Error("error deleting sale:", logger.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	branches, _ := h.strg.Branch().GetAllBranch(models.GetAllBranchRequest{})
-	branchName := make(map[string]string)
 
-	for _, v := range branches.Branches {
-		branchName[v.Id] = v.Name
-	}
-	for _, structs := range resp {
-		fmt.Printf("%s - %s - %f\n", structs.Day, branchName[structs.BranchId], structs.SalesAmount)
-	}
+	c.JSON(http.StatusOK, gin.H{"message": "tariff successfully deleted", "id": resp})
 }
 
-func (h *handler) CancelSale(id string) {
-	resp, err := h.strg.Sales().CancelSale(models.IdRequest{Id: id})
-	if err != nil {
-		fmt.Println("error from CreateSale:", err.Error())
-		return
-	}
+// func (h *Handler) GetTopSaleBranch() {
+// 	resp, err := h.strg.Sales().GetTopSaleBranch()
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		return
+// 	}
+// 	branches, _ := h.strg.Branch().GetAllBranch(models.GetAllBranchRequest{})
+// 	branchName := make(map[string]string)
 
-	// shop assistant change balance
-	sale, err := h.strg.Sales().GetSale(models.IdRequest{Id: id})
-	if err != nil {
-		fmt.Println("error while read data", err)
-		return
-	}
-	shopAsistant, err := h.strg.Staff().GetStaff(models.IdRequest{Id: sale.Shop_asissent_id})
-	if err == nil {
-		amount := 0.0
-		tarif, err := h.strg.StaffTarif().GetStaffTarif(models.IdRequest{Id: shopAsistant.TariffId})
-		if err != nil {
-			fmt.Println("error while get staff tarif")
-			fmt.Println(err)
-			return
-		}
+// 	for _, v := range branches.Branches {
+// 		branchName[v.Id] = v.Name
+// 	}
+// 	for _, structs := range resp {
+// 		fmt.Printf("%s - %s - %f\n", structs.Day, branchName[structs.BranchId], structs.SalesAmount)
+// 	}
+// }
 
-		if tarif.Type == config.Fixed {
-			if sale.Payment_Type == 2 {
-				amount = tarif.AmountForCash
-			} else {
-				amount = tarif.AmountForCard
-			}
-		} else if tarif.Type == config.Percent {
-			if sale.Payment_Type == 2 {
-				amount = sale.Price * tarif.AmountForCash / 100
-			} else {
-				amount = sale.Price * tarif.AmountForCard / 100
-			}
-		}
+// func (h *Handler) CancelSale(id string) {
+// 	resp, err := h.strg.Sales().CancelSale(models.IdRequest{Id: id})
+// 	if err != nil {
+// 		fmt.Println("error from CreateSale:", err.Error())
+// 		return
+// 	}
 
-		// shop assitant uchun transaction
-		_, err = h.strg.Transaction().CreateTransaction(models.CreateTransaction{
-			Sale_id:     resp,
-			Staff_id:    shopAsistant.Id,
-			Type:        "shop_assistant",
-			Source_type: "sales",
-			Amount:      int(sale.Price),
-			Text:        fmt.Sprintf("transcatiion cancelled, summa: %.2f", sale.Price),
-		})
-		if err != nil {
-			fmt.Println("Error while create transaction")
-			return
-		}
+// 	// shop assistant change balance
+// 	sale, err := h.strg.Sales().GetSale(models.IdRequest{Id: id})
+// 	if err != nil {
+// 		fmt.Println("error while read data", err)
+// 		return
+// 	}
+// 	shopAsistant, err := h.strg.Staff().GetStaff(models.IdRequest{Id: sale.Shop_asissent_id})
+// 	if err == nil {
+// 		amount := 0.0
+// 		tarif, err := h.strg.StaffTarif().GetStaffTarif(models.IdRequest{Id: shopAsistant.TariffId})
+// 		if err != nil {
+// 			fmt.Println("error while get staff tarif")
+// 			fmt.Println(err)
+// 			return
+// 		}
 
-		_, err = h.strg.Staff().ChangeBalance(models.ChangeBalance{Id: shopAsistant.Id, Balance: -amount})
-		if err != nil {
-			fmt.Println("Error while change balance")
-			return
-		}
-	} else {
-		fmt.Println("shopAssistant not found")
-	}
+// 		if tarif.Type == config.Fixed {
+// 			if sale.Payment_Type == 2 {
+// 				amount = tarif.AmountForCash
+// 			} else {
+// 				amount = tarif.AmountForCard
+// 			}
+// 		} else if tarif.Type == config.Percent {
+// 			if sale.Payment_Type == 2 {
+// 				amount = sale.Price * tarif.AmountForCash / 100
+// 			} else {
+// 				amount = sale.Price * tarif.AmountForCard / 100
+// 			}
+// 		}
 
-	cashier, err := h.strg.Staff().GetStaff(models.IdRequest{Id: sale.Cashier_id})
-	if err == nil {
-		amount := 0.0
-		tarif, err := h.strg.StaffTarif().GetStaffTarif(models.IdRequest{Id: cashier.TariffId})
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
+// 		// shop assitant uchun transaction
+// 		_, err = h.strg.Transaction().CreateTransaction(models.CreateTransaction{
+// 			Sale_id:     resp,
+// 			Staff_id:    shopAsistant.Id,
+// 			Type:        "shop_assistant",
+// 			Source_type: "sales",
+// 			Amount:      int(sale.Price),
+// 			Text:        fmt.Sprintf("transcatiion cancelled, summa: %.2f", sale.Price),
+// 		})
+// 		if err != nil {
+// 			fmt.Println("Error while create transaction")
+// 			return
+// 		}
 
-		if tarif.Type == config.Fixed {
-			if sale.Payment_Type == 2 {
-				amount = tarif.AmountForCash
-			} else {
-				amount = tarif.AmountForCard
-			}
-		} else if tarif.Type == config.Percent {
-			if sale.Payment_Type == 2 {
-				amount = sale.Price * tarif.AmountForCash / 100
-			} else {
-				amount = sale.Price * tarif.AmountForCard / 100
-			}
-		}
+// 		_, err = h.strg.Staff().ChangeBalance(models.ChangeBalance{Id: shopAsistant.Id, Balance: -amount})
+// 		if err != nil {
+// 			fmt.Println("Error while change balance")
+// 			return
+// 		}
+// 	} else {
+// 		fmt.Println("shopAssistant not found")
+// 	}
 
-		// cashier uchun transaction create qilish
-		_, err = h.strg.Transaction().CreateTransaction(models.CreateTransaction{
-			Sale_id:     resp,
-			Staff_id:    cashier.Id,
-			Type:        "cashier",
-			Source_type: "sales",
-			Amount:      int(sale.Price),
-			Text:        fmt.Sprintf("transcatiion cancelled, summa: %.2f", sale.Price),
-		})
-		if err != nil {
-			fmt.Println("Error while create transaction")
-			return
-		}
-		// cashier change balance
-		_, err = h.strg.Staff().ChangeBalance(models.ChangeBalance{Id: cashier.Id, Balance: -amount})
-		if err != nil {
-			fmt.Println("Error while change balance")
-			return
-		}
-	} else {
-		fmt.Println("error while get cashier data")
-		return
-	}
+// 	cashier, err := h.strg.Staff().GetStaff(models.IdRequest{Id: sale.Cashier_id})
+// 	if err == nil {
+// 		amount := 0.0
+// 		tarif, err := h.strg.StaffTarif().GetStaffTarif(models.IdRequest{Id: cashier.TariffId})
+// 		if err != nil {
+// 			fmt.Println(err)
+// 			return
+// 		}
 
-	fmt.Println(resp)
-}
-func (h *handler) GetSaleCountBranch() {
-	resp, err := h.strg.Sales().GetSaleCountBranch()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	branches, _ := h.strg.Branch().GetAllBranch(models.GetAllBranchRequest{})
-	branchName := make(map[string]string)
+// 		if tarif.Type == config.Fixed {
+// 			if sale.Payment_Type == 2 {
+// 				amount = tarif.AmountForCash
+// 			} else {
+// 				amount = tarif.AmountForCard
+// 			}
+// 		} else if tarif.Type == config.Percent {
+// 			if sale.Payment_Type == 2 {
+// 				amount = sale.Price * tarif.AmountForCash / 100
+// 			} else {
+// 				amount = sale.Price * tarif.AmountForCard / 100
+// 			}
+// 		}
 
-	for _, v := range branches.Branches {
-		branchName[v.Id] = v.Name
-	}
-	var sortedSlice []models.SaleCountSumBranch
+// 		// cashier uchun transaction create qilish
+// 		_, err = h.strg.Transaction().CreateTransaction(models.CreateTransaction{
+// 			Sale_id:     resp,
+// 			Staff_id:    cashier.Id,
+// 			Type:        "cashier",
+// 			Source_type: "sales",
+// 			Amount:      int(sale.Price),
+// 			Text:        fmt.Sprintf("transcatiion cancelled, summa: %.2f", sale.Price),
+// 		})
+// 		if err != nil {
+// 			fmt.Println("Error while create transaction")
+// 			return
+// 		}
+// 		// cashier change balance
+// 		_, err = h.strg.Staff().ChangeBalance(models.ChangeBalance{Id: cashier.Id, Balance: -amount})
+// 		if err != nil {
+// 			fmt.Println("Error while change balance")
+// 			return
+// 		}
+// 	} else {
+// 		fmt.Println("error while get cashier data")
+// 		return
+// 	}
 
-	for _, structs := range resp {
-		sortedSlice = append(sortedSlice, structs)
-	}
-	sort.Slice(sortedSlice, func(i, j int) bool {
-		return sortedSlice[i].SalesAmount > sortedSlice[j].SalesAmount
-	})
+// 	fmt.Println(resp)
+// }
 
-	for _, v := range sortedSlice {
-		fmt.Printf("%s - %f - %d\n", branchName[v.BranchId], v.SalesAmount, v.Count)
+// func (h *Handler) GetSaleCountBranch() {
+// 	resp, err := h.strg.Sales().GetSaleCountBranch()
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		return
+// 	}
+// 	branches, _ := h.strg.Branch().GetAllBranch(models.GetAllBranchRequest{})
+// 	branchName := make(map[string]string)
 
-	}
+// 	for _, v := range branches.Branches {
+// 		branchName[v.Id] = v.Name
+// 	}
+// 	var sortedSlice []models.SaleCountSumBranch
 
-}
-*/
+// 	for _, structs := range resp {
+// 		sortedSlice = append(sortedSlice, structs)
+// 	}
+// 	sort.Slice(sortedSlice, func(i, j int) bool {
+// 		return sortedSlice[i].SalesAmount > sortedSlice[j].SalesAmount
+// 	})
+
+// 	for _, v := range sortedSlice {
+// 		fmt.Printf("%s - %f - %d\n", branchName[v.BranchId], v.SalesAmount, v.Count)
+
+// 	}
+
+// }

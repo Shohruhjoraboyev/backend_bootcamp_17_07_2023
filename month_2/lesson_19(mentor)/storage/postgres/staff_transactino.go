@@ -1,217 +1,157 @@
 package postgres
 
-/*
+import (
+	"app/models"
+	"context"
+	"fmt"
+
+	"github.com/google/uuid"
+	"github.com/jackc/pgx"
+	"github.com/jackc/pgx/v4/pgxpool"
+)
+
 type transactionRepo struct {
-	fileName string
+	db *pgxpool.Pool
 }
 
-func NewTransactionRepo(fileName string) *transactionRepo {
-	return &transactionRepo{fileName: fileName}
+func NewTransactionRepo(db *pgxpool.Pool) *transactionRepo {
+	return &transactionRepo{db: db}
 }
 
-func (t *transactionRepo) CreateTransaction(req models.CreateTransaction) (string, error) {
+func (t *transactionRepo) CreateTransaction(req *models.CreateTransaction) (string, error) {
 	id := uuid.NewString()
-	transactions, err := t.read()
+
+	query := `
+		INSERT INTO "transactions" ("id", "type", "amount", "source_type", "text", "sale_id", "staff_id", "created_at")
+		VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
+	`
+
+	_, err := t.db.Exec(context.Background(), query, id, req.Type, req.Amount, req.Source_type, req.Text, req.Sale_id, req.Staff_id)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to create transaction: %w", err)
 	}
-	transactions = append(transactions, models.Transaction{
-		Id:          id,
-		Type:        req.Type,
-		Amount:      req.Amount,
-		Source_type: req.Source_type,
-		Text:        req.Text,
-		Sale_id:     req.Sale_id,
-		Staff_id:    req.Staff_id,
-		Created_at:  time.Now().Format("2006-01-02 15:04:05"),
-	})
-	err = t.write(transactions)
-	if err != nil {
-		return "", err
-	}
+
 	return id, nil
 }
 
-func (t *transactionRepo) UpdateTransaction(req models.Transaction) (string, error) {
-	transactions, err := t.read()
-	if err != nil {
-		return "", err
-	}
-	for i, v := range transactions {
-		if v.Id == req.Id {
-			transactions[i] = req
-			transactions[i].Created_at = time.Now().Format("2006-01-02 15:04:05")
-			err = t.write(transactions)
-			if err != nil {
-				return "", err
-			}
-			return "updated", nil
-		}
-	}
-	return "", errors.New("not transaction found with ID")
-}
+func (t *transactionRepo) GetTransaction(req *models.IdRequest) (*models.Transaction, error) {
+	var transaction models.Transaction
 
-func (t *transactionRepo) GetTransaction(req models.IdRequest) (models.Transaction, error) {
-	transactions, err := t.read()
-	if err != nil {
-		return models.Transaction{}, err
-	}
-	for _, v := range transactions {
-		if v.Id == req.Id {
-			return v, nil
-		}
-	}
-	return models.Transaction{}, errors.New("not transaction found with ID")
-}
+	query := `
+		SELECT "id", "type", "amount", "source_type", "text", "sale_id", "staff_id", "created_at", "updated_at"
+		FROM "transactions"
+		WHERE "id" = $1
+	`
 
-func (t *transactionRepo) GetAllTransaction(req models.GetAllTransactionRequest) (resp models.GetAllTransactionResponse, err error) {
-	transactions, err := t.read()
-	if err != nil {
-		return models.GetAllTransactionResponse{}, err
-	}
-	start := req.Limit * (req.Page - 1)
-	end := start + req.Limit
-
-	var filtered []models.Transaction
-
-	for _, v := range transactions {
-		if strings.Contains(v.Text, req.Text) {
-			filtered = append(filtered, v)
-		}
-	}
-
-	if start > len(filtered) {
-		resp.Transactions = []models.Transaction{}
-		resp.Count = len(filtered)
-		return
-	} else if end > len(filtered) {
-		return models.GetAllTransactionResponse{
-			Transactions: filtered[start:],
-			Count:        len(filtered),
-		}, nil
-	} else {
-		return models.GetAllTransactionResponse{
-			Transactions: filtered[start:end],
-			Count:        len(filtered),
-		}, nil
-	}
-
-}
-
-func (t *transactionRepo) DeleteTransaction(req models.IdRequest) (resp string, err error) {
-	transactions, err := t.read()
-	if err != nil {
-		return "", err
-	}
-	for i, v := range transactions {
-		if v.Id == req.Id {
-			transactions = append(transactions[:i], transactions[i+1:]...)
-			err = t.write(transactions)
-			if err != nil {
-				return "", err
-			}
-			return "deleted", nil
-		}
-	}
-	return "", errors.New("not found")
-}
-
-func (u *transactionRepo) read() ([]models.Transaction, error) {
-	var (
-		transactions []models.Transaction
+	err := t.db.QueryRow(context.Background(), query, req.Id).Scan(
+		&transaction.Id,
+		&transaction.Type,
+		&transaction.Amount,
+		&transaction.Source_type,
+		&transaction.Text,
+		&transaction.Sale_id,
+		&transaction.Staff_id,
+		&transaction.Created_at,
+		&transaction.Updated_at,
 	)
-
-	data, err := os.ReadFile(u.fileName)
 	if err != nil {
-		log.Printf("Error while Read data: %+v", err)
-		return nil, err
+
+		return nil, fmt.Errorf("transaction not found")
 	}
 
-	err = json.Unmarshal(data, &transactions)
-	if err != nil {
-		log.Printf("Error while Unmarshal data: %+v", err)
-		return nil, err
-	}
-
-	return transactions, nil
+	return &transaction, nil
 }
 
-func (u *transactionRepo) write(transasctions []models.Transaction) error {
-	body, err := json.Marshal(transasctions)
-	if err != nil {
-		return err
-	}
-	err = os.WriteFile(u.fileName, body, os.ModePerm)
-	if err != nil {
-		return err
-	}
-	return nil
-}
+func (t *transactionRepo) GetAllTransaction(req *models.GetAllTransactionRequest) (*models.GetAllTransactionResponse, error) {
+	var response models.GetAllTransactionResponse
+	response.Transactions = make([]models.Transaction, 0)
 
-func (t *transactionRepo) GetTopStaffs(req models.TopWorkerRequest) (resp map[string]models.StaffTop, err error) {
-	var staffes []models.Staff
-	var transactions []models.Transaction
-	data, err := os.ReadFile("data/staff.json")
-	if err != nil {
-		log.Printf("Error while Read data: %+v", err)
-		return map[string]models.StaffTop{}, err
-	}
-	err = json.Unmarshal(data, &staffes)
-	if err != nil {
-		log.Printf("Error while Unmarshal data: %+v", err)
-		return make(map[string]models.StaffTop), err
-	}
-	dataTrans, err := os.ReadFile("data/transaction.json")
-	if err != nil {
-		log.Printf("Error while Read data: %+v", err)
-		return make(map[string]models.StaffTop), err
-	}
-	err = json.Unmarshal(dataTrans, &transactions)
-	if err != nil {
-		log.Printf("Error while Unmarshal data: %+v", err)
-		return make(map[string]models.StaffTop), err
-	}
+	query := `
+		SELECT id, type, amount, source_type, text, sale_id, staff_id, created_at, updated_at
+		FROM transactions
+		WHERE text ILIKE '%' || $1 || '%'
+		LIMIT $2 OFFSET $3
+	`
 
-	startDate, err := time.Parse("2006-01-02", req.FromDate)
+	rows, err := t.db.Query(context.Background(), query, req.Text, req.Limit, (req.Page-1)*req.Limit)
 	if err != nil {
-		fmt.Println("Error parsing start date:", err)
-		return
+		return nil, fmt.Errorf("failed to get transactions: %w", err)
 	}
-	endDate, err := time.Parse("2006-01-02", req.ToDate)
-	if err != nil {
-		fmt.Println("Error parsing end date:", err)
-		return
-	}
+	defer rows.Close()
 
-	staffMap := make(map[string]models.Staff)
-	result := make(map[string]models.StaffTop)
-
-	for _, s := range staffes {
-		staffMap[s.Id] = models.Staff{
-			Id:       s.Id,
-			BranchId: s.BranchId,
-			Name:     s.Name,
-			TypeId:   s.TypeId,
-		}
-	}
-
-	for _, tr := range transactions {
-		createdAt, err := time.Parse("2006-01-02 15:04:05", tr.Created_at)
+	for rows.Next() {
+		var transaction models.Transaction
+		err := rows.Scan(
+			&transaction.Id,
+			&transaction.Type,
+			&transaction.Amount,
+			&transaction.Source_type,
+			&transaction.Text,
+			&transaction.Sale_id,
+			&transaction.Staff_id,
+			&transaction.Created_at,
+			&transaction.Updated_at,
+		)
 		if err != nil {
-			fmt.Println("Error parsing createdAt:", err)
-			continue
+			return nil, fmt.Errorf("failed to scan transaction row: %w", err)
 		}
-
-		if createdAt.After(startDate) && createdAt.Before(endDate) && string(staffMap[tr.Staff_id].TypeId) == req.Type {
-			v := result[tr.Staff_id]
-			v.BranchId = staffMap[tr.Staff_id].BranchId
-			v.Name = staffMap[tr.Staff_id].Name
-			v.TypeId = staffMap[tr.Staff_id].TypeId
-			v.Money += tr.Amount
-
-			result[tr.Staff_id] = v
-		}
+		response.Transactions = append(response.Transactions, transaction)
 	}
-	return result, nil
+
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("error occurred while iterating over transactions: %w", err)
+	}
+
+	countQuery := `
+		SELECT COUNT(*)
+		FROM transactions
+		WHERE text ILIKE '%' || $1 || '%'
+	`
+	err = t.db.QueryRow(context.Background(), countQuery, req.Text).Scan(&response.Count)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get transaction count: %w", err)
+	}
+
+	return &response, nil
 }
-*/
+
+func (t *transactionRepo) UpdateTransaction(req *models.Transaction) (string, error) {
+	query := `
+		UPDATE "transactions"
+		SET "type" = $1, "amount" = $2, "source_type" = $3, "text" = $4, "sale_id" = $5, "staff_id" = $6,  "updated_at" = NOW()
+		WHERE "id" = $7
+	`
+
+	_, err := t.db.Exec(context.Background(), query, req.Type, req.Amount, req.Source_type, req.Text, req.Sale_id, req.Staff_id, req.Id)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return "", fmt.Errorf("transaction not found")
+		}
+		return "", fmt.Errorf("failed to update transaction: %w", err)
+	}
+
+	return req.Id, nil
+}
+
+func (t *transactionRepo) DeleteTransaction(req *models.IdRequest) (string, error) {
+	query := `
+		DELETE FROM transactions
+		WHERE id = $1
+	`
+
+	result, err := t.db.Exec(context.Background(), query, req.Id)
+	if err != nil {
+		return "", fmt.Errorf("failed to delete transaction: %w", err)
+	}
+
+	affectedRows := result.RowsAffected()
+	if affectedRows != 1 {
+		return "", fmt.Errorf("transaction not found")
+	}
+
+	return req.Id, nil
+}
+
+// func (t *transactionRepo) GetTopStaffs(req *models.TopWorkerRequest) (resp *map[string]models.StaffTop, err error) {
+
+// }

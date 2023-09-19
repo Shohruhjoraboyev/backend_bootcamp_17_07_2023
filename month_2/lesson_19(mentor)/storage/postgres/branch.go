@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx"
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
@@ -28,7 +29,7 @@ func (b *branchRepo) CreateBranch(req *models.CreateBranch) (string, error) {
 	year := yearNow - req.FoundedAt
 
 	query := `
-		INSERT INTO branch(id, name, address, year, founded_at, created_at)
+		INSERT INTO branches(id, name, adress, year, founded_at, created_at)
 		VALUES ($1, $2, $3, $4, $5, $6)
 	`
 	_, err := b.db.Exec(context.Background(), query,
@@ -39,16 +40,15 @@ func (b *branchRepo) CreateBranch(req *models.CreateBranch) (string, error) {
 		req.FoundedAt,
 		time.Now(),
 	)
-
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to create branch: %w", err)
 	}
 
 	return id, nil
 }
 
 func (b *branchRepo) GetBranch(req *models.IdRequest) (resp *models.Branch, err error) {
-	query := `SELECT id, name, address, year, founded_at, created_at, updated_at FROM branch WHERE id=$1`
+	query := `SELECT id, name, adress, year, founded_at, created_at, updated_at FROM branches WHERE id=$1`
 	var (
 		createdAt time.Time
 		updatedAt sql.NullTime
@@ -65,7 +65,10 @@ func (b *branchRepo) GetBranch(req *models.IdRequest) (resp *models.Branch, err 
 		&updatedAt,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("branch not found")
+		if err == pgx.ErrNoRows {
+			return nil, fmt.Errorf("sale not found")
+		}
+		return nil, fmt.Errorf("failed to get sale: %w", err)
 	}
 	branch.CreatedAt = createdAt.Format(time.RFC3339)
 	if updatedAt.Valid {
@@ -78,14 +81,14 @@ func (b *branchRepo) GetBranch(req *models.IdRequest) (resp *models.Branch, err 
 func (b *branchRepo) UpdateBranch(req *models.Branch) (string, error) {
 	yearNow := time.Now().Year()
 	year := yearNow - req.FoundedAt
-	query := `UPDATE branch SET name = $1, address = $2, year = $3, founded_at = $4, updated_at = NOW() WHERE id = $5 RETURNING id`
+	query := `UPDATE branches SET name = $1, adress = $2, year = $3, founded_at = $4, updated_at = NOW() WHERE id = $5 RETURNING id`
 	result, err := b.db.Exec(context.Background(), query, req.Name, req.Address, year, req.FoundedAt, req.ID)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to update branch: %w", err)
 	}
 
 	if result.RowsAffected() == 0 {
-		return "", fmt.Errorf("branch not found")
+		return "", fmt.Errorf("branch with ID %s not found", req.ID)
 	}
 
 	return req.ID, nil
@@ -98,7 +101,7 @@ func (b *branchRepo) GetAllBranch(req *models.GetAllBranchRequest) (*models.GetA
 	createdAt := time.Time{}
 	updatedAt := sql.NullTime{}
 
-	s := `SELECT id, name, address, year, founded_at, created_at, updated_at FROM branch`
+	s := `SELECT id, name, adress, year, founded_at, created_at, updated_at FROM branches`
 
 	if req.Name != "" {
 		filter += ` WHERE name ILIKE '%' || :search || '%' `
@@ -117,6 +120,7 @@ func (b *branchRepo) GetAllBranch(req *models.GetAllBranchRequest) (*models.GetA
 	defer rows.Close()
 
 	resp := &models.GetAllBranch{}
+	resp.Branches = make([]models.Branch, 0)
 	count := 0
 	for rows.Next() {
 		var branch models.Branch
@@ -131,7 +135,7 @@ func (b *branchRepo) GetAllBranch(req *models.GetAllBranchRequest) (*models.GetA
 			&updatedAt,
 		)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to scan row: %w", err)
 		}
 		branch.CreatedAt = createdAt.Format(time.RFC3339)
 		if updatedAt.Valid {
@@ -145,7 +149,7 @@ func (b *branchRepo) GetAllBranch(req *models.GetAllBranchRequest) (*models.GetA
 }
 
 func (b *branchRepo) DeleteBranch(req *models.IdRequest) (resp string, err error) {
-	query := `DELETE FROM branch WHERE id = $1 RETURNING id`
+	query := `DELETE FROM branches WHERE id = $1 RETURNING id`
 
 	result, err := b.db.Exec(context.Background(), query, req.Id)
 	if err != nil {
@@ -153,7 +157,8 @@ func (b *branchRepo) DeleteBranch(req *models.IdRequest) (resp string, err error
 	}
 
 	if result.RowsAffected() == 0 {
-		return "", fmt.Errorf("branch not found")
+		return "", fmt.Errorf("branch with ID %s not found", req.Id)
+
 	}
 
 	return req.Id, nil

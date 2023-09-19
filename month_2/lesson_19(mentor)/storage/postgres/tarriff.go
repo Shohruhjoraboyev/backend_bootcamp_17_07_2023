@@ -120,6 +120,7 @@ func (s *staffTarifRepo) GetAllStaffTarif(req *models.GetAllStaffTarifRequest) (
 	defer rows.Close()
 
 	resp = &models.GetAllStaffTarif{}
+	resp.StaffTarifs = make([]models.StaffTarif, 0)
 	count := 0
 	for rows.Next() {
 		var tariff models.StaffTarif

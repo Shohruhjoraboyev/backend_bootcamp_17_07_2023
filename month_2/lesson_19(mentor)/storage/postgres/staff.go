@@ -135,6 +135,7 @@ func (s *staffRepo) GetAllStaff(req *models.GetAllStaffRequest) (*models.GetAllS
 	defer rows.Close()
 
 	resp := &models.GetAllStaff{}
+	resp.Staffs = make([]models.Staff, 0)
 	count := 0
 	for rows.Next() {
 		var staff models.Staff

@@ -3,12 +3,11 @@ package models
 import "time"
 
 type CreateStaff struct {
-	BranchID  string    `json:"branch_id"`
-	TariffID  string    `json:"tariff_id"`
-	Name      string    `json:"name"`
-	Type      string    `json:"staff_type"`
-	Balance   float64   `json:"balance"`
-	CreatedAt time.Time `json:"created_at"`
+	BranchID string  `json:"branch_id"`
+	TariffID string  `json:"tariff_id"`
+	Name     string  `json:"name"`
+	Type     string  `json:"staff_type"`
+	Balance  float64 `json:"balance"`
 }
 
 type Staff struct {
