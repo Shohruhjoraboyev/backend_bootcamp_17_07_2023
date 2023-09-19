@@ -12,6 +12,7 @@ import (
 type store struct {
 	db       *pgxpool.Pool
 	category *categoryRepo
+	product  *productRepo
 }
 
 func NewConnection(cfg *config.Config) (storage.StorageI, error) {
@@ -48,4 +49,11 @@ func (s *store) Category() storage.CategoryRepoI {
 		s.category = NewCategoryRepo(s.db)
 	}
 	return s.category
+}
+
+func (s *store) Product() storage.ProductRepoI {
+	if s.product == nil {
+		s.product = NewPorductRepo(s.db)
+	}
+	return s.product
 }

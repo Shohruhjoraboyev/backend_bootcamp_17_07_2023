@@ -46,7 +46,7 @@ func (r *categoryRepo) Create(req *models.CreateCategory) (string, error) {
 	return id, nil
 }
 
-func (r *categoryRepo) GetByID( req *models.CategoryPrimaryKey) (*models.Category, error) {
+func (r *categoryRepo) GetByID(req *models.CategoryPrimaryKey) (*models.Category, error) {
 
 	var (
 		query string
@@ -132,7 +132,6 @@ func (r *categoryRepo) GetList(req *models.CategoryGetListRequest) (*models.Cate
 		return nil, err
 	}
 
-
 	for rows.Next() {
 		var (
 			id        sql.NullString
@@ -200,7 +199,7 @@ func (r *categoryRepo) Update(req *models.UpdateCategory) (string, error) {
 	return req.Id, nil
 }
 
-func (r *categoryRepo) Delete( req *models.CategoryPrimaryKey) error {
+func (r *categoryRepo) Delete(req *models.CategoryPrimaryKey) error {
 
 	_, err := r.db.Exec(context.Background(), "DELETE FROM category WHERE id = $1", req.Id)
 	if err != nil {
