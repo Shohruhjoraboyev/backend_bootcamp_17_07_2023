@@ -1,104 +1,125 @@
 package handler
 
-/*
-func (h *handler) CreateTransaction(typ string, amount int, sourceType, text, saleId string, staffId string) {
-	resp, err := h.strg.Transaction().CreateTransaction(models.CreateTransaction{
-		Type:        typ,
-		Amount:      amount,
-		Source_type: sourceType,
-		Text:        text,
-		Sale_id:     saleId,
-		Staff_id:    staffId,
-	})
+import (
+	"app/models"
+	"app/pkg/logger"
+	"fmt"
+	"net/http"
+	"strconv"
+
+	"github.com/gin-gonic/gin"
+)
+
+func (h *Handler) CreateTransaction(c *gin.Context) {
+	var transaction models.CreateTransaction
+	err := c.ShouldBind(&transaction)
 	if err != nil {
-		fmt.Println("error from CreateTransaction: ", err.Error())
+		h.log.Error("error while binding:", logger.Error(err))
+		c.JSON(http.StatusBadRequest, "invalid body")
 		return
 	}
-	fmt.Println("created new transaction with id: ", resp)
-}
 
-func (h *handler) UpdateTransaction(id, typ string, amount int, sourceType, text, saleId string, staffId string) {
-	resp, err := h.strg.Transaction().UpdateTransaction(models.Transaction{
-		Id:          id,
-		Type:        typ,
-		Amount:      amount,
-		Source_type: sourceType,
-		Text:        text,
-		Sale_id:     saleId,
-		Staff_id:    staffId,
-	})
-
+	resp, err := h.storage.Transaction().CreateTransaction(&transaction)
 	if err != nil {
-		fmt.Println("error from UpdateTransaction: ", err.Error())
+		fmt.Println("error from storage create transaction:", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	fmt.Println("Updated transaction with id: ", resp)
+	c.JSON(http.StatusCreated, gin.H{"message": "created", "id": resp})
 }
 
-func (h *handler) GetTransaction(id string) {
-	resp, err := h.strg.Transaction().GetTransaction(models.IdRequest{
-		Id: id,
-	})
+func (h *Handler) GetTransaction(c *gin.Context) {
+	id := c.Param("id")
 
+	resp, err := h.storage.Transaction().GetTransaction(&models.IdRequest{Id: id})
 	if err != nil {
-		fmt.Println("error from GetTransaction: ", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		fmt.Println("error from storage get transaction:", err.Error())
 		return
 	}
-	fmt.Println("found transaction with id: ", resp)
+
+	c.JSON(http.StatusOK, gin.H{"message": "success", "data": resp})
 }
 
-func (h *handler) GetAllTransaction(page, limit int) {
-	if page < 1 {
-		page = h.cfg.Page
+func (h *Handler) GetAllTransaction(c *gin.Context) {
+	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
+	if err != nil {
+		h.log.Error("error get page:", logger.Error(err))
+		c.JSON(http.StatusBadRequest, "invalid page param")
+		return
 	}
-	if limit < 1 {
-		limit = h.cfg.Limit
+	limit, err := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	if err != nil {
+		h.log.Error("error get limit:", logger.Error(err))
+		c.JSON(http.StatusBadRequest, "invalid page param")
+		return
 	}
 
-	resp, err := h.strg.Transaction().GetAllTransaction(models.GetAllTransactionRequest{
+	resp, err := h.storage.Transaction().GetAllTransaction(&models.GetAllTransactionRequest{
 		Page:  page,
 		Limit: limit,
+		Text:  c.Query("search"),
 	})
-
 	if err != nil {
-		fmt.Println("error from GetAllTransaction: ", err.Error())
+		h.log.Error("error from storage getAll transaction:", logger.Error(err))
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
-	fmt.Println("found all Transactiones based on filter: ", resp)
+	c.JSON(http.StatusOK, resp)
 }
 
-func (h *handler) DeleteTransaction(id string) {
-	resp, err := h.strg.Transaction().DeleteTransaction(models.IdRequest{
-		Id: id,
-	})
-
+func (h *Handler) UpdateTransaction(c *gin.Context) {
+	var transaction models.Transaction
+	err := c.ShouldBind(&transaction)
 	if err != nil {
-		fmt.Println("error from DeleteTransaction: ", err.Error())
+		h.log.Error("error while binding:", logger.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 		return
 	}
-	fmt.Println("deleted transaction with id: ", resp)
-}
 
-func (h *handler) GetTopStaffs(Type, fromData, ToData string) {
-
-	resp, err := h.strg.Transaction().GetTopStaffs(models.TopWorkerRequest{
-		Type:     Type,
-		FromDate: fromData,
-		ToDate:   ToData,
-	})
-
-	branchNamesMap, _ := h.strg.Branch().GetAllBranch(models.GetAllBranchRequest{})
-
-	branchName := make(map[string]string)
-	for _, b := range branchNamesMap.Branches {
-		branchName[b.Id] = b.Name
-	}
-	for _, v := range resp {
-		fmt.Printf("Branch: %s Staff: %s Earning: %d\n", branchName[v.BranchId], v.Name, v.Money)
-	}
-
+	transaction.Id = c.Param("id")
+	resp, err := h.storage.Transaction().UpdateTransaction(&transaction)
 	if err != nil {
-		fmt.Println(err)
+		h.log.Error("error transaction update:", logger.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "updated", "id": resp})
 }
-*/
+
+func (h *Handler) DeleteTransaction(c *gin.Context) {
+	id := c.Param("id")
+
+	resp, err := h.storage.Transaction().DeleteTransaction(&models.IdRequest{Id: id})
+	if err != nil {
+		h.log.Error("error deleting transaction:", logger.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "transaction successfully deleted", "id": resp})
+}
+
+// func (h *Handler) GetTopStaffs(c *gin.Context) {
+
+// 	resp, err := h.strg.Transaction().GetTopStaffs(models.TopWorkerRequest{
+// 		Type:     Type,
+// 		FromDate: fromData,
+// 		ToDate:   ToData,
+// 	})
+
+// 	branchNamesMap, _ := h.strg.Branch().GetAllBranch(models.GetAllBranchRequest{})
+
+// 	branchName := make(map[string]string)
+// 	for _, b := range branchNamesMap.Branches {
+// 		branchName[b.Id] = b.Name
+// 	}
+// 	for _, v := range resp {
+// 		fmt.Printf("Branch: %s Staff: %s Earning: %d\n", branchName[v.BranchId], v.Name, v.Money)
+// 	}
+
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
+// }

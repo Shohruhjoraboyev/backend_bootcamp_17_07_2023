@@ -181,7 +181,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "UPDATES STAFF BASED ON GIVEN DATA AND ID",
+                "description": "UPDATES BRANCH BASED ON GIVEN DATA AND ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -191,23 +191,23 @@ const docTemplate = `{
                 "tags": [
                     "BRANCH"
                 ],
-                "summary": "UPDATE STAFF BY ID",
+                "summary": "UPDATE BRANCH BY ID",
                 "parameters": [
                     {
                         "type": "string",
                         "format": "uuid",
-                        "description": "id of staff",
+                        "description": "id of branch",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "staff data",
+                        "description": "branch data",
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.CreateStaff"
+                            "$ref": "#/definitions/models.CreateBranch"
                         }
                     }
                 ],
@@ -431,6 +431,64 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.Staff"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResp"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResp"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResp"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "UPDATES STAFF BASED ON GIVEN DATA AND ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "STAFF"
+                ],
+                "summary": "UPDATE STAFF BY ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "id of staff",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "staff data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CreateStaff"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     "400": {

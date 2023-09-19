@@ -9,8 +9,7 @@ type StorageI interface {
 	Tariff() TariffsI
 	Staff() StaffesI
 	Sales() SalesI
-	// Transaction() TransactionI
-	// StaffTarif() StaffTarifsI
+	Transaction() TransactionI
 	Close()
 }
 
@@ -52,11 +51,11 @@ type SalesI interface {
 	// CancelSale(*models.IdRequest) (string, error)
 }
 
-// type TransactionI interface {
-// 	CreateTransaction(models.CreateTransaction) (string, error)
-// 	UpdateTransaction(models.Transaction) (string, error)
-// 	GetTransaction(models.IdRequest) (models.Transaction, error)
-// 	GetAllTransaction(models.GetAllTransactionRequest) (models.GetAllTransactionResponse, error)
-// 	DeleteTransaction(models.IdRequest) (string, error)
-// 	GetTopStaffs(models.TopWorkerRequest) (map[string]models.StaffTop, error)
-// }
+type TransactionI interface {
+	CreateTransaction(*models.CreateTransaction) (string, error)
+	UpdateTransaction(*models.Transaction) (string, error)
+	GetTransaction(*models.IdRequest) (*models.Transaction, error)
+	GetAllTransaction(*models.GetAllTransactionRequest) (*models.GetAllTransactionResponse, error)
+	DeleteTransaction(*models.IdRequest) (string, error)
+	// GetTopStaffs(models.TopWorkerRequest) (map[string]models.StaffTop, error)
+}

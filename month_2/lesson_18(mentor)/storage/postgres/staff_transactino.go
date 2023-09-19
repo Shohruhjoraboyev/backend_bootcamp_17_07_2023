@@ -23,10 +23,10 @@ func (t *transactionRepo) CreateTransaction(req *models.CreateTransaction) (stri
 
 	query := `
 		INSERT INTO "transactions" ("id", "type", "amount", "source_type", "text", "sale_id", "staff_id", "created_at")
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
 	`
 
-	_, err := t.db.Exec(context.Background(), query, id, req.Type, req.Amount, req.Source_type, req.Text, req.Sale_id, req.Staff_id, req.Created_at)
+	_, err := t.db.Exec(context.Background(), query, id, req.Type, req.Amount, req.Source_type, req.Text, req.Sale_id, req.Staff_id)
 	if err != nil {
 		return "", fmt.Errorf("failed to create transaction: %w", err)
 	}
@@ -34,11 +34,11 @@ func (t *transactionRepo) CreateTransaction(req *models.CreateTransaction) (stri
 	return id, nil
 }
 
-func (t *transactionRepo) GetTransaction(req *models.IdRequest) (models.Transaction, error) {
+func (t *transactionRepo) GetTransaction(req *models.IdRequest) (*models.Transaction, error) {
 	var transaction models.Transaction
 
 	query := `
-		SELECT "id", "type", "amount", "source_type", "text", "sale_id", "staff_id", "created_at"
+		SELECT "id", "type", "amount", "source_type", "text", "sale_id", "staff_id", "created_at", "updated_at"
 		FROM "transactions"
 		WHERE "id" = $1
 	`
@@ -56,12 +56,12 @@ func (t *transactionRepo) GetTransaction(req *models.IdRequest) (models.Transact
 	)
 	if err != nil {
 		if err == pgx.ErrNoRows {
-			return models.Transaction{}, fmt.Errorf("transaction not found")
+			return nil, fmt.Errorf("transaction not found")
 		}
-		return models.Transaction{}, fmt.Errorf("failed to get transaction: %w", err)
+		return nil, fmt.Errorf("failed to get transaction: %w", err)
 	}
 
-	return transaction, nil
+	return &transaction, nil
 }
 
 func (t *transactionRepo) GetAllTransaction(req *models.GetAllTransactionRequest) (*models.GetAllTransactionResponse, error) {
@@ -69,7 +69,7 @@ func (t *transactionRepo) GetAllTransaction(req *models.GetAllTransactionRequest
 	response.Transactions = make([]models.Transaction, 0)
 
 	query := `
-		SELECT id, type, amount, source_type, text, sale_id, staff_id, created_at
+		SELECT id, type, amount, source_type, text, sale_id, staff_id, created_at, updated_at
 		FROM transactions
 		WHERE text ILIKE '%' || $1 || '%'
 		LIMIT $2 OFFSET $3
@@ -120,11 +120,11 @@ func (t *transactionRepo) GetAllTransaction(req *models.GetAllTransactionRequest
 func (t *transactionRepo) UpdateTransaction(req *models.Transaction) (string, error) {
 	query := `
 		UPDATE "transactions"
-		SET "type" = $1, "amount" = $2, "source_type" = $3, "text" = $4, "sale_id" = $5, "staff_id" = $6, "created_at" = $7, "updated_at" = NOW()
-		WHERE "id" = $8
+		SET "type" = $1, "amount" = $2, "source_type" = $3, "text" = $4, "sale_id" = $5, "staff_id" = $6,  "updated_at" = NOW()
+		WHERE "id" = $7
 	`
 
-	_, err := t.db.Exec(context.Background(), query, req.Type, req.Amount, req.Source_type, req.Text, req.Sale_id, req.Staff_id, req.Created_at, req.Id)
+	_, err := t.db.Exec(context.Background(), query, req.Type, req.Amount, req.Source_type, req.Text, req.Sale_id, req.Staff_id, req.Id)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			return "", fmt.Errorf("transaction not found")

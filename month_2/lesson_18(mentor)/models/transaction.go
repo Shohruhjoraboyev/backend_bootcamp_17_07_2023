@@ -1,5 +1,9 @@
 package models
 
+import (
+	"time"
+)
+
 type CreateTransaction struct {
 	Type        string `json:"type"`
 	Amount      int    `json:"amount"`
@@ -7,19 +11,18 @@ type CreateTransaction struct {
 	Text        string `json:"text"`
 	Sale_id     string `json:"sale_id"`
 	Staff_id    string `json:"staff_id"`
-	Created_at  string `json:"created_at"`
 }
 
 type Transaction struct {
-	Id          string `json:"id"`
-	Type        string `json:"type"`
-	Amount      int    `json:"amount"`
-	Source_type string `json:"source_type"`
-	Text        string `json:"text"`
-	Sale_id     string `json:"sale_id"`
-	Staff_id    string `json:"staff_id"`
-	Created_at  string `json:"created_at"`
-	Updated_at  string `json:"updated_at"`
+	Id          string    `json:"id"`
+	Type        string    `json:"type"`
+	Amount      int       `json:"amount"`
+	Source_type string    `json:"source_type"`
+	Text        string    `json:"text"`
+	Sale_id     string    `json:"sale_id"`
+	Staff_id    string    `json:"staff_id"`
+	Created_at  time.Time `json:"created_at"`
+	Updated_at  time.Time `json:"updated_at"`
 }
 
 type GetAllTransactionRequest struct {

@@ -273,20 +273,20 @@ paths:
     put:
       consumes:
       - application/json
-      description: UPDATES STAFF BASED ON GIVEN DATA AND ID
+      description: UPDATES BRANCH BASED ON GIVEN DATA AND ID
       parameters:
-      - description: id of staff
+      - description: id of branch
         format: uuid
         in: path
         name: id
         required: true
         type: string
-      - description: staff data
+      - description: branch data
         in: body
         name: data
         required: true
         schema:
-          $ref: '#/definitions/models.CreateStaff'
+          $ref: '#/definitions/models.CreateBranch'
       produces:
       - application/json
       responses:
@@ -306,7 +306,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorResp'
-      summary: UPDATE STAFF BY ID
+      summary: UPDATE BRANCH BY ID
       tags:
       - BRANCH
   /staff:
@@ -451,6 +451,45 @@ paths:
           schema:
             $ref: '#/definitions/response.ErrorResp'
       summary: GET BY ID
+      tags:
+      - STAFF
+    put:
+      consumes:
+      - application/json
+      description: UPDATES STAFF BASED ON GIVEN DATA AND ID
+      parameters:
+      - description: id of staff
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: staff data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateStaff'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: UPDATE STAFF BY ID
       tags:
       - STAFF
   /tariff:
