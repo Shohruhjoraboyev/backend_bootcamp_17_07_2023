@@ -10,6 +10,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// CreateTransaction godoc
+// @Router       /transaction [POST]
+// @Summary      CREATES TRANSACTION
+// @Description  CREATES TRANSACTION BASED ON GIVEN DATA
+// @Tags         TRANSACTION
+// @Accept       json
+// @Produce      json
+// @Param        data  body      models.CreateTransaction  true  "transaction data"
+// @Success      200  {string}  string
+// @Failure      400  {object}  response.ErrorResp
+// @Failure      404  {object}  response.ErrorResp
+// @Failure      500  {object}  response.ErrorResp
 func (h *Handler) CreateTransaction(c *gin.Context) {
 	var transaction models.CreateTransaction
 	err := c.ShouldBind(&transaction)
@@ -28,6 +40,18 @@ func (h *Handler) CreateTransaction(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "created", "id": resp})
 }
 
+// GetTransaction godoc
+// @Router       /transaction/{id} [GET]
+// @Summary      GET BY ID
+// @Description  get transaction by ID
+// @Tags         TRANSACTION
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "Transaction ID" format(uuid)
+// @Success      200  {object}  models.Transaction
+// @Failure      400  {object}  response.ErrorResp
+// @Failure      404  {object}  response.ErrorResp
+// @Failure      500  {object}  response.ErrorResp
 func (h *Handler) GetTransaction(c *gin.Context) {
 	id := c.Param("id")
 
@@ -41,6 +65,20 @@ func (h *Handler) GetTransaction(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "success", "data": resp})
 }
 
+// ListTransaction godoc
+// @Router       /transaction [GET]
+// @Summary      GET  ALL TRANSACTION
+// @Description  gets all transaction based on limit, page and search by name
+// @Tags         TRANSACTION
+// @Accept       json
+// @Produce      json
+// @Param   limit         query     int        false  "limit"          minimum(1)     default(10)
+// @Param   page         query     int        false  "page"          minimum(1)     default(1)
+// @Param   search         query     string        false  "search"
+// @Success      200  {object}  models.GetAllTransactionResponse
+// @Failure      400  {object}  response.ErrorResp
+// @Failure      404  {object}  response.ErrorResp
+// @Failure      500  {object}  response.ErrorResp
 func (h *Handler) GetAllTransaction(c *gin.Context) {
 	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
 	if err != nil {
@@ -68,6 +106,19 @@ func (h *Handler) GetAllTransaction(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
+// UpdateTransaction godoc
+// @Router       /transaction/{id} [PUT]
+// @Summary      UPDATE TRANSACTION BY ID
+// @Description  UPDATES TRANSACTION BASED ON GIVEN DATA AND ID
+// @Tags         TRANSACTION
+// @Accept       json
+// @Produce      json
+// @Param        id    path     string  true  "id of transaction" format(uuid)
+// @Param        data  body      models.CreateTransaction  true  "transaction data"
+// @Success      200  {string}  string
+// @Failure      400  {object}  response.ErrorResp
+// @Failure      404  {object}  response.ErrorResp
+// @Failure      500  {object}  response.ErrorResp
 func (h *Handler) UpdateTransaction(c *gin.Context) {
 	var transaction models.Transaction
 	err := c.ShouldBind(&transaction)
@@ -88,6 +139,18 @@ func (h *Handler) UpdateTransaction(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "updated", "id": resp})
 }
 
+// DeleteTransaction godoc
+// @Router       /transaction/{id} [DELETE]
+// @Summary      DELETE TRANSACTION BY ID
+// @Description  DELETES TRANSACTION BASED ON ID
+// @Tags         TRANSACTION
+// @Accept       json
+// @Produce      json
+// @Param        id    path     string  true  "id of transaction" format(uuid)
+// @Success      200  {string}  string
+// @Failure      400  {object}  response.ErrorResp
+// @Failure      404  {object}  response.ErrorResp
+// @Failure      500  {object}  response.ErrorResp
 func (h *Handler) DeleteTransaction(c *gin.Context) {
 	id := c.Param("id")
 

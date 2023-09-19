@@ -10,6 +10,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// CreateSale godoc
+// @Router       /sale [POST]
+// @Summary      CREATES SALE
+// @Description  CREATES SALE BASED ON GIVEN DATA
+// @Tags         SALE
+// @Accept       json
+// @Produce      json
+// @Param        data  body      models.CreateSales  true  "branch data"
+// @Success      200  {string}  string
+// @Failure      400  {object}  response.ErrorResp
+// @Failure      404  {object}  response.ErrorResp
+// @Failure      500  {object}  response.ErrorResp
 func (h *Handler) CreateSale(c *gin.Context) {
 	var sale models.CreateSales
 	err := c.ShouldBind(&sale)
@@ -28,6 +40,18 @@ func (h *Handler) CreateSale(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "created", "id": resp})
 }
 
+// GetSale godoc
+// @Router       /sale/{id} [GET]
+// @Summary      GET BY ID
+// @Description  get sale by ID
+// @Tags         SALE
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "Sale ID" format(uuid)
+// @Success      200  {object}  models.Sales
+// @Failure      400  {object}  response.ErrorResp
+// @Failure      404  {object}  response.ErrorResp
+// @Failure      500  {object}  response.ErrorResp
 func (h *Handler) GetSale(c *gin.Context) {
 	id := c.Param("id")
 
@@ -41,6 +65,20 @@ func (h *Handler) GetSale(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "success", "data": resp})
 }
 
+// ListSales godoc
+// @Router       /sale [GET]
+// @Summary      GET  ALL SALES
+// @Description  gets all sales based on limit, page and search by name
+// @Tags         SALE
+// @Accept       json
+// @Produce      json
+// @Param   limit         query     int        false  "limit"          minimum(1)     default(10)
+// @Param   page         query     int        false  "page"          minimum(1)     default(1)
+// @Param   search         query     string        false  "search"
+// @Success      200  {object}  models.GetAllSalesResponse
+// @Failure      400  {object}  response.ErrorResp
+// @Failure      404  {object}  response.ErrorResp
+// @Failure      500  {object}  response.ErrorResp
 func (h *Handler) GetAllSale(c *gin.Context) {
 	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
 	if err != nil {
@@ -68,6 +106,19 @@ func (h *Handler) GetAllSale(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
+// UpdateSale godoc
+// @Router       /sale/{id} [PUT]
+// @Summary      UPDATE SALE BY ID
+// @Description  UPDATES SALE BASED ON GIVEN DATA AND ID
+// @Tags         SALE
+// @Accept       json
+// @Produce      json
+// @Param        id    path     string  true  "id of sale" format(uuid)
+// @Param        data  body      models.Sales  true  "sale data"
+// @Success      200  {string}  string
+// @Failure      400  {object}  response.ErrorResp
+// @Failure      404  {object}  response.ErrorResp
+// @Failure      500  {object}  response.ErrorResp
 func (h *Handler) UpdateSale(c *gin.Context) {
 	var sale models.Sales
 	err := c.ShouldBind(&sale)
@@ -88,6 +139,18 @@ func (h *Handler) UpdateSale(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "sale successfully updated", "id": resp})
 }
 
+// DeleteSale godoc
+// @Router       /sale/{id} [DELETE]
+// @Summary      DELETE SALE BY ID
+// @Description  DELETES SALE BASED ON ID
+// @Tags         SALE
+// @Accept       json
+// @Produce      json
+// @Param        id    path     string  true  "id of sale" format(uuid)
+// @Success      200  {string}  string
+// @Failure      400  {object}  response.ErrorResp
+// @Failure      404  {object}  response.ErrorResp
+// @Failure      500  {object}  response.ErrorResp
 func (h *Handler) DeleteSale(c *gin.Context) {
 	id := c.Param("id")
 
