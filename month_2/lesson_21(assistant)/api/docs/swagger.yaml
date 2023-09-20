@@ -405,6 +405,44 @@ paths:
       summary: UPDATE BRANCH BY ID
       tags:
       - BRANCH
+  /get_top_staff:
+    get:
+      consumes:
+      - application/json
+      description: get top staff
+      parameters:
+      - description: from_date
+        in: query
+        name: from_date
+        required: true
+        type: string
+      - description: to_date
+        in: query
+        name: to_date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Branch'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: GET top staffes
+      tags:
+      - Biznes
   /sale:
     get:
       consumes:
