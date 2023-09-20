@@ -29,7 +29,13 @@ func (b *branchRepo) CreateBranch(req *models.CreateBranch) (string, error) {
 	year := yearNow - req.FoundedAt
 
 	query := `
-		INSERT INTO branches(id, name, adress, year, founded_at, created_at)
+		INSERT INTO branches(
+			id, 
+			name, 
+			adress, 
+			year, 
+			founded_at, 
+			created_at)
 		VALUES ($1, $2, $3, $4, $5, $6)
 	`
 	_, err := b.db.Exec(context.Background(), query,
@@ -48,7 +54,18 @@ func (b *branchRepo) CreateBranch(req *models.CreateBranch) (string, error) {
 }
 
 func (b *branchRepo) GetBranch(req *models.IdRequest) (resp *models.Branch, err error) {
-	query := `SELECT id, name, adress, year, founded_at, created_at, updated_at FROM branches WHERE id=$1`
+	query := `
+				SELECT 
+					id, 
+					name, 
+					adress, 
+					year, 
+					founded_at, 
+					created_at, 
+					updated_at 
+				FROM branches 
+				WHERE id=$1`
+
 	var (
 		createdAt time.Time
 		updatedAt sql.NullTime
@@ -81,8 +98,27 @@ func (b *branchRepo) GetBranch(req *models.IdRequest) (resp *models.Branch, err 
 func (b *branchRepo) UpdateBranch(req *models.Branch) (string, error) {
 	yearNow := time.Now().Year()
 	year := yearNow - req.FoundedAt
-	query := `UPDATE branches SET name = $1, adress = $2, year = $3, founded_at = $4, updated_at = NOW() WHERE id = $5 RETURNING id`
-	result, err := b.db.Exec(context.Background(), query, req.Name, req.Address, year, req.FoundedAt, req.ID)
+
+	query := `
+				UPDATE branches 
+				SET 
+					name = $1, 
+					adress = $2, 
+					year = $3, 
+					founded_at = $4, 
+					updated_at = NOW() 
+				WHERE id = $5 RETURNING id`
+
+	result, err := b.db.Exec(
+		context.Background(),
+		query,
+		req.Name,
+		req.Address,
+		year,
+		req.FoundedAt,
+		req.ID,
+	)
+
 	if err != nil {
 		return "", fmt.Errorf("failed to update branch: %w", err)
 	}
@@ -101,7 +137,16 @@ func (b *branchRepo) GetAllBranch(req *models.GetAllBranchRequest) (*models.GetA
 	createdAt := time.Time{}
 	updatedAt := sql.NullTime{}
 
-	s := `SELECT id, name, adress, year, founded_at, created_at, updated_at FROM branches`
+	s := `
+		SELECT 
+			id, 
+			name, 
+			adress, 
+			year, 
+			founded_at, 
+			created_at, 
+			updated_at 
+		FROM branches`
 
 	if req.Name != "" {
 		filter += ` WHERE name ILIKE '%' || :search || '%' `
@@ -149,9 +194,16 @@ func (b *branchRepo) GetAllBranch(req *models.GetAllBranchRequest) (*models.GetA
 }
 
 func (b *branchRepo) DeleteBranch(req *models.IdRequest) (resp string, err error) {
-	query := `DELETE FROM branches WHERE id = $1 RETURNING id`
+	query := `
+			DELETE 
+				FROM branches 
+			WHERE id = $1 RETURNING id`
 
-	result, err := b.db.Exec(context.Background(), query, req.Id)
+	result, err := b.db.Exec(
+		context.Background(),
+		query,
+		req.Id,
+	)
 	if err != nil {
 		return "", err
 	}
