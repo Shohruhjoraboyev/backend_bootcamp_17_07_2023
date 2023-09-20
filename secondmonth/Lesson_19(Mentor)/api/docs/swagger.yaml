@@ -1,0 +1,1015 @@
+definitions:
+  models.Branch:
+    properties:
+      address:
+        type: string
+      created_at:
+        type: string
+      founded_at:
+        type: integer
+      id:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: string
+      year:
+        type: integer
+    type: object
+  models.CreateBranch:
+    properties:
+      address:
+        type: string
+      founded_at:
+        type: integer
+      name:
+        type: string
+    type: object
+  models.CreateSale:
+    properties:
+      branch_id:
+        type: string
+      cashier_id:
+        type: string
+      clientName:
+        type: string
+      payment_Type:
+        description: 1 for card ,2 for cash
+        type: string
+      price:
+        type: number
+      shop_asisstant_id:
+        type: string
+      status:
+        description: 1 for succes ,2 for  cancel
+        type: string
+    type: object
+  models.CreateStaff:
+    properties:
+      balance:
+        type: number
+      branch_id:
+        type: string
+      name:
+        type: string
+      staff_type:
+        $ref: '#/definitions/models.StaffType'
+      tariff_id:
+        type: string
+    type: object
+  models.CreateStaffTarif:
+    properties:
+      amount_for_card:
+        type: number
+      amount_for_cash:
+        type: number
+      name:
+        type: string
+      type:
+        description: 1-fixed,2-percent
+        type: string
+    type: object
+  models.CreateTransaction:
+    properties:
+      amount:
+        type: integer
+      sale_id:
+        type: string
+      source_type:
+        description: Sales,Bonus
+        type: string
+      staff_id:
+        type: string
+      text:
+        type: string
+      type:
+        description: (withdraw,topup)
+        type: string
+    type: object
+  models.GetAllBranch:
+    properties:
+      branches:
+        items:
+          $ref: '#/definitions/models.Branch'
+        type: array
+      count:
+        type: integer
+    type: object
+  models.StaffType:
+    enum:
+    - cashier
+    - shop_assistant
+    type: string
+    x-enum-varnames:
+    - Cashier
+    - ShopAssistant
+  response.ErrorResp:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /branch:
+    get:
+      consumes:
+      - application/json
+      description: get all branches based on limit, page and search by name
+      parameters:
+      - default: 10
+        description: limit
+        in: query
+        minimum: 1
+        name: limit
+        type: integer
+      - default: 1
+        description: page
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      - description: search
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.GetAllBranch'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: GET  ALL BRANCHES
+      tags:
+      - BRANCH
+    post:
+      consumes:
+      - application/json
+      description: CREATES BRANCH BASED ON GIVEN DATA
+      parameters:
+      - description: branch data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateBranch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: CREATES BRANCH
+      tags:
+      - BRANCH
+  /branch/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: DELETES BRANCH BASED ON ID
+      parameters:
+      - description: id of branch
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: DELETE BRANCH BY ID
+      tags:
+      - BRANCH
+    get:
+      consumes:
+      - application/json
+      description: get branch by ID
+      parameters:
+      - description: Branch ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Branch'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: GET BY ID
+      tags:
+      - BRANCH
+    put:
+      consumes:
+      - application/json
+      description: UPDATES BRANCH BASED ON GIVEN DATA AND ID
+      parameters:
+      - description: id of branch
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: branch data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateBranch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: UPDATE BRANCH BY ID
+      tags:
+      - BRANCH
+  /sale:
+    get:
+      consumes:
+      - application/json
+      description: GET ALL SALES BASED ON GIVEN LIMIT,PAGE AND SEARCH BY CLIENT_NAME
+      parameters:
+      - default: 10
+        description: limit
+        in: query
+        minimum: 1
+        name: limit
+        type: integer
+      - default: 1
+        description: page
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      - description: search
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: GetAll Sale
+      tags:
+      - sale
+    post:
+      consumes:
+      - application/json
+      description: CREATE SALE BASED ON GIVEN DATA
+      parameters:
+      - description: sale data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateSale'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: CREATE SALE
+      tags:
+      - sale
+  /sale/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: DELETE SALE BY ID
+      parameters:
+      - description: SALE ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: DELETE SALE
+      tags:
+      - sale
+    get:
+      consumes:
+      - application/json
+      description: GET SALE BY ID
+      parameters:
+      - description: SALE ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: GET SALE
+      tags:
+      - sale
+    put:
+      consumes:
+      - application/json
+      description: UPDATE SALE BY ID AND GIVEN DATA
+      parameters:
+      - description: SALE ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: sale data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateSale'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: UPDATE SALE
+      tags:
+      - sale
+  /staff:
+    get:
+      consumes:
+      - application/json
+      description: GET ALL  STAFF BY GIVEN LIMIT,PAGE AND SEARCH BY NAME
+      parameters:
+      - default: 10
+        description: limit
+        in: query
+        minimum: 1
+        name: limit
+        type: integer
+      - default: 1
+        description: page
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      - description: search
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: GET ALL STAFF
+      tags:
+      - staff
+    post:
+      consumes:
+      - application/json
+      description: CREATE STAFF BY GIVEN DATA
+      parameters:
+      - description: STAFF DATA
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateStaff'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: CREATE STAFF
+      tags:
+      - staff
+  /staff/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: DELETE STAFF BY ID
+      parameters:
+      - description: STAFF ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: DELETE STAFF
+      tags:
+      - staff
+    get:
+      consumes:
+      - application/json
+      description: GET STAFF BY ID
+      parameters:
+      - description: STAFF ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: GET STAFF
+      tags:
+      - staff
+    put:
+      consumes:
+      - application/json
+      description: UPDATE STAFF BY ID
+      parameters:
+      - description: STAFF ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: STAFF DATA
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateStaff'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: UPDATE STAFF
+      tags:
+      - staff
+  /staff_tarif:
+    get:
+      consumes:
+      - application/json
+      description: gets all tariff based on limit, page and search by name
+      parameters:
+      - default: 10
+        description: limit
+        in: query
+        minimum: 1
+        name: limit
+        type: integer
+      - default: 1
+        description: page
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      - description: search
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: GET ALL STAFF TARIFF
+      tags:
+      - tariff
+    post:
+      consumes:
+      - application/json
+      description: CREATE STAFF TARIFF BY GIVEN DATA
+      parameters:
+      - description: STAFF TARIFF DATA
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateStaffTarif'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: CREATE STAFF TARIFF
+      tags:
+      - tariff
+  /staff_tarif/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: DELETE STAFF TARIFF BY GIVEN ID
+      parameters:
+      - description: TARIFF ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: DELETE STAFF TARIFF
+      tags:
+      - tariff
+    get:
+      consumes:
+      - application/json
+      description: GET STAFF TARIFF BY GIVEN ID
+      parameters:
+      - description: TARIFF ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: GET STAFF TARIFF
+      tags:
+      - tariff
+    put:
+      consumes:
+      - application/json
+      description: UPDATE STAFF TARIFF BY GIVEN ID AND DATA
+      parameters:
+      - description: TARIFF ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: STAFF TARIFF DATA
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateStaffTarif'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: UPDATE STAFF TARIFF
+      tags:
+      - tariff
+  /transaction:
+    get:
+      consumes:
+      - application/json
+      description: GET  ALL STAFF TRANSACTION BY GIVEN LIMIT,PAGE AND SEARCH BY TEXT
+      parameters:
+      - default: 10
+        description: limit
+        in: query
+        minimum: 1
+        name: limit
+        type: integer
+      - default: 1
+        description: page
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      - description: search
+        in: query
+        name: serch
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: GET  ALL STAFF TRANSACTION
+      tags:
+      - transaction
+    post:
+      consumes:
+      - application/json
+      description: CREATE STAFF TRANSACTION BY GIVEN DATA
+      parameters:
+      - description: STAFF TRANSACTION DATA
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateTransaction'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: CREATE STAFF TRANSACTION
+      tags:
+      - transaction
+    put:
+      consumes:
+      - application/json
+      description: Update STAFF TRANSACTION BY GIVEN ID and DATA
+      parameters:
+      - description: TRANSACTION ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: STAFF TRANSACTION DATA
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateTransaction'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: Update STAFF TRANSACTION
+      tags:
+      - transaction
+  /transaction/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: DELETE STAFF TRANSACTION BY GIVEN ID
+      parameters:
+      - description: TRANSACTION ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: DELETE STAFF TRANSACTION
+      tags:
+      - transaction
+    get:
+      consumes:
+      - application/json
+      description: GET STAFF TRANSACTION BY GIVEN ID
+      parameters:
+      - description: TRANSACTION ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: GET STAFF TRANSACTION
+      tags:
+      - transaction
+swagger: "2.0"
