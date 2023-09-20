@@ -50,3 +50,17 @@ type GetAllStaff struct {
 	Staffs []Staff `json:"staffs"`
 	Count  int     `json:"count"`
 }
+
+type UpdateBalanceRequest struct {
+	SaleId          string
+	TransactionType string
+	SourceType      string
+	Cashier         StaffIdAmount
+	ShopAssisstant  StaffIdAmount
+	Text            string
+}
+
+type StaffIdAmount struct {
+	StaffId string
+	Amount  float32
+}
