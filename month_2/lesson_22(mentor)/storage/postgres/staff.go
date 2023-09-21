@@ -179,23 +179,104 @@ func (s *staffRepo) DeleteStaff(req *models.IdRequest) (string, error) {
 	return deletedID, nil
 }
 
-// func (u *staffRepo) ChangeBalance(req models.ChangeBalance) (string, error) {
-// 	staffes, err := u.read()
-// 	if err != nil {
-// 		return "", err
-// 	}
-// 	for i, v := range staffes {
-// 		if v.Id == req.Id {
-// 			staffes[i].Balance = req.Balance
-// 			err = u.write(staffes)
-// 			if err != nil {
-// 				return "", err
-// 			}
-// 			return "updated balance", nil
-// 		}
-// 	}
-// 	return "", errors.New("not staff balance found with ID")
-// }
+func (s *staffRepo) UpdateBalance(req *models.UpdateBalanceRequest) (res string, err error) {
+
+	// begin transaction
+	tr, err := s.db.Begin(context.Background())
+	// rollback and commit function
+	defer func() {
+		if err != nil {
+			tr.Rollback(context.Background())
+		} else {
+			tr.Commit(context.Background())
+		}
+	}()
+
+	// query for cashier
+	cashierBQuery := `
+			UPADTE "staffs" 
+				SET "balance" = "balance" + $2
+			WHERE "id" = $1`
+
+	// checks transaction type if it is("withraw"), balance should be negative
+	if req.TransactionType == "withdraw" {
+		req.Cashier.Amount = -req.Cashier.Amount
+		req.ShopAssisstant.Amount = -req.ShopAssisstant.Amount
+	}
+
+	// Execting for cashier
+	_, err = tr.Exec(context.Background(), cashierBQuery, req.Cashier.StaffId, req.Cashier.Amount)
+	if err != nil {
+		return "", err
+	}
+
+	cashierTIQuery := `
+				INSERT INTO "transactions" (
+									"id", 
+									"type", 
+									"amount", 
+									"source_type", 
+									"text", 
+									"sale_id", 
+									"staff_id", 
+									"created_at")
+				VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())`
+
+	_, err = tr.Exec(context.Background(), cashierTIQuery,
+		uuid.NewString(),
+		req.TransactionType,
+		req.Cashier.Amount,
+		req.SourceType,
+		req.Text,
+		req.SaleId,
+		req.Cashier.StaffId,
+	)
+	if err != nil {
+		return "", err
+	}
+
+	// IF SHOP ASSSISTANT HAS ID RUN THIS
+	if req.ShopAssisstant.StaffId != "" {
+		// query for shop_assistant
+		assistBQuery := `
+	UPADTE "staffs" 
+		SET "balance" = "balance" + $2
+	WHERE "id" = $1`
+
+		// Execting for shop_assistant
+		_, err = tr.Exec(context.Background(), assistBQuery, req.ShopAssisstant.StaffId, req.ShopAssisstant.Amount)
+		if err != nil {
+			return "", err
+		}
+
+		assistTIQuery := `
+		INSERT INTO "transactions" (
+							"id", 
+							"type", 
+							"amount", 
+							"source_type", 
+							"text", 
+							"sale_id", 
+							"staff_id", 
+							"created_at")
+		VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())`
+
+		_, err = tr.Exec(context.Background(), assistTIQuery,
+			uuid.NewString(),
+			req.TransactionType,
+			req.ShopAssisstant.Amount,
+			req.SourceType,
+			req.Text,
+			req.SaleId,
+			req.ShopAssisstant.StaffId,
+		)
+		if err != nil {
+			return "", err
+		}
+	}
+
+	return "balance updated", nil
+}
 
 // func (u *staffRepo) Exists(req models.ExistsReq) bool {
 // 	staffes := []models.Staff{}
