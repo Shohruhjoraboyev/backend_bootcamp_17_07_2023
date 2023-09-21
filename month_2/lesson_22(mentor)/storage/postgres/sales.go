@@ -131,9 +131,18 @@ func (c *saleRepo) GetAllSale(req *models.GetAllSalesRequest) (*models.GetAllSal
 	var shop_assistant_id sql.NullString
 
 	selectQuery := `
-    SELECT "id", "client_name", "branch_id", "shop_assistant_id",
-    "cashier_id", "price", "payment_type", "status", "created_at", "updated_at"
-    FROM "sales"
+   			SELECT 
+			 	"id", 
+			 	"client_name", 
+				"branch_id", 
+				"shop_assistant_id",
+    			"cashier_id", 
+				"price", 
+				"payment_type", 
+				"status", 
+				"created_at", 
+				"updated_at"
+    		FROM "sales"
     `
 
 	if req.Client_name != "" {
@@ -141,18 +150,9 @@ func (c *saleRepo) GetAllSale(req *models.GetAllSalesRequest) (*models.GetAllSal
 		params["search"] = req.Client_name
 	}
 
-	limit := req.Limit
-	if limit <= 0 {
-		limit = 10
-	}
+	offset := (req.Page - 1) * req.Limit
 
-	page := req.Page
-	if page <= 0 {
-		page = 1
-	}
-	offset := (req.Page - 1) * limit
-
-	params["limit"] = limit
+	params["limit"] = req.Limit
 	params["offset"] = offset
 
 	query := selectQuery + filter + " ORDER BY created_at DESC LIMIT :limit OFFSET :offset"

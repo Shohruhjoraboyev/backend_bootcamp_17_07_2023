@@ -25,8 +25,13 @@ func (s *staffTarifRepo) CreateStaffTarif(req *models.CreateStaffTarif) (string,
 	id := uuid.NewString()
 
 	query := `
-		INSERT INTO "tariffs" 
-		("id", "name", "type", "amount_for_cash", "amount_for_card", "created_at")
+		INSERT INTO "tariffs" (
+			"id", 
+			"name", 
+			"type", 
+			"amount_for_cash", 
+			"amount_for_card", 
+			"created_at")
 		VALUES 
 		($1, $2, $3, $4, $5, NOW())
 	`
@@ -47,8 +52,16 @@ func (s *staffTarifRepo) CreateStaffTarif(req *models.CreateStaffTarif) (string,
 
 func (s *staffTarifRepo) GetStaffTarif(req *models.IdRequest) (resp *models.StaffTarif, err error) {
 	query := `
-		SELECT  "id", "name", "type", "amount_for_cash", "amount_for_card", "created_at", "updated_at"
-		FROM "tariffs" WHERE "id" = $1
+		SELECT  
+			"id", 
+			"name", 
+			"type", 
+			"amount_for_cash", 
+			"amount_for_card", 
+			"created_at", 
+			"updated_at"
+		FROM "tariffs" 
+		WHERE "id" = $1
 	`
 	var (
 		created_at time.Time
@@ -87,7 +100,13 @@ func (s *staffTarifRepo) GetAllStaffTarif(req *models.GetAllStaffTarifRequest) (
 
 	sekect := `
 		SELECT
-		"id", "name", "type", "amount_for_cash", "amount_for_card", "created_at", "updated_at"
+			"id", 
+			"name", 
+			"type", 
+			"amount_for_cash", 
+			"amount_for_card", 
+			"created_at", 
+			"updated_at"
 		FROM "tariffs"
 	`
 
@@ -96,18 +115,9 @@ func (s *staffTarifRepo) GetAllStaffTarif(req *models.GetAllStaffTarifRequest) (
 		params["search"] = req.Name
 	}
 
-	limit := req.Limit
-	if limit <= 0 {
-		limit = 10
-	}
+	offset := (req.Page - 1) * req.Limit
 
-	page := req.Page
-	if page <= 0 {
-		page = 1
-	}
-	offset := (req.Page - 1) * limit
-
-	params["limit"] = limit
+	params["limit"] = req.Limit
 	params["offset"] = offset
 
 	query := sekect + filter + " ORDER BY created_at DESC LIMIT :limit OFFSET :offset"
@@ -150,8 +160,12 @@ func (s *staffTarifRepo) GetAllStaffTarif(req *models.GetAllStaffTarifRequest) (
 
 func (s *staffTarifRepo) UpdateStaffTarif(req *models.StaffTarif) (string, error) {
 	query := `
-		UPDATE "tariffs"
-		SET "name" = $1, "type" = $2, "amount_for_cash" = $3, "amount_for_card" = $4, "updated_at" = NOW()
+		UPDATE "tariffs" SET 
+			"name" = $1, 
+			"type" = $2, 
+			"amount_for_cash" = $3, 
+			"amount_for_card" = $4, 
+			"updated_at" = NOW()
 		WHERE "id" = $5
 	`
 

@@ -23,12 +23,26 @@ func (s *staffRepo) CreateStaff(req *models.CreateStaff) (string, error) {
 	id := uuid.NewString()
 
 	query := `
-		INSERT INTO "staffs" ("id", "branch_id", "tariff_id", "staff_type", "name", "balance", "created_at", "updated_at")
+		INSERT INTO "staffs" (
+				"id", 
+				"branch_id", 
+				"tariff_id", 
+				"staff_type", 
+				"name", 
+				"balance", 
+				"created_at", 
+				"updated_at")
 		VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
 		RETURNING "id"
 	`
 
-	result := s.db.QueryRow(context.Background(), query, id, req.BranchID, req.TariffID, req.Type, req.Name, req.Balance)
+	result := s.db.QueryRow(context.Background(), query,
+		id,
+		req.BranchID,
+		req.TariffID,
+		req.Type,
+		req.Name,
+		req.Balance)
 
 	var createdID string
 	if err := result.Scan(&createdID); err != nil {
@@ -41,15 +55,23 @@ func (s *staffRepo) CreateStaff(req *models.CreateStaff) (string, error) {
 func (s *staffRepo) UpdateStaff(req *models.Staff) (string, error) {
 	query := `
 		UPDATE "staffs"
-		SET "branch_id" = $1, "tariff_id" = $2, 
-		"staff_type" = $3, "balance" = $4, 
-		"name" = $5, "updated_at" = NOW()
+			SET "branch_id" = $1, 
+			"tariff_id" = $2, 
+			"staff_type" = $3, 
+			"balance" = $4, 
+			"name" = $5, 
+			"updated_at" = NOW()
 		WHERE "id" = $6
 		RETURNING "id"
 	`
 
-	result, err := s.db.Exec(context.Background(),
-		query, req.BranchID, req.TariffID, req.Type, req.Balance, req.Name, req.ID)
+	result, err := s.db.Exec(context.Background(), query,
+		req.BranchID,
+		req.TariffID,
+		req.Type,
+		req.Balance,
+		req.Name,
+		req.ID)
 
 	if err != nil {
 		return "", fmt.Errorf("failed to update staff: %w", err)
@@ -63,7 +85,15 @@ func (s *staffRepo) UpdateStaff(req *models.Staff) (string, error) {
 }
 func (s *staffRepo) GetStaff(req *models.IdRequest) (*models.Staff, error) {
 	query := `
-		SELECT "id", "branch_id", "tariff_id", "staff_type", "name", "balance", "created_at", "updated_at"
+		SELECT 
+		"id", 
+		"branch_id", 
+		"tariff_id", 
+		"staff_type", 
+		"name", 
+		"balance", 
+		"created_at", 
+		"updated_at"
 		FROM "staffs"
 		WHERE "id" = $1
 	`
@@ -104,25 +134,24 @@ func (s *staffRepo) GetAllStaff(req *models.GetAllStaffRequest) (*models.GetAllS
 	filter := ""
 
 	query := `
-		SELECT "id", "branch_id", "tariff_id", "staff_type", "name", "balance", "created_at", "updated_at"
+		SELECT 
+			"id", 
+			"branch_id", 
+			"tariff_id", 
+			"staff_type", 
+			"name", 
+			"balance", 
+			"created_at", 
+			"updated_at"
 		FROM "staffs"
 	`
 	if req.Name != "" {
 		filter += ` WHERE "name" ILIKE '%' || :search || '%' `
 		params["search"] = req.Name
 	}
-	limit := req.Limit
-	if limit <= 0 {
-		limit = 10
-	}
 
-	page := req.Page
-	if page <= 0 {
-		page = 1
-	}
-
-	offset := (req.Page - 1) * limit
-	params["limit"] = limit
+	offset := (req.Page - 1) * req.Limit
+	params["limit"] = req.Limit
 	params["offset"] = offset
 
 	query = query + filter + " ORDER BY created_at DESC LIMIT :limit OFFSET :offset"
