@@ -10,6 +10,7 @@ type StorageI interface {
 	Staff() StaffesI
 	Sales() SalesI
 	Transaction() TransactionI
+	BiznesLoggic() BiznesLogicI
 	Close()
 }
 
@@ -58,4 +59,8 @@ type TransactionI interface {
 	GetAllTransaction(*models.GetAllTransactionRequest) (*models.GetAllTransactionResponse, error)
 	DeleteTransaction(*models.IdRequest) (string, error)
 	// GetTopStaffs(models.TopWorkerRequest) (map[string]models.StaffTop, error)
+}
+
+type BiznesLogicI interface {
+	GetTopStaff(*models.TopStaffRequest) (*models.TopStaffResponse, error)
 }

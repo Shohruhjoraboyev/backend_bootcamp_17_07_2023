@@ -16,6 +16,7 @@ type store struct {
 	staffes     *staffRepo
 	sales       *saleRepo
 	transaction *transactionRepo
+	biznes      *biznesRepo
 	// staffTarifs *staffTarifRepo
 }
 
@@ -81,4 +82,11 @@ func (s *store) Transaction() storage.TransactionI {
 		s.transaction = NewTransactionRepo(s.db)
 	}
 	return s.transaction
+}
+
+func (s *store) BiznesLoggic() storage.BiznesLogicI {
+	if s.biznes == nil {
+		s.biznes = NewBiznesRepo(s.db)
+	}
+	return s.biznes
 }
