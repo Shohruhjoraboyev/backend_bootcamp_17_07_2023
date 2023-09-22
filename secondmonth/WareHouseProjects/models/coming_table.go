@@ -1,0 +1,42 @@
+package models
+
+import "time"
+
+type TableType string
+
+const (
+	Finishied TableType = "finishied"
+	InProcess TableType = "in_process"
+)
+
+type CreateComingTable struct {
+	Coming_id int       `json:"coming_id"`
+	Branch_id string    `json:"branch_id"`
+	DateTime  time.Time `json:"date_time"`
+	Status    string    `json:"status"`
+}
+
+type ComingTable struct {
+	ID        string    `json:"id"`
+	ComingID  string    `json:"coming_id"`
+	BranchID  string    `json:"branch_id"`
+	DateTime  time.Time `json:"date_time"`
+	Status    TableType `json:"status"`
+	CreatedAt string    `json:"created_at"`
+	UpdatedAt string    `json:"updated_at"`
+}
+
+type ComingTableIdRequest struct {
+	Id string `json:"id"`
+}
+
+type GetAllComingTableRequest struct {
+	ComingID string    `json:"coming_id"`
+	BranchID string    `json:"branch_id"`
+	DateTime time.Time `json:"date_time"`
+}
+
+type GetAllComingTable struct {
+	ComingTables []ComingTable `json:"coming_table"`
+	Count        int           `json:"count"`
+}
