@@ -17,12 +17,18 @@ type CategoryIdRequest struct {
 	Id string `json:"id"`
 }
 
-type GetAllCategoryRequest struct {
+type UpdateCategory struct {
+	Id        string `json:"id"`
 	Name      string `json:"name"`
 	Parent_id string `json:"parent_id"`
 }
+type GetAllCategoryRequest struct {
+	Page  int    `json:"page"`
+	Limit int    `json:"limit"`
+	Name  string `json:"name"`
+}
 
-type GetAllCategory struct {
+type GetAllCategoryResponse struct {
 	Categories []Category `json:"category"`
 	Count      int        `json:"count"`
 }
