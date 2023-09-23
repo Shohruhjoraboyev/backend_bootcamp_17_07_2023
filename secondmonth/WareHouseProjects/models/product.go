@@ -4,7 +4,7 @@ type CreateProduct struct {
 	Name        string  `json:"name"`
 	Price       float64 `json:"price"`
 	Barcode     string  `json:"barcode"`
-	Category_id int     `json:"category_id"`
+	Category_id string  `json:"category_id"`
 }
 
 type Product struct {
@@ -12,9 +12,16 @@ type Product struct {
 	Name        string  `json:"name"`
 	Price       float64 `json:"price"`
 	Barcode     string  `json:"barcode"`
-	Category_id int     `json:"category_id"`
+	Category_id string  `json:"category_id"`
 	CreatedAt   string  `json:"created_at"`
 	UpdatedAt   string  `json:"updated_at"`
+}
+type UpdateProduct struct {
+	ID          string  `json:"id"`
+	Name        string  `json:"name"`
+	Price       float64 `json:"price"`
+	Barcode     string  `json:"barcode"`
+	Category_id string  `json:"category_id"`
 }
 
 type ProductIdRequest struct {
@@ -22,11 +29,12 @@ type ProductIdRequest struct {
 }
 
 type GetAllProductRequest struct {
-	Name    string `json:"name"`
-	Barcode string `json:"barcode"`
+	Page   int    `json:"page"`
+	Limit  int    `json:"limit"`
+	Search string `json:"search"`
 }
 
-type GetAllProduct struct {
+type GetAllProductResponse struct {
 	Products []Product `json:"product"`
 	Count    int       `json:"count"`
 }

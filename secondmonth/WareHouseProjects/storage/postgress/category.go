@@ -22,29 +22,47 @@ func NewCategoryRepo(db *pgxpool.Pool) *categoryRepo {
 	}
 }
 
-func (c *categoryRepo) CreateCategory(req *models.CreateCategory) (string, error) {
-
+func (r *categoryRepo) CreateCategory(req *models.CreateCategory) (string, error) {
 	var (
-		id    = uuid.NewString()
-		query string
+		id = uuid.NewString()
 	)
 
-	query = `
-		INSERT INTO "category"(
-			"id", 
+	query := `
+		  INSERT INTO "category"(
+			"id",
+			"name",
+			"created_at")
+		  VALUES ($1, $2, NOW())`
+
+	if req.Parent_id != "" {
+		query = `
+		  INSERT INTO "category"(
+			"id",
 			"name",
 			"parent_id",
-			"created_at" )
-		VALUES ($1, $2, $3,  NOW())`
+			"created_at")
+		  VALUES ($1, $2, $3, NOW())`
+	}
 
-	_, err := c.db.Exec(context.Background(), query,
-		id,
-		req.Name,
-		helper.NewNullString(req.Parent_id),
-	)
+	if req.Parent_id != "" {
+		_, err := r.db.Exec(context.Background(), query,
+			id,
+			req.Name,
+			req.Parent_id,
+		)
 
-	if err != nil {
-		return "", err
+		if err != nil {
+			return "", err
+		}
+	} else {
+		_, err := r.db.Exec(context.Background(), query,
+			id,
+			req.Name,
+		)
+
+		if err != nil {
+			return "", err
+		}
 	}
 
 	return id, nil
@@ -57,7 +75,7 @@ func (c *categoryRepo) GetCategory(req *models.CategoryIdRequest) (resp *models.
 		   "id", 
 		    "name",
 		    "parent_id",
-		    "created_at" 
+		    "created_at", 
 			"updated_at" 
 		FROM "category"
 		WHERE id = $1
@@ -88,58 +106,66 @@ func (c *categoryRepo) GetCategory(req *models.CategoryIdRequest) (resp *models.
 
 func (c *categoryRepo) GetAllCategory(req *models.GetAllCategoryRequest) (*models.GetAllCategoryResponse, error) {
 	params := make(map[string]interface{})
-	filter := ""
-	offset := (req.Page - 1) * req.Limit
-	createdAt := time.Time{}
-	updatedAt := sql.NullTime{}
+	var resp = &models.GetAllCategoryResponse{}
 
-	s := `SELECT 
-		   "id", 
-		    "name",
-		    "parent_id",
-		    "created_at" 
-			"updated_at" 
-				FROM category order by created_at desc`
+	resp.Categories = make([]models.Category, 0)
 
+	filter := " WHERE true "
+	query := `
+			SELECT
+				COUNT(*) OVER(),
+				"id", 
+				"name",
+				"parent_id",
+				"created_at",
+				"updated_at" 
+			FROM "category"
+		`
 	if req.Name != "" {
-		filter += ` WHERE name ILIKE '%' || :search || '%' `
+		filter += ` AND "name" ILIKE '%' || :search || '%' `
 		params["search"] = req.Name
 	}
 
-	limit := fmt.Sprintf(" LIMIT %d", req.Limit)
-	offsetQ := fmt.Sprintf(" OFFSET %d", offset)
-	query := s + filter + limit + offsetQ
+	offset := (req.Page - 1) * req.Limit
+	params["limit"] = req.Limit
+	params["offset"] = offset
 
-	q, pArr := helper.ReplaceQueryParams(query, params)
-	rows, err := c.db.Query(context.Background(), q, pArr...)
+	query = query + filter + " ORDER BY created_at DESC OFFSET :offset LIMIT :limit "
+	rquery, pArr := helper.ReplaceQueryParams(query, params)
+
+	rows, err := c.db.Query(context.Background(), rquery, pArr...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute query: %w", err)
 	}
 	defer rows.Close()
 
-	resp := &models.GetAllCategoryResponse{}
-	count := 0
 	for rows.Next() {
-		var category models.Category
-		count++
+		var (
+			id        sql.NullString
+			name      sql.NullString
+			parent_id sql.NullString
+			createdAt sql.NullString
+			updatedAt sql.NullString
+		)
 		err := rows.Scan(
-			&category.ID,
-			&category.Name,
-			&category.Parent_id,
+			&resp.Count,
+			&id,
+			&name,
+			&parent_id,
 			&createdAt,
 			&updatedAt,
 		)
 		if err != nil {
 			return nil, err
 		}
-		category.CreatedAt = createdAt.Format(time.RFC3339)
-		if updatedAt.Valid {
-			category.UpdatedAt = updatedAt.Time.Format(time.RFC3339)
-		}
-		resp.Categories = append(resp.Categories, category)
+		resp.Categories = append(resp.Categories, models.Category{
+			ID:        id.String,
+			Name:      name.String,
+			Parent_id: parent_id.String,
+			CreatedAt: createdAt.String,
+			UpdatedAt: updatedAt.String,
+		})
 	}
-
-	resp.Count = count
 	return resp, nil
 }
 

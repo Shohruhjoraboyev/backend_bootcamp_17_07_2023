@@ -10,7 +10,7 @@ const (
 )
 
 type CreateComingTable struct {
-	Coming_id int       `json:"coming_id"`
+	Coming_id string    `json:"coming_id"`
 	Branch_id string    `json:"branch_id"`
 	DateTime  time.Time `json:"date_time"`
 	Status    string    `json:"status"`
@@ -25,18 +25,25 @@ type ComingTable struct {
 	CreatedAt string    `json:"created_at"`
 	UpdatedAt string    `json:"updated_at"`
 }
+type UpdateComingTable struct {
+	ID       string    `json:"id"`
+	ComingID string    `json:"coming_id"`
+	BranchID string    `json:"branch_id"`
+	DateTime time.Time `json:"date_time"`
+	Status   TableType `json:"status"`
+}
 
 type ComingTableIdRequest struct {
 	Id string `json:"id"`
 }
 
 type GetAllComingTableRequest struct {
-	ComingID string    `json:"coming_id"`
-	BranchID string    `json:"branch_id"`
-	DateTime time.Time `json:"date_time"`
+	Page   int    `json:"page"`
+	Limit  int    `json:"limit"`
+	Search string `json:"search"`
 }
 
-type GetAllComingTable struct {
+type GetAllComingTableResponse struct {
 	ComingTables []ComingTable `json:"coming_table"`
 	Count        int           `json:"count"`
 }

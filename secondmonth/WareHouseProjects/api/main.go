@@ -25,6 +25,34 @@ func NewServer(h *handler.Handler) *gin.Engine {
 	r.PUT("/category/:id", h.UpdateCategory)
 	r.DELETE("/category/:id", h.DeleteCategory)
 
+	//Product
+	r.POST("/product", h.CreateProduct)
+	r.GET("/product/:id", h.GetProduct)
+	r.GET("/product", h.GetAllProduct)
+	r.PUT("/product/:id", h.UpdateProduct)
+	r.DELETE("/product/:id", h.DeleteProduct)
+
+	//ComingTable
+	r.POST("/coming_table", h.CreateComingTable)
+	r.GET("/coming_table/:id", h.GetComingTable)
+	r.GET("/coming_table", h.GetAllComingTable)
+	r.PUT("/coming_table/:id", h.UpdateComingTable)
+	r.DELETE("/coming_table/:id", h.DeleteComingTable)
+
+	//ComingTableProduct
+	r.POST("/coming_table_product", h.CreateComingTableProduct)
+	r.GET("/coming_table_product/:id", h.GetComingTableProduct)
+	r.GET("/coming_table_product", h.GetAllComingTableProduct)
+	r.PUT("/coming_table_product/:id", h.UpdateComingTableProduct)
+	r.DELETE("/coming_table_product/:id", h.DeleteComingTableProduct)
+
+	//Remain
+	r.POST("/remain", h.CreateRemain)
+	r.GET("/remain/:id", h.GetRemain)
+	r.GET("/remain", h.GetAllRemain)
+	r.PUT("/remain/:id", h.UpdateRemain)
+	r.DELETE("/remain/:id", h.DeleteRemain)
+
 	url := ginSwagger.URL("swagger/doc.json")
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
 	return r

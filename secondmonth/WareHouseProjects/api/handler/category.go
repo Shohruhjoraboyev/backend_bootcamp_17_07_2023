@@ -75,7 +75,7 @@ func (h *Handler) GetCategory(c *gin.Context) {
 // @Param   limit         query     int        false  "limit"          minimum(1)     default(10)
 // @Param   page         query     int        false  "page"          minimum(1)     default(1)
 // @Param   search         query     string        false  "search"
-// @Success      200  {object}  models.GetAllCategory
+// @Success      200  {object}  models.GetAllCategoryRequest
 // @Failure      400  {object}  response.ErrorResp
 // @Failure      404  {object}  response.ErrorResp
 // @Failure      500  {object}  response.ErrorResp
@@ -116,7 +116,7 @@ func (h *Handler) GetAllCategory(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        id    path     string  true  "id of category" format(uuid)
-// @Param        data  body      models.CreateCategory true  "category data"
+// @Param        data  body      models.UpdateCategory true  "category data"
 // @Success      200  {string}  string
 // @Failure      400  {object}  response.ErrorResp
 // @Failure      404  {object}  response.ErrorResp

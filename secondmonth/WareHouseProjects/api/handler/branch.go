@@ -75,7 +75,7 @@ func (h *Handler) GetBranch(c *gin.Context) {
 // @Param   limit         query     int        false  "limit"          minimum(1)     default(10)
 // @Param   page         query     int        false  "page"          minimum(1)     default(1)
 // @Param   search         query     string        false  "search"
-// @Success      200  {object}  models.GetAllBranch
+// @Success      200  {object}  models.GetAllBranchRequest
 // @Failure      400  {object}  response.ErrorResp
 // @Failure      404  {object}  response.ErrorResp
 // @Failure      500  {object}  response.ErrorResp
@@ -116,7 +116,7 @@ func (h *Handler) GetAllBranch(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        id    path     string  true  "id of branch" format(uuid)
-// @Param        data  body      models.CreateBranch  true  "branch data"
+// @Param        data  body      models.UpdateBranch  true  "branch data"
 // @Success      200  {string}  string
 // @Failure      400  {object}  response.ErrorResp
 // @Failure      404  {object}  response.ErrorResp

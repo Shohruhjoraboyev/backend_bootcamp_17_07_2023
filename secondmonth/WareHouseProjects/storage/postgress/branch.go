@@ -92,60 +92,69 @@ func (b *branchRepo) GetBranch(req *models.BranchIdRequest) (resp *models.Branch
 
 func (b *branchRepo) GetAllBranch(req *models.GetAllBranchRequest) (*models.GetAllBranchResponse, error) {
 	params := make(map[string]interface{})
-	filter := ""
-	offset := (req.Page - 1) * req.Limit
-	createdAt := time.Time{}
-	updatedAt := sql.NullTime{}
+	var resp = &models.GetAllBranchResponse{}
 
-	s := `SELECT 
-	            id, 
-				name, 
-				address, 
-				phone, 
-				created_at, 
-				updated_at 
-				FROM branches order by created_at desc`
+	resp.Branches = make([]models.Branch, 0)
 
+	filter := " WHERE true "
+	query := `
+			SELECT
+				COUNT(*) OVER(),
+				"id", 
+				"name",
+				"address",
+				"phone",
+				"created_at",
+				"updated_at" 
+			FROM "branches"
+		`
 	if req.Name != "" {
-		filter += ` WHERE name ILIKE '%' || :search || '%' `
+		filter += ` AND "name" ILIKE '%' || :search || '%' `
 		params["search"] = req.Name
 	}
 
-	limit := fmt.Sprintf(" LIMIT %d", req.Limit)
-	offsetQ := fmt.Sprintf(" OFFSET %d", offset)
-	query := s + filter + limit + offsetQ
+	offset := (req.Page - 1) * req.Limit
+	params["limit"] = req.Limit
+	params["offset"] = offset
+	query = query + filter + " ORDER BY created_at DESC OFFSET :offset LIMIT :limit "
+	rquery, pArr := helper.ReplaceQueryParams(query, params)
 
-	q, pArr := helper.ReplaceQueryParams(query, params)
-	rows, err := b.db.Query(context.Background(), q, pArr...)
+	rows, err := b.db.Query(context.Background(), rquery, pArr...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute query: %w", err)
 	}
 	defer rows.Close()
 
-	resp := &models.GetAllBranchResponse{}
-	count := 0
 	for rows.Next() {
-		var branch models.Branch
-		count++
+		var (
+			id        sql.NullString
+			name      sql.NullString
+			address   sql.NullString
+			phone     sql.NullString
+			createdAt sql.NullString
+			updatedAt sql.NullString
+		)
 		err := rows.Scan(
-			&branch.ID,
-			&branch.Name,
-			&branch.Address,
-			&branch.Phone,
+			&resp.Count,
+			&id,
+			&name,
+			&address,
+			&phone,
 			&createdAt,
 			&updatedAt,
 		)
 		if err != nil {
 			return nil, err
 		}
-		branch.CreatedAt = createdAt.Format(time.RFC3339)
-		if updatedAt.Valid {
-			branch.UpdatedAt = updatedAt.Time.Format(time.RFC3339)
-		}
-		resp.Branches = append(resp.Branches, branch)
+		resp.Branches = append(resp.Branches, models.Branch{
+			ID:        id.String,
+			Name:      name.String,
+			Address:   address.String,
+			Phone:     phone.String,
+			CreatedAt: createdAt.String,
+			UpdatedAt: updatedAt.String,
+		})
 	}
-
-	resp.Count = count
 	return resp, nil
 }
 
