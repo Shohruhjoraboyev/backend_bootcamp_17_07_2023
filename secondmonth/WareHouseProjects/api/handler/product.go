@@ -73,7 +73,8 @@ func (h *Handler) GetProduct(c *gin.Context) {
 // @Produce      json
 // @Param  		 limit         query     int        false  "limit"          minimum(1)     default(10)
 // @Param  		 page          query     int        false  "page"           minimum(1)     default(1)
-// @Param   	 search        query     string     false  "search"
+// @Param   	 name          query     string     false  "name"
+// @Param   	 barcode       query     string     false  "barcode"
 // @Success      200  {object}  models.GetAllProductRequest
 // @Failure      400  {object}  response.ErrorResp
 // @Failure      404  {object}  response.ErrorResp
@@ -93,9 +94,10 @@ func (h *Handler) GetAllProduct(c *gin.Context) {
 	}
 
 	resp, err := h.storage.Product().GetAllProduct(&models.GetAllProductRequest{
-		Page:   page,
-		Limit:  limit,
-		Search: c.Query("search"),
+		Page:    page,
+		Limit:   limit,
+		Barcode: c.Query("search"),
+		Name:    c.Query("search"),
 	})
 	if err != nil {
 		h.log.Error("error Product GetAllProduct:", logger.Error(err))

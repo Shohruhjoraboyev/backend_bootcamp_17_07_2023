@@ -73,7 +73,8 @@ func (h *Handler) GetComingTable(c *gin.Context) {
 // @Produce      json
 // @Param  		 limit         query     int        false  "limit"          minimum(1)     default(10)
 // @Param  		 page          query     int        false  "page"           minimum(1)     default(1)
-// @Param   	 search        query     string     false  "search"
+// @Param   	 coming_id        query     string     false  "coming_id"
+// @Param   	 branch_id        query     string     false  "branch_id"
 // @Success      200  {object}  models.GetAllComingTableRequest
 // @Failure      400  {object}  response.ErrorResp
 // @Failure      404  {object}  response.ErrorResp
@@ -93,9 +94,10 @@ func (h *Handler) GetAllComingTable(c *gin.Context) {
 	}
 
 	resp, err := h.storage.Coming_Table().GetAllComingTable(&models.GetAllComingTableRequest{
-		Page:   page,
-		Limit:  limit,
-		Search: c.Query("search"),
+		Page:     page,
+		Limit:    limit,
+		ComingID: c.Query("search"),
+		BranchID: c.Query("search"),
 	})
 	if err != nil {
 		h.log.Error("error ComingTable GetAllComingTable:", logger.Error(err))

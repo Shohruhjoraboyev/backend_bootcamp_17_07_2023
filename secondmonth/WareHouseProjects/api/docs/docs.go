@@ -593,8 +593,14 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "search",
-                        "name": "search",
+                        "description": "coming_id",
+                        "name": "coming_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "branch_id",
+                        "name": "branch_id",
                         "in": "query"
                     }
                 ],
@@ -866,8 +872,14 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "search",
-                        "name": "search",
+                        "description": "category_id",
+                        "name": "category_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "barcode",
+                        "name": "barcode",
                         "in": "query"
                     }
                 ],
@@ -917,7 +929,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.CreateComingTableProduct"
+                            "$ref": "#/definitions/models.CreateComingTableProductSwagger"
                         }
                     }
                 ],
@@ -1139,8 +1151,14 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "search",
-                        "name": "search",
+                        "description": "name",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "barcode",
+                        "name": "barcode",
                         "in": "query"
                     }
                 ],
@@ -1412,8 +1430,20 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "search",
-                        "name": "search",
+                        "description": "branch_id",
+                        "name": "branch_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "category_id",
+                        "name": "category_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "barcode",
+                        "name": "barcode",
                         "in": "query"
                     }
                 ],
@@ -1795,31 +1825,19 @@ const docTemplate = `{
                 },
                 "date_time": {
                     "type": "string"
-                },
-                "status": {
-                    "type": "string"
                 }
             }
         },
-        "models.CreateComingTableProduct": {
+        "models.CreateComingTableProductSwagger": {
             "type": "object",
             "properties": {
                 "barcode": {
-                    "type": "string"
-                },
-                "category_id": {
                     "type": "string"
                 },
                 "coming_table_id": {
                     "type": "string"
                 },
                 "count": {
-                    "type": "number"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "price": {
                     "type": "number"
                 }
             }
@@ -1898,56 +1916,71 @@ const docTemplate = `{
         "models.GetAllComingTableProductRequest": {
             "type": "object",
             "properties": {
+                "barcode": {
+                    "type": "string"
+                },
+                "category_id": {
+                    "type": "string"
+                },
                 "limit": {
                     "type": "integer"
                 },
                 "page": {
                     "type": "integer"
-                },
-                "search": {
-                    "type": "string"
                 }
             }
         },
         "models.GetAllComingTableRequest": {
             "type": "object",
             "properties": {
+                "branch_id": {
+                    "type": "string"
+                },
+                "coming_id": {
+                    "type": "string"
+                },
                 "limit": {
                     "type": "integer"
                 },
                 "page": {
                     "type": "integer"
-                },
-                "search": {
-                    "type": "string"
                 }
             }
         },
         "models.GetAllProductRequest": {
             "type": "object",
             "properties": {
+                "barcode": {
+                    "type": "string"
+                },
                 "limit": {
                     "type": "integer"
                 },
+                "name": {
+                    "type": "string"
+                },
                 "page": {
                     "type": "integer"
-                },
-                "search": {
-                    "type": "string"
                 }
             }
         },
         "models.GetAllRemainRequest": {
             "type": "object",
             "properties": {
+                "barcode": {
+                    "type": "string"
+                },
+                "branch_id": {
+                    "type": "string"
+                },
+                "category_id": {
+                    "type": "string"
+                },
                 "limit": {
                     "type": "integer"
                 },
                 "page": {
                     "type": "integer"
-                },
-                "search": {
-                    "type": "string"
                 }
             }
         },
@@ -2068,9 +2101,6 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string"
-                },
-                "status": {
-                    "$ref": "#/definitions/models.TableType"
                 }
             }
         },

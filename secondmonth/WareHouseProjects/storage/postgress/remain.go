@@ -129,10 +129,21 @@ func (c *remainRepo) GetAllRemain(req *models.GetAllRemainRequest) (*models.GetA
 			"updated_at"
 		FROM "remain"
 	`
-	if req.Search != "" {
-		filter += ` AND ("category_id" ILIKE '%' || :search || '%' OR "branch_id" = :search || '%' OR "barcode" = :search) `
-		params["search"] = req.Search
+	if req.Category_id != "" {
+		filter += ` AND ("category_id" ILIKE '%' || :search ) `
+		params["search"] = req.Category_id
 	}
+
+	if req.Branch_id != "" {
+		filter += ` AND ("branch_id" ILIKE '%' || :search ) `
+		params["search"] = req.Branch_id
+	}
+
+	if req.Barcode != "" {
+		filter += ` AND ("barcode" ILIKE '%' || :search ) `
+		params["search"] = req.Barcode
+	}
+
 	offset := (req.Page - 1) * req.Limit
 	params["limit"] = req.Limit
 	params["offset"] = offset
@@ -184,6 +195,7 @@ func (c *remainRepo) GetAllRemain(req *models.GetAllRemainRequest) (*models.GetA
 	return resp, nil
 }
 func (c *remainRepo) UpdateRemain(req *models.UpdateRemain) (string, error) {
+	totalPrice := req.Count * req.Price
 
 	query := `UPDATE remain 
 	            SET  branch_id = $1, 
@@ -196,7 +208,7 @@ func (c *remainRepo) UpdateRemain(req *models.UpdateRemain) (string, error) {
 					 updated_at = NOW() 
 					 WHERE id = $8 RETURNING id`
 
-	result, err := c.db.Exec(context.Background(), query, req.Branch_id, req.Category_id, req.Name, req.Price, req.Barcode, req.Count, req.TotalPrice, req.ID)
+	result, err := c.db.Exec(context.Background(), query, req.Branch_id, req.Category_id, req.Name, req.Price, req.Barcode, req.Count, totalPrice, req.ID)
 	if err != nil {
 		return "Error Update Remain", err
 	}

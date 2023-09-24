@@ -1,7 +1,5 @@
 package models
 
-import "time"
-
 type TableType string
 
 const (
@@ -10,27 +8,25 @@ const (
 )
 
 type CreateComingTable struct {
-	Coming_id string    `json:"coming_id"`
-	Branch_id string    `json:"branch_id"`
-	DateTime  time.Time `json:"date_time"`
-	Status    string    `json:"status"`
+	Coming_id string `json:"coming_id"`
+	Branch_id string `json:"branch_id"`
+	DateTime  string `json:"date_time"`
 }
 
 type ComingTable struct {
 	ID        string    `json:"id"`
 	ComingID  string    `json:"coming_id"`
 	BranchID  string    `json:"branch_id"`
-	DateTime  time.Time `json:"date_time"`
+	DateTime  string    `json:"date_time"`
 	Status    TableType `json:"status"`
 	CreatedAt string    `json:"created_at"`
 	UpdatedAt string    `json:"updated_at"`
 }
 type UpdateComingTable struct {
-	ID       string    `json:"id"`
-	ComingID string    `json:"coming_id"`
-	BranchID string    `json:"branch_id"`
-	DateTime time.Time `json:"date_time"`
-	Status   TableType `json:"status"`
+	ID       string `json:"id"`
+	ComingID string `json:"coming_id"`
+	BranchID string `json:"branch_id"`
+	DateTime string `json:"date_time"`
 }
 
 type ComingTableIdRequest struct {
@@ -38,9 +34,10 @@ type ComingTableIdRequest struct {
 }
 
 type GetAllComingTableRequest struct {
-	Page   int    `json:"page"`
-	Limit  int    `json:"limit"`
-	Search string `json:"search"`
+	Page     int    `json:"page"`
+	Limit    int    `json:"limit"`
+	ComingID string `json:"coming_id"`
+	BranchID string `json:"branch_id"`
 }
 
 type GetAllComingTableResponse struct {

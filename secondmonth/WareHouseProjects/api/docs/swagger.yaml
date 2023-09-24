@@ -91,22 +91,14 @@ definitions:
         type: string
       date_time:
         type: string
-      status:
-        type: string
     type: object
-  models.CreateComingTableProduct:
+  models.CreateComingTableProductSwagger:
     properties:
       barcode:
-        type: string
-      category_id:
         type: string
       coming_table_id:
         type: string
       count:
-        type: number
-      name:
-        type: string
-      price:
         type: number
     type: object
   models.CreateProduct:
@@ -157,39 +149,49 @@ definitions:
     type: object
   models.GetAllComingTableProductRequest:
     properties:
+      barcode:
+        type: string
+      category_id:
+        type: string
       limit:
         type: integer
       page:
         type: integer
-      search:
-        type: string
     type: object
   models.GetAllComingTableRequest:
     properties:
+      branch_id:
+        type: string
+      coming_id:
+        type: string
       limit:
         type: integer
       page:
         type: integer
-      search:
-        type: string
     type: object
   models.GetAllProductRequest:
     properties:
+      barcode:
+        type: string
       limit:
         type: integer
+      name:
+        type: string
       page:
         type: integer
-      search:
-        type: string
     type: object
   models.GetAllRemainRequest:
     properties:
+      barcode:
+        type: string
+      branch_id:
+        type: string
+      category_id:
+        type: string
       limit:
         type: integer
       page:
         type: integer
-      search:
-        type: string
     type: object
   models.Product:
     properties:
@@ -269,8 +271,6 @@ definitions:
         type: string
       id:
         type: string
-      status:
-        $ref: '#/definitions/models.TableType'
     type: object
   models.UpdateComingTableProduct:
     properties:
@@ -717,9 +717,13 @@ paths:
         minimum: 1
         name: page
         type: integer
-      - description: search
+      - description: coming_id
         in: query
-        name: search
+        name: coming_id
+        type: string
+      - description: branch_id
+        in: query
+        name: branch_id
         type: string
       produces:
       - application/json
@@ -901,9 +905,13 @@ paths:
         minimum: 1
         name: page
         type: integer
-      - description: search
+      - description: category_id
         in: query
-        name: search
+        name: category_id
+        type: string
+      - description: barcode
+        in: query
+        name: barcode
         type: string
       produces:
       - application/json
@@ -937,7 +945,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/models.CreateComingTableProduct'
+          $ref: '#/definitions/models.CreateComingTableProductSwagger'
       produces:
       - application/json
       responses:
@@ -1084,9 +1092,13 @@ paths:
         minimum: 1
         name: page
         type: integer
-      - description: search
+      - description: name
         in: query
-        name: search
+        name: name
+        type: string
+      - description: barcode
+        in: query
+        name: barcode
         type: string
       produces:
       - application/json
@@ -1267,9 +1279,17 @@ paths:
         minimum: 1
         name: page
         type: integer
-      - description: search
+      - description: branch_id
         in: query
-        name: search
+        name: branch_id
+        type: string
+      - description: category_id
+        in: query
+        name: category_id
+        type: string
+      - description: barcode
+        in: query
+        name: barcode
         type: string
       produces:
       - application/json

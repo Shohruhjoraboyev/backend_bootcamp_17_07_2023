@@ -35,6 +35,8 @@ type ProdouctsI interface {
 	GetAllProduct(*models.GetAllProductRequest) (*models.GetAllProductResponse, error)
 	UpdateProduct(*models.UpdateProduct) (string, error)
 	DeleteProduct(*models.ProductIdRequest) (string, error)
+
+	GetProductByBarcode(*models.CheckBarcodeComingTable) (*models.RespBarcodeProduct, error)
 }
 
 type Coming_TableI interface {
@@ -43,6 +45,8 @@ type Coming_TableI interface {
 	GetAllComingTable(*models.GetAllComingTableRequest) (*models.GetAllComingTableResponse, error)
 	UpdateComingTable(*models.UpdateComingTable) (string, error)
 	DeleteComingTable(*models.ComingTableIdRequest) (string, error)
+
+	GetStatus(*models.ComingTableIdRequest) error
 }
 
 type Coming_TableProductI interface {

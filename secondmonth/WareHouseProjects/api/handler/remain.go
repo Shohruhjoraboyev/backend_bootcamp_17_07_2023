@@ -73,7 +73,9 @@ func (h *Handler) GetRemain(c *gin.Context) {
 // @Produce      json
 // @Param  		 limit         query     int        false  "limit"          minimum(1)     default(10)
 // @Param  		 page          query     int        false  "page"           minimum(1)     default(1)
-// @Param   	 search        query     string     false  "search"
+// @Param   	 branch_id        query     string     false  "branch_id"
+// @Param   	 category_id        query     string     false  "category_id"
+// @Param   	 barcode        query     string     false  "barcode"
 // @Success      200  {object}  models.GetAllRemainRequest
 // @Failure      400  {object}  response.ErrorResp
 // @Failure      404  {object}  response.ErrorResp
@@ -93,9 +95,11 @@ func (h *Handler) GetAllRemain(c *gin.Context) {
 	}
 
 	resp, err := h.storage.Remaining().GetAllRemain(&models.GetAllRemainRequest{
-		Page:   page,
-		Limit:  limit,
-		Search: c.Query("search"),
+		Page:        page,
+		Limit:       limit,
+		Branch_id:   c.Query("search"),
+		Category_id: c.Query("search"),
+		Barcode:     c.Query("search"),
 	})
 	if err != nil {
 		h.log.Error("error Remain GetAllRemain:", logger.Error(err))

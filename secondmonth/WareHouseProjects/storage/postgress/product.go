@@ -93,6 +93,30 @@ func (c *productRepo) GetProduct(req *models.ProductIdRequest) (resp *models.Pro
 	return &Product, nil
 }
 
+func (c *productRepo) GetProductByBarcode(req *models.CheckBarcodeComingTable) (resp *models.RespBarcodeProduct, err error) {
+
+	query := `
+		SELECT
+		    "name",
+		    "price",
+			"category_id"
+		FROM "product"
+		WHERE barcode = $1 and coming_table_id=$2
+	`
+
+	Product := models.RespBarcodeProduct{}
+	err = c.db.QueryRow(context.Background(), query, req.Barcode, req.Coming_Table_id).Scan(
+		&Product.Name,
+		&Product.Price,
+		&Product.Category_id,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("Product not found")
+	}
+
+	return &Product, nil
+}
+
 func (c *productRepo) GetAllProduct(req *models.GetAllProductRequest) (*models.GetAllProductResponse, error) {
 	params := make(map[string]interface{})
 	var resp = &models.GetAllProductResponse{}
@@ -112,9 +136,13 @@ func (c *productRepo) GetAllProduct(req *models.GetAllProductRequest) (*models.G
 			"updated_at" 
 		FROM "product"
 	`
-	if req.Search != "" {
-		filter += ` AND ("name" ILIKE '%' || :search || '%' OR "barcode" = :search) `
-		params["search"] = req.Search
+	if req.Name != "" {
+		filter += ` AND ("name" ILIKE '%' || :name ) `
+		params["search"] = req.Name
+	}
+	if req.Barcode != "" {
+		filter += ` AND ("barcode" ILIKE '%' || :barcode ) `
+		params["search"] = req.Barcode
 	}
 
 	offset := (req.Page - 1) * req.Limit

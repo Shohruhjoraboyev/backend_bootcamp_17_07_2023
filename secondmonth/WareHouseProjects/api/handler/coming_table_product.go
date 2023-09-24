@@ -16,11 +16,53 @@ import (
 // @Tags         coming_table_product
 // @Accept       json
 // @Produce      json
-// @Param        data  body      models.CreateComingTableProduct true  "ComingTableProduct data"
+// @Param        data  body      models.CreateComingTableProductSwagger true  "ComingTableProduct data"
 // @Success      200  {string}  string
 // @Failure      400  {object}  response.ErrorResp
 // @Failure      404  {object}  response.ErrorResp
 // @Failure      500  {object}  response.ErrorResp
+func (h *Handler) CreateComingTableProduct(c *gin.Context) {
+	var coming_tableProduct models.CreateComingTableProduct
+	err := c.ShouldBind(&coming_tableProduct)
+	if err != nil {
+		h.log.Error("error while binding coming table_product:", logger.Error(err))
+		c.JSON(http.StatusBadRequest, "invalid body")
+		return
+	}
+
+	//check status
+	comingTableId := c.Param("coming_table_id")
+	coming_table_id := models.ComingTableIdRequest{Id: comingTableId}
+	err = h.storage.Coming_Table().GetStatus(&coming_table_id)
+	if err != nil {
+		h.log.Error("error getting coming table status:", logger.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	//get  product details
+	CheckBarcodeComingTable := models.CheckBarcodeComingTable{Barcode: coming_tableProduct.Barcode, Coming_Table_id: coming_tableProduct.Coming_Table_id}
+	respondProduct, err := h.storage.Product().GetProductByBarcode(&CheckBarcodeComingTable)
+	if err != nil {
+		h.log.Error("error Getting Product info:", logger.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	coming_tableProduct.Name = respondProduct.Name
+	coming_tableProduct.Price = respondProduct.Price
+	coming_tableProduct.Category_id = respondProduct.Category_id
+	coming_tableProduct.TotalPrice = respondProduct.Price * coming_tableProduct.Count
+
+	resp, err := h.storage.Coming_TableProduct().CreateComingTableProduct(&coming_tableProduct)
+	if err != nil {
+		h.log.Error("error Coming_Table_Product create:", logger.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusCreated, gin.H{"code": http.StatusCreated, "message": "success", "resp": resp})
+}
+
+/*
 func (h *Handler) CreateComingTableProduct(c *gin.Context) {
 	var coming_tableProduct models.CreateComingTableProduct
 	err := c.ShouldBind(&coming_tableProduct)
@@ -38,7 +80,7 @@ func (h *Handler) CreateComingTableProduct(c *gin.Context) {
 	}
 	c.JSON(http.StatusCreated, gin.H{"code": http.StatusCreated, "message": "success", "resp": resp})
 }
-
+*/
 // GetComingTableProduct godoc
 // @Router       /coming_table_product/{id} [GET]
 // @Summary      GET BY ID
@@ -73,7 +115,8 @@ func (h *Handler) GetComingTableProduct(c *gin.Context) {
 // @Produce      json
 // @Param  		 limit         query     int        false  "limit"          minimum(1)     default(10)
 // @Param  		 page          query     int        false  "page"           minimum(1)     default(1)
-// @Param   	 search        query     string     false  "search"
+// @Param   	 category_id   query     string     false  "category_id"
+// @Param   	 barcode       query     string     false  "barcode"
 // @Success      200  {object}  models.GetAllComingTableProductRequest
 // @Failure      400  {object}  response.ErrorResp
 // @Failure      404  {object}  response.ErrorResp
@@ -93,9 +136,10 @@ func (h *Handler) GetAllComingTableProduct(c *gin.Context) {
 	}
 
 	resp, err := h.storage.Coming_TableProduct().GetAllComingTableProduct(&models.GetAllComingTableProductRequest{
-		Page:   page,
-		Limit:  limit,
-		Search: c.Query("search"),
+		Page:        page,
+		Limit:       limit,
+		Category_id: c.Query("search"),
+		Barcode:     c.Query("search"),
 	})
 	if err != nil {
 		h.log.Error("error ComingTableProduct GetAllComingTableProduct:", logger.Error(err))

@@ -24,14 +24,21 @@ type UpdateProduct struct {
 	Category_id string  `json:"category_id"`
 }
 
+type RespBarcodeProduct struct {
+	Name        string  `json:"name"`
+	Price       float64 `json:"price"`
+	Category_id string  `json:"category_id"`
+}
+
 type ProductIdRequest struct {
 	Id string `json:"id"`
 }
 
 type GetAllProductRequest struct {
-	Page   int    `json:"page"`
-	Limit  int    `json:"limit"`
-	Search string `json:"search"`
+	Page    int    `json:"page"`
+	Limit   int    `json:"limit"`
+	Name    string `json:"name"`
+	Barcode string `json:"barcode"`
 }
 
 type GetAllProductResponse struct {

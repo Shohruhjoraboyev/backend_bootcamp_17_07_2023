@@ -5,6 +5,7 @@ import (
 	"WareHouseProjects/pkg/helper"
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"time"
 
@@ -36,9 +37,10 @@ func (r *coming_TableProductRepo) CreateComingTableProduct(req *models.CreateCom
 			"price",
 			"barcode",
 			"count",
+			"total_price",
 			"coming_table_id",
 			"created_at" )
-		VALUES ($1, $2, $3, $4, $5,$6,$7, NOW())`
+		VALUES ($1, $2, $3, $4, $5,$6,$7,$8 NOW())`
 
 	_, err := r.db.Exec(context.Background(), query,
 		id,
@@ -47,6 +49,7 @@ func (r *coming_TableProductRepo) CreateComingTableProduct(req *models.CreateCom
 		req.Price,
 		req.Barcode,
 		req.Count,
+		req.TotalPrice,
 		req.Coming_Table_id,
 	)
 
@@ -67,6 +70,7 @@ func (c *coming_TableProductRepo) GetComingTableProduct(req *models.ComingTableP
 			"price",
 			"barcode",
 			"count",
+			"total_price",
 			"coming_table_id",
 		    "created_at",
 			"updated_at" 
@@ -86,6 +90,7 @@ func (c *coming_TableProductRepo) GetComingTableProduct(req *models.ComingTableP
 		&ComingTableProduct.Price,
 		&ComingTableProduct.Barcode,
 		&ComingTableProduct.Count,
+		&ComingTableProduct.TotalPrice,
 		&ComingTableProduct.Coming_Table_id,
 		&createdAt,
 		&updatedAt,
@@ -117,14 +122,19 @@ func (c *coming_TableProductRepo) GetAllComingTableProduct(req *models.GetAllCom
 				"price",
 				"barcode",
 				"count",
+				"total_price",
 				"coming_table_id",
 				"created_at",
 				"updated_at" 
 			FROM "coming_table_product"
 		`
-	if req.Search != "" {
-		filter += ` AND ("category_id" ILIKE '%' || :search || '%' OR "barcode" = :search) `
-		params["search"] = req.Search
+	if req.Category_id != "" {
+		filter += ` AND ("category_id" ILIKE '%' || :category_id) `
+		params["search"] = req.Category_id
+	}
+	if req.Barcode != "" {
+		filter += ` AND ("barcode" ILIKE '%' || :barcode) `
+		params["search"] = req.Barcode
 	}
 
 	offset := (req.Page - 1) * req.Limit
@@ -148,6 +158,7 @@ func (c *coming_TableProductRepo) GetAllComingTableProduct(req *models.GetAllCom
 			price           sql.NullFloat64
 			barcode         sql.NullString
 			count           sql.NullFloat64
+			total_price     sql.NullFloat64
 			coming_table_id sql.NullString
 			createdAt       sql.NullString
 			updatedAt       sql.NullString
@@ -160,6 +171,7 @@ func (c *coming_TableProductRepo) GetAllComingTableProduct(req *models.GetAllCom
 			&price,
 			&barcode,
 			&count,
+			&total_price,
 			&coming_table_id,
 			&createdAt,
 			&updatedAt,
@@ -174,6 +186,7 @@ func (c *coming_TableProductRepo) GetAllComingTableProduct(req *models.GetAllCom
 			Price:           price.Float64,
 			Barcode:         barcode.String,
 			Count:           count.Float64,
+			TotalPrice:      total_price.Float64,
 			Coming_Table_id: coming_table_id.String,
 			CreatedAt:       createdAt.String,
 			UpdatedAt:       updatedAt.String,
@@ -183,6 +196,7 @@ func (c *coming_TableProductRepo) GetAllComingTableProduct(req *models.GetAllCom
 }
 
 func (c *coming_TableProductRepo) UpdateComingTableProduct(req *models.UpdateComingTableProduct) (string, error) {
+	total_price := req.Count * req.Price
 
 	query := `UPDATE coming_table_product 
 	            SET  category_id = $1, 
@@ -190,11 +204,12 @@ func (c *coming_TableProductRepo) UpdateComingTableProduct(req *models.UpdateCom
 					 price=$3,
 					 barcode=$4,
 					 count=$5,
-					 comint_table_product=$6,
+					 total_price=$6,
+					 comint_table_product=$7,
 					 updated_at = NOW() 
 					 WHERE id = $7 RETURNING id`
 
-	result, err := c.db.Exec(context.Background(), query, req.Category_id, req.Name, req.Price, req.Barcode, req.Count, req.Coming_Table_id, req.ID)
+	result, err := c.db.Exec(context.Background(), query, req.Category_id, req.Name, req.Price, req.Barcode, req.Count, total_price, req.Coming_Table_id, req.ID)
 	if err != nil {
 		return "Error Update Coming_TableProduct", err
 	}
@@ -220,4 +235,54 @@ func (c *coming_TableProductRepo) DeleteComingTableProduct(req *models.ComingTab
 	}
 
 	return req.Id, nil
+}
+
+func (c *coming_TableProductRepo) CheckAviableProduct(req *models.CheckBarcodeComingTable) (string, error) {
+	var id sql.NullString
+
+	query := `Select
+	             id
+			from coming_table_product
+			where barcode=$1 and coming_table_id=$2 `
+
+	err := c.db.QueryRow(context.Background(), query, req.Barcode, req.Coming_Table_id).Scan(&id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", errors.New("not found")
+		}
+		return "", err
+	}
+
+	return id.String, nil
+}
+
+func (c *coming_TableProductRepo) UpdateIdAviable(req *models.UpdateComingTableProduct) (string, error) {
+	query := `Update coming_table_product Set
+	           category_id=$1,
+			   barcode=$2,
+			   name=$3,
+			   price=$4,
+			   count=count+$5,
+			   total_price=total_price+$6,
+			   coming_table_id=$7,
+			   updated_at=now()
+			   where id = $8  `
+
+	result, err := c.db.Exec(context.Background(), query,
+		req.Category_id,
+		req.Barcode,
+		req.Name,
+		req.Price,
+		req.Count,
+		req.TotalPrice,
+		req.ID,
+	)
+	if err != nil {
+		return "", err
+	}
+	if result.RowsAffected() == 0 {
+		return "", fmt.Errorf("Not found this id in coming table product:  %s", req.Coming_Table_id)
+	}
+	return req.Coming_Table_id, nil
+
 }

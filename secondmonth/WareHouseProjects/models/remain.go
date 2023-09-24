@@ -39,9 +39,11 @@ type UpdateRemain struct {
 }
 
 type GetAllRemainRequest struct {
-	Page   int    `json:"page"`
-	Limit  int    `json:"limit"`
-	Search string `json:"search"`
+	Page        int    `json:"page"`
+	Limit       int    `json:"limit"`
+	Branch_id   string `json:"branch_id"`
+	Category_id string `json:"category_id"`
+	Barcode     string `json:"barcode"`
 }
 
 type GetAllRemainResponse struct {
