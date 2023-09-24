@@ -33,7 +33,7 @@ func (h *Handler) CreateComingTableProduct(c *gin.Context) {
 	//check status
 	comingTableId := c.Param("coming_table_id")
 	coming_table_id := models.ComingTableIdRequest{Id: comingTableId}
-	err = h.storage.Coming_Table().GetStatus(&coming_table_id)
+	_, err = h.storage.Coming_Table().GetStatus(&coming_table_id)
 	if err != nil {
 		h.log.Error("error getting coming table status:", logger.Error(err))
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

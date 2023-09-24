@@ -46,7 +46,8 @@ type Coming_TableI interface {
 	UpdateComingTable(*models.UpdateComingTable) (string, error)
 	DeleteComingTable(*models.ComingTableIdRequest) (string, error)
 
-	GetStatus(*models.ComingTableIdRequest) error
+	GetStatus(*models.ComingTableIdRequest) (string, error)
+	UpdateStatus(req *models.ComingTableIdRequest) (string, error)
 }
 
 type Coming_TableProductI interface {
@@ -58,6 +59,7 @@ type Coming_TableProductI interface {
 
 	CheckAviableProduct(*models.CheckBarcodeComingTable) (string, error)
 	UpdateIdAviable(*models.UpdateComingTableProduct) (string, error)
+	GetComingTableById(*models.ComingTableProductIdRequest) (*models.ComingTableProduct, error)
 }
 
 type RemainingI interface {
@@ -66,4 +68,7 @@ type RemainingI interface {
 	GetAllRemain(*models.GetAllRemainRequest) (resp *models.GetAllRemainResponse, err error)
 	UpdateRemain(*models.UpdateRemain) (string, error)
 	DeleteRemain(*models.RemainIdRequest) (string, error)
+
+	UpdateIdAviable(req *models.UpdateRemain) (string, error)
+	CheckRemain(req *models.CheckRemain) (string, error)
 }

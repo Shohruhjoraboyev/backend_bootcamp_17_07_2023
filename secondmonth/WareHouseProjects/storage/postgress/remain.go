@@ -24,12 +24,10 @@ func NewRemainRepo(db *pgxpool.Pool) *remainRepo {
 
 func (c *remainRepo) CreateRemain(req *models.CreateRemain) (string, error) {
 	var (
-		id         = uuid.NewString()
-		totalPrice = req.Count * req.Price
-		query      string
+		id = uuid.NewString()
 	)
 
-	query = `
+	query := `
 		INSERT INTO "remain"(
 			"id", 
 			"branch_id",
@@ -50,7 +48,7 @@ func (c *remainRepo) CreateRemain(req *models.CreateRemain) (string, error) {
 		req.Price,
 		req.Barcode,
 		req.Count,
-		totalPrice,
+		req.TotalPrice,
 	)
 
 	if err != nil {
@@ -234,4 +232,96 @@ func (c *remainRepo) DeleteRemain(req *models.RemainIdRequest) (resp string, err
 	}
 
 	return req.Id, nil
+}
+
+func (c *remainRepo) CheckRemain(req *models.CheckRemain) (string, error) {
+	var id sql.NullString
+	var params map[string]interface{}
+
+	query := `
+		SELECT
+			"id"
+		FROM "remaining"
+		WHERE "branch_id" = :branch_id AND "barcode" = :barcode
+	`
+
+	params = map[string]interface{}{
+		"branch_id": req.Branch_id,
+		"barcode":   req.Barcode,
+	}
+	queryN, args := helper.ReplaceQueryParams(query, params)
+
+	err := c.db.QueryRow(context.Background(), queryN, args...).Scan(
+		&id,
+	)
+	if err != nil {
+		return id.String, err
+	}
+
+	return id.String, nil
+}
+
+func (c *remainRepo) UpdateIdAviable(req *models.UpdateRemain) (string, error) {
+	query := `UPDATE  remain SET
+	                 "branch_id" = $1,
+	                 "category_id" = $2,
+	                 "name" = $3,
+	                 "price" = $4,
+	                 "barcode" =$5,
+	                 "count" = "count" + $6,
+                	 "total_price" = "total_price" + $7,
+	                 "updated_at" = NOW()
+                    WHERE id = $8    `
+
+	resp, err := c.db.Exec(context.Background(), query,
+		req.Branch_id,
+		req.Category_id,
+		req.Name,
+		req.Price,
+		req.Barcode,
+		req.Count,
+		req.TotalPrice,
+		req.ID,
+	)
+	if err != nil {
+		return "", err
+	}
+
+	if resp.RowsAffected() == 0 {
+		return "", fmt.Errorf("remaining with ID %s not found", req.ID)
+	}
+
+	return req.ID, nil
+}
+
+func (c *coming_TableProductRepo) GetComingTableById(req *models.ComingTableProductIdRequest) (*models.ComingTableProduct, error) {
+	query := `
+	SELECT
+		"id",
+		"category_id",
+		"name",
+		"price",
+		"barcode",
+		sum("count"),
+		sum("total_price"),
+	FROM "remain"
+	WHERE coming_table_id = $1
+	GROUPD BY id,barcode
+`
+
+	rem := models.ComingTableProduct{}
+	err := c.db.QueryRow(context.Background(), query, req.Id).Scan(
+		&rem.ID,
+		&rem.Category_id,
+		&rem.Name,
+		&rem.Price,
+		&rem.Barcode,
+		&rem.Count,
+		&rem.TotalPrice,
+	)
+	if err != nil {
+		return nil, fmt.Errorf(" Error in GetComingTableById func")
+	}
+
+	return &rem, nil
 }

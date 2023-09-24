@@ -10,6 +10,11 @@ type CreateRemain struct {
 	TotalPrice  float64 `json:"total_price"`
 }
 
+type CheckRemain struct {
+	Barcode   string `json:"barcode"`
+	Branch_id string `json:"branch_id"`
+}
+
 type Remain struct {
 	ID          string  `json:"id"`
 	Branch_id   string  `json:"branch_id"`

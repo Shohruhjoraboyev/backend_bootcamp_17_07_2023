@@ -10,33 +10,81 @@ import (
 )
 
 // CreateRemain godoc
-// @Router       /remain [POST]
+// @Router       /do_income/{coming_table_id} [POST]
 // @Summary      CREATE Remain
-// @Description adds Remain data to db based on given info in body
+// @Description adds Remain data to db based on given id
 // @Tags         remain
 // @Accept       json
 // @Produce      json
-// @Param        data  body      models.CreateRemain  true  "Remain data"
+// @Param        coming_table_id path string true "Coming Table ID"
 // @Success      200  {string}  string
 // @Failure      400  {object}  response.ErrorResp
 // @Failure      404  {object}  response.ErrorResp
 // @Failure      500  {object}  response.ErrorResp
 func (h *Handler) CreateRemain(c *gin.Context) {
-	var Remain models.CreateRemain
-	err := c.ShouldBind(&Remain)
+	comingTableID := c.Param("coming_table_id")
+	var remain models.CreateRemain
+
+	// Check status
+	comingTableIDRequest := models.ComingTableIdRequest{Id: comingTableID}
+	branchID, err := h.storage.Coming_Table().GetStatus(&comingTableIDRequest)
 	if err != nil {
-		h.log.Error("error while binding Remain:", logger.Error(err))
-		c.JSON(http.StatusBadRequest, "invalid body")
+		h.log.Error("error while getting coming table status", logger.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+	remain.Branch_id = branchID
+
+	comingIDRequest := models.ComingTableProductIdRequest{Id: comingTableID}
+	comingTableData, err := h.storage.Coming_TableProduct().GetComingTableById(&comingIDRequest)
+	if err != nil {
+		h.log.Error("error while getting coming table data details:", logger.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Not Found Coming_table_data with that coming_id"})
 		return
 	}
 
-	resp, err := h.storage.Remaining().CreateRemain(&Remain)
+	remain.Barcode = comingTableData.Barcode
+	remain.Category_id = comingTableData.Category_id
+	remain.Price = comingTableData.Price
+	remain.Count = comingTableData.Count
+	remain.TotalPrice = comingTableData.TotalPrice
+	remain.Name = comingTableData.Name
+
+	checkRemainRequest := models.CheckRemain{Branch_id: branchID, Barcode: remain.Barcode}
+	id, err := h.storage.Remaining().CheckRemain(&checkRemainRequest)
 	if err != nil {
-		h.log.Error("error Remain create:", logger.Error(err))
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		h.log.Info("remaining not found, creating new remaining", logger.Error(err))
+		resp, err := h.storage.Remaining().CreateRemain(&remain)
+		if err != nil {
+			h.log.Error("error creating remaining:", logger.Error(err))
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
+			return
+		}
+		c.JSON(http.StatusCreated, gin.H{"code": http.StatusCreated, "message": "added new remaining", "resp": resp})
+		h.storage.Coming_Table().UpdateStatus(&comingTableIDRequest)
 		return
 	}
-	c.JSON(http.StatusCreated, gin.H{"code": http.StatusCreated, "message": "success", "resp": resp})
+
+	updatingData := models.UpdateRemain{
+		ID:          id,
+		Branch_id:   remain.Branch_id,
+		Category_id: remain.Category_id,
+		Name:        remain.Name,
+		Price:       remain.Price,
+		Barcode:     remain.Barcode,
+		Count:       remain.Count,
+		TotalPrice:  remain.TotalPrice,
+	}
+	r, err := h.storage.Remaining().UpdateIdAviable(&updatingData)
+	if err != nil {
+		h.log.Info("error updating remaining:", logger.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "updated existing remaining table", "resp": r})
+
+	// If everything is ok, change status to finished
+	h.storage.Coming_Table().UpdateStatus(&comingTableIDRequest)
 }
 
 // GetRemain godoc
