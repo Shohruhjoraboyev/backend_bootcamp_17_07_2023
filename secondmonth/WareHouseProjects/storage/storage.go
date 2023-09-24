@@ -55,6 +55,9 @@ type Coming_TableProductI interface {
 	GetAllComingTableProduct(*models.GetAllComingTableProductRequest) (*models.GetAllComingTableProductResponse, error)
 	UpdateComingTableProduct(*models.UpdateComingTableProduct) (string, error)
 	DeleteComingTableProduct(*models.ComingTableProductIdRequest) (string, error)
+
+	CheckAviableProduct(*models.CheckBarcodeComingTable) (string, error)
+	UpdateIdAviable(*models.UpdateComingTableProduct) (string, error)
 }
 
 type RemainingI interface {

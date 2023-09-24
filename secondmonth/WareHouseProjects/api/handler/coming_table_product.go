@@ -53,13 +53,43 @@ func (h *Handler) CreateComingTableProduct(c *gin.Context) {
 	coming_tableProduct.Category_id = respondProduct.Category_id
 	coming_tableProduct.TotalPrice = respondProduct.Price * coming_tableProduct.Count
 
-	resp, err := h.storage.Coming_TableProduct().CreateComingTableProduct(&coming_tableProduct)
+	barcodeQuery := c.Query("barcode")
+	barcode := models.CheckBarcodeComingTable{Barcode: barcodeQuery, Coming_Table_id: comingTableId}
+	id, err := h.storage.Coming_TableProduct().CheckAviableProduct(&barcode)
+
 	if err != nil {
-		h.log.Error("error Coming_Table_Product create:", logger.Error(err))
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		h.log.Error("error   id or barcode not found in comingTable", logger.Error(err))
+		// if this product didnt exist Add it
+		resp, err := h.storage.Coming_TableProduct().CreateComingTableProduct(&coming_tableProduct)
+		if err != nil {
+			h.log.Error("error Coming_Table_Product create:", logger.Error(err))
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+
+		}
+
+		c.JSON(http.StatusCreated, gin.H{"code": http.StatusCreated, "message": "successfully added ", "resp": resp})
 		return
 	}
-	c.JSON(http.StatusCreated, gin.H{"code": http.StatusCreated, "message": "success", "resp": resp})
+	updatingData := models.UpdateComingTableProduct{
+		ID:              id,
+		Category_id:     coming_tableProduct.Category_id,
+		Name:            coming_tableProduct.Name,
+		Price:           coming_tableProduct.Price,
+		Barcode:         coming_tableProduct.Barcode,
+		Count:           coming_tableProduct.Count,
+		TotalPrice:      coming_tableProduct.TotalPrice,
+		Coming_Table_id: coming_tableProduct.Coming_Table_id,
+	}
+
+	resp, err := h.storage.Coming_TableProduct().UpdateIdAviable(&updatingData)
+	if err != nil {
+		h.log.Error("error Updating  coming_table_product:", logger.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "updated existing coming_product_table", "resp": resp})
 }
 
 /*
@@ -81,6 +111,7 @@ func (h *Handler) CreateComingTableProduct(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"code": http.StatusCreated, "message": "success", "resp": resp})
 }
 */
+
 // GetComingTableProduct godoc
 // @Router       /coming_table_product/{id} [GET]
 // @Summary      GET BY ID
