@@ -1,8 +1,12 @@
 package handler
 
 import (
+	"auth/api/response"
+	"auth/config"
 	"auth/models"
+	"auth/pkg/helper"
 	"auth/pkg/logger"
+	"context"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -34,7 +38,7 @@ func (h *Handler) CreateUser(c *gin.Context) {
 	resp, err := h.storage.User().CreateUser(c.Request.Context(), &user)
 	if err != nil {
 		fmt.Println("error User Create:", err.Error())
-		c.JSON(http.StatusInternalServerError, "internal server error")
+		c.JSON(http.StatusInternalServerError, "login or phone number is already used, enter another one")
 		return
 	}
 	c.JSON(http.StatusCreated, gin.H{"message": "created", "id": resp})
@@ -162,4 +166,50 @@ func (h *Handler) DeleteUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "success", "deleted user id": resp})
+}
+
+// loginUser godoc
+// @Router       /login [POST]
+// @Summary      auth
+// @Description  login
+// @Tags         AUTH
+// @Accept       json
+// @Produce      json
+// @Param        user    body     models.LoginRequest  true  "data of user"
+// @Success      200  {object}  models.LoginRespond
+// @Failure      400  {object}  response.ErrorResp
+// @Failure      404  {object}  response.ErrorResp
+// @Failure      500  {object}  response.ErrorResp
+func (h *Handler) Login(c *gin.Context) {
+	var req models.LoginRequest
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		h.log.Error("error while binding:", logger.Error(err))
+		res := response.ErrorResp{Code: "BAD REQUEST", Message: "invalid fields in body"}
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	resp, err := h.storage.User().GetByLogin(context.Background(), &models.LoginRequest{
+		Login:    req.Login,
+		Password: req.Password,
+	})
+
+	if err != nil {
+		fmt.Println("error Person GetByUsername:", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"not found user with login:": req.Login})
+		return
+	}
+
+	if req.Password != resp.Password {
+		h.log.Error("error while binding:", logger.Error(err))
+		res := response.ErrorResp{Message: "login or password is incorrect"}
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	m := make(map[string]interface{})
+	m["user_id"] = resp.ID
+	token, _ := helper.GenerateJWT(m, config.TokenExpireTime, config.JWTSecretKey)
+	c.JSON(http.StatusCreated, models.LoginRespond{Token: token})
 }

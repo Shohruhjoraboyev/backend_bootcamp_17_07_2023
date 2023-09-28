@@ -33,7 +33,12 @@ type IdRequest struct {
 }
 
 type LoginRequest struct {
-	Login string `json:"login"`
+	Login    string `json:"login"`
+	Password string `json:"password"`
+}
+
+type LoginRespond struct {
+	Token string
 }
 
 type PhoneNumberRequest struct {
