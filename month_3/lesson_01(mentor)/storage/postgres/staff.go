@@ -4,6 +4,7 @@ import (
 	"app/models"
 	"app/pkg/helper"
 	"context"
+	"database/sql"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -29,10 +30,11 @@ func (s *staffRepo) CreateStaff(ctx context.Context, req *models.CreateStaff) (s
 				"tariff_id", 
 				"staff_type", 
 				"name", 
-				"balance", 
+				"username", 
+				"password", 
 				"created_at", 
 				"updated_at")
-		VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
+		VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW())
 		RETURNING "id"
 	`
 
@@ -42,7 +44,8 @@ func (s *staffRepo) CreateStaff(ctx context.Context, req *models.CreateStaff) (s
 		req.TariffID,
 		req.Type,
 		req.Name,
-		req.Balance)
+		req.Username,
+		req.Password)
 
 	var createdID string
 	if err := result.Scan(&createdID); err != nil {
@@ -92,6 +95,8 @@ func (s *staffRepo) GetStaff(ctx context.Context, req *models.IdRequest) (*model
 		"staff_type", 
 		"name", 
 		"balance", 
+		"username", 
+		"password", 
 		"created_at", 
 		"updated_at"
 		FROM "staffs"
@@ -99,6 +104,11 @@ func (s *staffRepo) GetStaff(ctx context.Context, req *models.IdRequest) (*model
 	`
 
 	staff := models.Staff{}
+	var (
+		username sql.NullString
+		password sql.NullString
+		balance  sql.NullFloat64
+	)
 
 	err := s.db.QueryRow(context.Background(), query, req.Id).Scan(
 		&staff.ID,
@@ -106,7 +116,9 @@ func (s *staffRepo) GetStaff(ctx context.Context, req *models.IdRequest) (*model
 		&staff.TariffID,
 		&staff.Type,
 		&staff.Name,
-		&staff.Balance,
+		&balance,
+		&username,
+		&password,
 		&staff.CreatedAt,
 		&staff.UpdatedAt)
 	if err != nil {
@@ -115,19 +127,58 @@ func (s *staffRepo) GetStaff(ctx context.Context, req *models.IdRequest) (*model
 		}
 		return &models.Staff{}, fmt.Errorf("failed to get staff: %w", err)
 	}
+	staff.Balance = balance.Float64
+	staff.Username = username.String
+	staff.Password = password.String
 
 	return &staff, nil
 }
 
-// func (u *staffRepo) GetByLogin(ctx context.Context,req models.LoginRequest) (models.Staff, error) {
-// 	staffes := []models.Staff{}
-// 	for _, s := range staffes {
-// 		if req.Login == s.Login {
-// 			return s, nil
-// 		}
-// 	}
-// 	return models.Staff{}, nil
-// }
+func (u *staffRepo) GetByUsername(ctx context.Context, req *models.RequestByUsername) (*models.Staff, error) {
+	query := `
+		SELECT 
+		"id", 
+		"branch_id", 
+		"tariff_id", 
+		"staff_type", 
+		"name", 
+		"balance", 
+		"username", 
+		"password", 
+		"created_at", 
+		"updated_at"
+		FROM "staffs"
+		WHERE "username" = $1
+	`
+
+	staff := models.Staff{}
+	var (
+		username sql.NullString
+		password sql.NullString
+		balance  sql.NullFloat64
+	)
+	err := u.db.QueryRow(context.Background(), query, req.Username).Scan(
+		&staff.ID,
+		&staff.BranchID,
+		&staff.TariffID,
+		&staff.Type,
+		&staff.Name,
+		&balance,
+		&username,
+		&password,
+		&staff.CreatedAt,
+		&staff.UpdatedAt)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return &models.Staff{}, fmt.Errorf("staff not found")
+		}
+		return &models.Staff{}, fmt.Errorf("failed to get staff: %w", err)
+	}
+	staff.Balance = balance.Float64
+	staff.Username = username.String
+	staff.Password = password.String
+	return &staff, nil
+}
 
 func (s *staffRepo) GetAllStaff(ctx context.Context, req *models.GetAllStaffRequest) (*models.GetAllStaff, error) {
 	params := make(map[string]interface{})
@@ -141,6 +192,8 @@ func (s *staffRepo) GetAllStaff(ctx context.Context, req *models.GetAllStaffRequ
 			"staff_type", 
 			"name", 
 			"balance", 
+			"username", 
+			"password", 
 			"created_at", 
 			"updated_at"
 		FROM "staffs"
@@ -167,6 +220,11 @@ func (s *staffRepo) GetAllStaff(ctx context.Context, req *models.GetAllStaffRequ
 	resp.Staffs = make([]models.Staff, 0)
 	count := 0
 	for rows.Next() {
+		var (
+			username sql.NullString
+			password sql.NullString
+			balance  sql.NullFloat64
+		)
 		var staff models.Staff
 		count++
 		err := rows.Scan(
@@ -175,12 +233,17 @@ func (s *staffRepo) GetAllStaff(ctx context.Context, req *models.GetAllStaffRequ
 			&staff.TariffID,
 			&staff.Type,
 			&staff.Name,
-			&staff.Balance,
+			&balance,
+			&username,
+			&password,
 			&staff.CreatedAt,
 			&staff.UpdatedAt)
 		if err != nil {
 			return nil, fmt.Errorf("failed to scan row: %w", err)
 		}
+		staff.Username = username.String
+		staff.Password = password.String
+		staff.Balance = balance.Float64
 		resp.Staffs = append(resp.Staffs, staff)
 	}
 

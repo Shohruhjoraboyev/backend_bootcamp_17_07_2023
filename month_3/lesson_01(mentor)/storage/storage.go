@@ -40,6 +40,7 @@ type StaffesI interface {
 	DeleteStaff(context.Context, *models.IdRequest) (string, error)
 	// ChangeBalance(models.ChangeBalance) (string, error)
 	// Exists(models.ExistsReq) bool
+	GetByUsername(context.Context, *models.RequestByUsername) (*models.Staff, error)
 }
 
 type SalesI interface {

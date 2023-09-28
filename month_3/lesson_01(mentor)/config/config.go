@@ -42,6 +42,11 @@ const (
 )
 
 const (
+	TokenExpireTime = 24 * time.Hour
+	JWTSecretKey    = "MySecretKey"
+)
+
+const (
 	// DebugMode indicates service mode is debug.
 	DebugMode = "debug"
 	// TestMode indicates service mode is test.

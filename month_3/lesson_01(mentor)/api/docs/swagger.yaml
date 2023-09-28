@@ -46,15 +46,17 @@ definitions:
     type: object
   models.CreateStaff:
     properties:
-      balance:
-        type: number
       branch_id:
         type: string
       name:
         type: string
+      password:
+        type: string
       staff_type:
         type: string
       tariff_id:
+        type: string
+      username:
         type: string
     type: object
   models.CreateStaffTarif:
@@ -129,6 +131,18 @@ definitions:
           $ref: '#/definitions/models.Transaction'
         type: array
     type: object
+  models.LoginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  models.LoginRespond:
+    properties:
+      token:
+        type: string
+    type: object
   models.Sales:
     properties:
       branch_id:
@@ -166,11 +180,15 @@ definitions:
         type: string
       name:
         type: string
+      password:
+        type: string
       staff_type:
         type: string
       tariff_id:
         type: string
       updated_at:
+        type: string
+      username:
         type: string
     type: object
   models.StaffTarif:
@@ -405,6 +423,79 @@ paths:
       summary: UPDATE BRANCH BY ID
       tags:
       - BRANCH
+  /get_top_staff:
+    get:
+      consumes:
+      - application/json
+      description: 'Top ishchilarni chiqarish: berilgan vaqt oralig''ida type dynamic
+        (cashier, shopAssistant)'
+      parameters:
+      - description: from_date
+        in: query
+        name: from_date
+        required: true
+        type: string
+      - description: to_date
+        in: query
+        name: to_date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Branch'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: GET top staffes
+      tags:
+      - BIZNESS
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: api for create staffes
+      parameters:
+      - description: data of staff
+        in: body
+        name: staff
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.LoginRespond'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: create staff
+      tags:
+      - STAFF
   /sale:
     get:
       consumes:
