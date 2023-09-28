@@ -21,7 +21,7 @@ func NewStaffTarifRepo(db *pgxpool.Pool) *staffTarifRepo {
 	return &staffTarifRepo{db: db}
 }
 
-func (s *staffTarifRepo) CreateStaffTarif(req *models.CreateStaffTarif) (string, error) {
+func (s *staffTarifRepo) CreateStaffTarif(ctx context.Context, req *models.CreateStaffTarif) (string, error) {
 	id := uuid.NewString()
 
 	query := `
@@ -50,7 +50,7 @@ func (s *staffTarifRepo) CreateStaffTarif(req *models.CreateStaffTarif) (string,
 	return id, nil
 }
 
-func (s *staffTarifRepo) GetStaffTarif(req *models.IdRequest) (resp *models.StaffTarif, err error) {
+func (s *staffTarifRepo) GetStaffTarif(ctx context.Context, req *models.IdRequest) (resp *models.StaffTarif, err error) {
 	query := `
 		SELECT  
 			"id", 
@@ -92,7 +92,7 @@ func (s *staffTarifRepo) GetStaffTarif(req *models.IdRequest) (resp *models.Staf
 
 	return &tariff, nil
 }
-func (s *staffTarifRepo) GetAllStaffTarif(req *models.GetAllStaffTarifRequest) (resp *models.GetAllStaffTarif, err error) {
+func (s *staffTarifRepo) GetAllStaffTarif(ctx context.Context, req *models.GetAllStaffTarifRequest) (resp *models.GetAllStaffTarif, err error) {
 	params := make(map[string]interface{})
 	filter := ""
 	created_at := time.Time{}
@@ -158,7 +158,7 @@ func (s *staffTarifRepo) GetAllStaffTarif(req *models.GetAllStaffTarifRequest) (
 	return resp, nil
 }
 
-func (s *staffTarifRepo) UpdateStaffTarif(req *models.StaffTarif) (string, error) {
+func (s *staffTarifRepo) UpdateStaffTarif(ctx context.Context, req *models.StaffTarif) (string, error) {
 	query := `
 		UPDATE "tariffs" SET 
 			"name" = $1, 
@@ -187,7 +187,7 @@ func (s *staffTarifRepo) UpdateStaffTarif(req *models.StaffTarif) (string, error
 	return req.Id, nil
 }
 
-func (s *staffTarifRepo) DeleteStaffTarif(req *models.IdRequest) (string, error) {
+func (s *staffTarifRepo) DeleteStaffTarif(ctx context.Context, req *models.IdRequest) (string, error) {
 	query := `
 		DELETE FROM "tariffs"
 		WHERE "id" = $1

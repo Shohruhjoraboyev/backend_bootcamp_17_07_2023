@@ -19,7 +19,7 @@ func NewStaffRepo(db *pgxpool.Pool) *staffRepo {
 	return &staffRepo{db: db}
 }
 
-func (s *staffRepo) CreateStaff(req *models.CreateStaff) (string, error) {
+func (s *staffRepo) CreateStaff(ctx context.Context, req *models.CreateStaff) (string, error) {
 	id := uuid.NewString()
 
 	query := `
@@ -52,7 +52,7 @@ func (s *staffRepo) CreateStaff(req *models.CreateStaff) (string, error) {
 	return createdID, nil
 }
 
-func (s *staffRepo) UpdateStaff(req *models.Staff) (string, error) {
+func (s *staffRepo) UpdateStaff(ctx context.Context, req *models.Staff) (string, error) {
 	query := `
 		UPDATE "staffs"
 			SET "branch_id" = $1, 
@@ -83,7 +83,7 @@ func (s *staffRepo) UpdateStaff(req *models.Staff) (string, error) {
 
 	return req.ID, nil
 }
-func (s *staffRepo) GetStaff(req *models.IdRequest) (*models.Staff, error) {
+func (s *staffRepo) GetStaff(ctx context.Context, req *models.IdRequest) (*models.Staff, error) {
 	query := `
 		SELECT 
 		"id", 
@@ -119,7 +119,7 @@ func (s *staffRepo) GetStaff(req *models.IdRequest) (*models.Staff, error) {
 	return &staff, nil
 }
 
-// func (u *staffRepo) GetByLogin(req models.LoginRequest) (models.Staff, error) {
+// func (u *staffRepo) GetByLogin(ctx context.Context,req models.LoginRequest) (models.Staff, error) {
 // 	staffes := []models.Staff{}
 // 	for _, s := range staffes {
 // 		if req.Login == s.Login {
@@ -129,7 +129,7 @@ func (s *staffRepo) GetStaff(req *models.IdRequest) (*models.Staff, error) {
 // 	return models.Staff{}, nil
 // }
 
-func (s *staffRepo) GetAllStaff(req *models.GetAllStaffRequest) (*models.GetAllStaff, error) {
+func (s *staffRepo) GetAllStaff(ctx context.Context, req *models.GetAllStaffRequest) (*models.GetAllStaff, error) {
 	params := make(map[string]interface{})
 	filter := ""
 
@@ -188,7 +188,7 @@ func (s *staffRepo) GetAllStaff(req *models.GetAllStaffRequest) (*models.GetAllS
 	return resp, nil
 }
 
-func (s *staffRepo) DeleteStaff(req *models.IdRequest) (string, error) {
+func (s *staffRepo) DeleteStaff(ctx context.Context, req *models.IdRequest) (string, error) {
 	query := `
 		DELETE FROM "staffs"
 		WHERE "id" = $1
@@ -208,7 +208,7 @@ func (s *staffRepo) DeleteStaff(req *models.IdRequest) (string, error) {
 	return deletedID, nil
 }
 
-func (s *staffRepo) UpdateBalance(req *models.UpdateBalanceRequest) (res string, err error) {
+func (s *staffRepo) UpdateBalance(ctx context.Context, req *models.UpdateBalanceRequest) (res string, err error) {
 
 	// begin transaction
 	tr, err := s.db.Begin(context.Background())
@@ -307,7 +307,7 @@ func (s *staffRepo) UpdateBalance(req *models.UpdateBalanceRequest) (res string,
 	return "balance updated", nil
 }
 
-// func (u *staffRepo) Exists(req models.ExistsReq) bool {
+// func (u *staffRepo) Exists(ctx context.Context,req models.ExistsReq) bool {
 // 	staffes := []models.Staff{}
 // 	for _, s := range staffes {
 // 		if req.Phone == s.Phone {

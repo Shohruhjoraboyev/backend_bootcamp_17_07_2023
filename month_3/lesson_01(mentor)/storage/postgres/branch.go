@@ -23,7 +23,7 @@ func NewBranchRepo(db *pgxpool.Pool) *branchRepo {
 	}
 }
 
-func (b *branchRepo) CreateBranch(req *models.CreateBranch) (string, error) {
+func (b *branchRepo) CreateBranch(c context.Context, req *models.CreateBranch) (string, error) {
 	id := uuid.NewString()
 	yearNow := time.Now().Year()
 	year := yearNow - req.FoundedAt
@@ -53,7 +53,7 @@ func (b *branchRepo) CreateBranch(req *models.CreateBranch) (string, error) {
 	return id, nil
 }
 
-func (b *branchRepo) GetBranch(req *models.IdRequest) (resp *models.Branch, err error) {
+func (b *branchRepo) GetBranch(c context.Context, req *models.IdRequest) (resp *models.Branch, err error) {
 	query := `
 				SELECT 
 					id, 
@@ -95,7 +95,7 @@ func (b *branchRepo) GetBranch(req *models.IdRequest) (resp *models.Branch, err 
 	return &branch, nil
 }
 
-func (b *branchRepo) UpdateBranch(req *models.Branch) (string, error) {
+func (b *branchRepo) UpdateBranch(c context.Context, req *models.Branch) (string, error) {
 	yearNow := time.Now().Year()
 	year := yearNow - req.FoundedAt
 
@@ -130,7 +130,7 @@ func (b *branchRepo) UpdateBranch(req *models.Branch) (string, error) {
 	return req.ID, nil
 }
 
-func (b *branchRepo) GetAllBranch(req *models.GetAllBranchRequest) (*models.GetAllBranch, error) {
+func (b *branchRepo) GetAllBranch(c context.Context, req *models.GetAllBranchRequest) (*models.GetAllBranch, error) {
 	params := make(map[string]interface{})
 	filter := ""
 	offset := (req.Page - 1) * req.Limit
@@ -193,7 +193,7 @@ func (b *branchRepo) GetAllBranch(req *models.GetAllBranchRequest) (*models.GetA
 	return resp, nil
 }
 
-func (b *branchRepo) DeleteBranch(req *models.IdRequest) (resp string, err error) {
+func (b *branchRepo) DeleteBranch(c context.Context, req *models.IdRequest) (resp string, err error) {
 	query := `
 			DELETE 
 				FROM branches 

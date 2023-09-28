@@ -31,7 +31,7 @@ func (h *Handler) CreateBranch(c *gin.Context) {
 		return
 	}
 
-	resp, err := h.storage.Branch().CreateBranch(&branch)
+	resp, err := h.storage.Branch().CreateBranch(c.Request.Context(), &branch)
 	if err != nil {
 		fmt.Println("error Branch Create:", err.Error())
 		c.JSON(http.StatusInternalServerError, "internal server error")
@@ -55,7 +55,7 @@ func (h *Handler) CreateBranch(c *gin.Context) {
 func (h *Handler) GetBranch(c *gin.Context) {
 	id := c.Param("id")
 
-	resp, err := h.storage.Branch().GetBranch(&models.IdRequest{Id: id})
+	resp, err := h.storage.Branch().GetBranch(c.Request.Context(), &models.IdRequest{Id: id})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		fmt.Println("error Branch Get:", err.Error())
@@ -94,7 +94,7 @@ func (h *Handler) GetAllBranch(c *gin.Context) {
 		return
 	}
 
-	resp, err := h.storage.Branch().GetAllBranch(&models.GetAllBranchRequest{
+	resp, err := h.storage.Branch().GetAllBranch(c.Request.Context(), &models.GetAllBranchRequest{
 		Page:  page,
 		Limit: limit,
 		Name:  c.Query("search"),
@@ -131,7 +131,7 @@ func (h *Handler) UpdateBranch(c *gin.Context) {
 	}
 
 	branch.ID = c.Param("id")
-	resp, err := h.storage.Branch().UpdateBranch(&branch)
+	resp, err := h.storage.Branch().UpdateBranch(c.Request.Context(), &branch)
 	if err != nil {
 		h.log.Error("error Branch Update:", logger.Error(err))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update branch"})
@@ -156,7 +156,7 @@ func (h *Handler) UpdateBranch(c *gin.Context) {
 func (h *Handler) DeleteBranch(c *gin.Context) {
 	id := c.Param("id")
 
-	resp, err := h.storage.Branch().DeleteBranch(&models.IdRequest{Id: id})
+	resp, err := h.storage.Branch().DeleteBranch(c.Request.Context(), &models.IdRequest{Id: id})
 	if err != nil {
 		h.log.Error("error deleting branch:", logger.Error(err))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete branch"})

@@ -21,7 +21,7 @@ func NewSaleRepo(db *pgxpool.Pool) *saleRepo {
 	return &saleRepo{db: db}
 }
 
-func (c *saleRepo) CreateSale(req *models.CreateSales) (string, error) {
+func (c *saleRepo) CreateSale(ctx context.Context, req *models.CreateSales) (string, error) {
 	id := uuid.NewString()
 
 	query := `
@@ -84,7 +84,7 @@ func (c *saleRepo) CreateSale(req *models.CreateSales) (string, error) {
 	return insertedID, nil
 }
 
-func (c *saleRepo) GetSale(req *models.IdRequest) (resp *models.Sales, err error) {
+func (c *saleRepo) GetSale(ctx context.Context, req *models.IdRequest) (resp *models.Sales, err error) {
 	query := `
     SELECT "id", "client_name", "branch_id", "shop_assistant_id",
     "cashier_id", "price", "payment_type", "status", "created_at", "updated_at"
@@ -123,7 +123,7 @@ func (c *saleRepo) GetSale(req *models.IdRequest) (resp *models.Sales, err error
 	return &sale, nil
 }
 
-func (c *saleRepo) GetAllSale(req *models.GetAllSalesRequest) (*models.GetAllSalesResponse, error) {
+func (c *saleRepo) GetAllSale(ctx context.Context, req *models.GetAllSalesRequest) (*models.GetAllSalesResponse, error) {
 	params := make(map[string]interface{})
 	filter := ""
 
@@ -201,7 +201,7 @@ func (c *saleRepo) GetAllSale(req *models.GetAllSalesRequest) (*models.GetAllSal
 	return resp, nil
 }
 
-func (c *saleRepo) UpdateSale(req *models.Sales) (string, error) {
+func (c *saleRepo) UpdateSale(ctx context.Context, req *models.Sales) (string, error) {
 	query := `
 	UPDATE "sales" SET
 	"client_name" = $1,
@@ -266,7 +266,7 @@ func (c *saleRepo) UpdateSale(req *models.Sales) (string, error) {
 	return updatedID, nil
 }
 
-func (c *saleRepo) DeleteSale(req *models.IdRequest) (resp string, err error) {
+func (c *saleRepo) DeleteSale(ctx context.Context, req *models.IdRequest) (resp string, err error) {
 	query := `DELETE FROM "sales" WHERE "id" = $1`
 
 	resul, err := c.db.Exec(context.Background(), query, req.Id)
@@ -281,7 +281,7 @@ func (c *saleRepo) DeleteSale(req *models.IdRequest) (resp string, err error) {
 	return req.Id, nil
 }
 
-// func (s *saleRepo) CancelSale(req *models.IdRequest) (string, error) {
+// func (s *saleRepo) CancelSale(ctx context.Context,req *models.IdRequest) (string, error) {
 // 	// sales, err := s.read()
 // 	// if err != nil {
 // 	// 	return "", err
@@ -300,7 +300,7 @@ func (c *saleRepo) DeleteSale(req *models.IdRequest) (resp string, err error) {
 // 	return "sale cancelled successfully", nil
 // }
 
-// func (u *saleRepo) GetTopSaleBranch() (resp map[string]models.SaleTopBranch, err error) {
+// func (u *saleRepo) GetTopSaleBranch(ctx context.Context) (resp map[string]models.SaleTopBranch, err error) {
 // 	sales, err := u.read()
 // 	if err != nil {
 // 		return resp, err
@@ -329,7 +329,7 @@ func (c *saleRepo) DeleteSale(req *models.IdRequest) (resp string, err error) {
 //
 // 1. Chilonzor   12 392 000       873
 // // 2. MGorkiy      9 847 000       604
-// func (u *saleRepo) GetSaleCountBranch() (resp map[string]models.SaleCountSumBranch, err error) {
+// func (u *saleRepo) GetSaleCountBranch(ctx context.Context) (resp map[string]models.SaleCountSumBranch, err error) {
 // 	sales, err := u.read()
 // 	if err != nil {
 // 		return resp, err

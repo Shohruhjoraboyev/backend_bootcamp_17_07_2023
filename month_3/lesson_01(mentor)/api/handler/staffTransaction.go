@@ -31,7 +31,7 @@ func (h *Handler) CreateTransaction(c *gin.Context) {
 		return
 	}
 
-	resp, err := h.storage.Transaction().CreateTransaction(&transaction)
+	resp, err := h.storage.Transaction().CreateTransaction(c.Request.Context(), &transaction)
 	if err != nil {
 		fmt.Println("error from storage create transaction:", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -55,7 +55,7 @@ func (h *Handler) CreateTransaction(c *gin.Context) {
 func (h *Handler) GetTransaction(c *gin.Context) {
 	id := c.Param("id")
 
-	resp, err := h.storage.Transaction().GetTransaction(&models.IdRequest{Id: id})
+	resp, err := h.storage.Transaction().GetTransaction(c.Request.Context(), &models.IdRequest{Id: id})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		fmt.Println("error from storage get transaction:", err.Error())
@@ -93,7 +93,7 @@ func (h *Handler) GetAllTransaction(c *gin.Context) {
 		return
 	}
 
-	resp, err := h.storage.Transaction().GetAllTransaction(&models.GetAllTransactionRequest{
+	resp, err := h.storage.Transaction().GetAllTransaction(c.Request.Context(), &models.GetAllTransactionRequest{
 		Page:  page,
 		Limit: limit,
 		Text:  c.Query("search"),
@@ -129,7 +129,7 @@ func (h *Handler) UpdateTransaction(c *gin.Context) {
 	}
 
 	transaction.Id = c.Param("id")
-	resp, err := h.storage.Transaction().UpdateTransaction(&transaction)
+	resp, err := h.storage.Transaction().UpdateTransaction(c.Request.Context(), &transaction)
 	if err != nil {
 		h.log.Error("error transaction update:", logger.Error(err))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -154,7 +154,7 @@ func (h *Handler) UpdateTransaction(c *gin.Context) {
 func (h *Handler) DeleteTransaction(c *gin.Context) {
 	id := c.Param("id")
 
-	resp, err := h.storage.Transaction().DeleteTransaction(&models.IdRequest{Id: id})
+	resp, err := h.storage.Transaction().DeleteTransaction(c.Request.Context(), &models.IdRequest{Id: id})
 	if err != nil {
 		h.log.Error("error deleting transaction:", logger.Error(err))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

@@ -26,7 +26,7 @@ func (h *Handler) GetTopStaff(c *gin.Context) {
 	ToDate := c.Query("to_date")
 	fmt.Println(FromDate, ToDate)
 
-	resp, err := h.storage.BiznesLoggic().GetTopStaff(&models.TopStaffRequest{FromDate: FromDate, ToDate: ToDate})
+	resp, err := h.storage.BiznesLoggic().GetTopStaff(c.Request.Context(), &models.TopStaffRequest{FromDate: FromDate, ToDate: ToDate})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		fmt.Println("error get top staff:", err.Error())

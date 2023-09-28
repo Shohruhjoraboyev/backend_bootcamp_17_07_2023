@@ -31,7 +31,7 @@ func (h *Handler) CreateStaff(c *gin.Context) {
 		return
 	}
 
-	resp, err := h.storage.Staff().CreateStaff(&staff)
+	resp, err := h.storage.Staff().CreateStaff(c.Request.Context(), &staff)
 	if err != nil {
 		fmt.Println("error Staff Create:", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -55,7 +55,7 @@ func (h *Handler) CreateStaff(c *gin.Context) {
 func (h *Handler) GetStaff(c *gin.Context) {
 	id := c.Param("id")
 
-	resp, err := h.storage.Staff().GetStaff(&models.IdRequest{Id: id})
+	resp, err := h.storage.Staff().GetStaff(c.Request.Context(), &models.IdRequest{Id: id})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		fmt.Println("error staff Get:", err.Error())
@@ -94,7 +94,7 @@ func (h *Handler) GetAllStaff(c *gin.Context) {
 		return
 	}
 
-	resp, err := h.storage.Staff().GetAllStaff(&models.GetAllStaffRequest{
+	resp, err := h.storage.Staff().GetAllStaff(c.Request.Context(), &models.GetAllStaffRequest{
 		Page:  page,
 		Limit: limit,
 		Name:  c.Query("search"),
@@ -131,7 +131,7 @@ func (h *Handler) UpdateStaff(c *gin.Context) {
 	}
 
 	staff.ID = c.Param("id")
-	resp, err := h.storage.Staff().UpdateStaff(&staff)
+	resp, err := h.storage.Staff().UpdateStaff(c.Request.Context(), &staff)
 	if err != nil {
 		h.log.Error("error Staff Update:", logger.Error(err))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -156,7 +156,7 @@ func (h *Handler) UpdateStaff(c *gin.Context) {
 func (h *Handler) DeleteStaff(c *gin.Context) {
 	id := c.Param("id")
 
-	resp, err := h.storage.Staff().DeleteStaff(&models.IdRequest{Id: id})
+	resp, err := h.storage.Staff().DeleteStaff(c.Request.Context(), &models.IdRequest{Id: id})
 	if err != nil {
 		h.log.Error("error deleting staff:", logger.Error(err))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

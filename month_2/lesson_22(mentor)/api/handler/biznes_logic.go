@@ -11,8 +11,8 @@ import (
 // GetTopStaff godoc
 // @Router       /get_top_staff [GET]
 // @Summary      GET top staffes
-// @Description  get top staff
-// @Tags         Biznes
+// @Description  Top ishchilarni chiqarish: berilgan vaqt oralig'ida type dynamic (cashier, shopAssistant)
+// @Tags         BIZNESS
 // @Accept       json
 // @Produce      json
 // @Param        from_date   query      string  true  "from_date"

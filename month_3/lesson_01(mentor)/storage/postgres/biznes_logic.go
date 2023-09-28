@@ -18,7 +18,7 @@ func NewBiznesRepo(db *pgxpool.Pool) *biznesRepo {
 	}
 }
 
-func (b *biznesRepo) GetTopStaff(req *models.TopStaffRequest) (*models.TopStaffResponse, error) {
+func (b *biznesRepo) GetTopStaff(c context.Context, req *models.TopStaffRequest) (*models.TopStaffResponse, error) {
 	TopStaffs := models.TopStaffResponse{}
 	TopStaffs.TopStaffs = make([]*models.TopStaff, 0)
 

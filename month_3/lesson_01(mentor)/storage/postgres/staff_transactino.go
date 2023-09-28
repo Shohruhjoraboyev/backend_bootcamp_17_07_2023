@@ -18,7 +18,7 @@ func NewTransactionRepo(db *pgxpool.Pool) *transactionRepo {
 	return &transactionRepo{db: db}
 }
 
-func (t *transactionRepo) CreateTransaction(req *models.CreateTransaction) (string, error) {
+func (t *transactionRepo) CreateTransaction(ctx context.Context, req *models.CreateTransaction) (string, error) {
 	id := uuid.NewString()
 
 	query := `
@@ -50,7 +50,7 @@ func (t *transactionRepo) CreateTransaction(req *models.CreateTransaction) (stri
 	return id, nil
 }
 
-func (t *transactionRepo) GetTransaction(req *models.IdRequest) (*models.Transaction, error) {
+func (t *transactionRepo) GetTransaction(ctx context.Context, req *models.IdRequest) (*models.Transaction, error) {
 	var transaction models.Transaction
 
 	query := `
@@ -87,7 +87,7 @@ func (t *transactionRepo) GetTransaction(req *models.IdRequest) (*models.Transac
 	return &transaction, nil
 }
 
-func (t *transactionRepo) GetAllTransaction(req *models.GetAllTransactionRequest) (*models.GetAllTransactionResponse, error) {
+func (t *transactionRepo) GetAllTransaction(ctx context.Context, req *models.GetAllTransactionRequest) (*models.GetAllTransactionResponse, error) {
 	var response models.GetAllTransactionResponse
 	response.Transactions = make([]models.Transaction, 0)
 
@@ -149,7 +149,7 @@ func (t *transactionRepo) GetAllTransaction(req *models.GetAllTransactionRequest
 	return &response, nil
 }
 
-func (t *transactionRepo) UpdateTransaction(req *models.Transaction) (string, error) {
+func (t *transactionRepo) UpdateTransaction(ctx context.Context, req *models.Transaction) (string, error) {
 	query := `
 		UPDATE "transactions" SET 
 				"type" = $1, 
@@ -180,7 +180,7 @@ func (t *transactionRepo) UpdateTransaction(req *models.Transaction) (string, er
 	return req.Id, nil
 }
 
-func (t *transactionRepo) DeleteTransaction(req *models.IdRequest) (string, error) {
+func (t *transactionRepo) DeleteTransaction(ctx context.Context, req *models.IdRequest) (string, error) {
 	query := `
 		DELETE FROM transactions
 		WHERE id = $1
@@ -199,6 +199,6 @@ func (t *transactionRepo) DeleteTransaction(req *models.IdRequest) (string, erro
 	return req.Id, nil
 }
 
-// func (t *transactionRepo) GetTopStaffs(req *models.TopWorkerRequest) (resp *map[string]models.StaffTop, err error) {
+// func (t *transactionRepo) GetTopStaffs(ctx context.Context,req *models.TopWorkerRequest) (resp *map[string]models.StaffTop, err error) {
 
 // }

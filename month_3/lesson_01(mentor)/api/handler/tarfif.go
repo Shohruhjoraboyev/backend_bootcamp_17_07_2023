@@ -31,7 +31,7 @@ func (h *Handler) CreateStaffTarif(c *gin.Context) {
 		return
 	}
 
-	resp, err := h.storage.Tariff().CreateStaffTarif(&tariff)
+	resp, err := h.storage.Tariff().CreateStaffTarif(c.Request.Context(), &tariff)
 	if err != nil {
 		fmt.Println("error Tariff Create:", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -55,7 +55,7 @@ func (h *Handler) CreateStaffTarif(c *gin.Context) {
 func (h *Handler) GetStaffTarif(c *gin.Context) {
 	id := c.Param("id")
 
-	resp, err := h.storage.Tariff().GetStaffTarif(&models.IdRequest{Id: id})
+	resp, err := h.storage.Tariff().GetStaffTarif(c.Request.Context(), &models.IdRequest{Id: id})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		fmt.Println("error tariff Get:", err.Error())
@@ -94,7 +94,7 @@ func (h *Handler) GetAllStaffTarif(c *gin.Context) {
 		return
 	}
 
-	resp, err := h.storage.Tariff().GetAllStaffTarif(&models.GetAllStaffTarifRequest{
+	resp, err := h.storage.Tariff().GetAllStaffTarif(c.Request.Context(), &models.GetAllStaffTarifRequest{
 		Page:  page,
 		Limit: limit,
 		Name:  c.Query("search"),
@@ -131,7 +131,7 @@ func (h *Handler) UpdateStaffTarif(c *gin.Context) {
 	}
 
 	tariff.Id = c.Param("id")
-	resp, err := h.storage.Tariff().UpdateStaffTarif(&tariff)
+	resp, err := h.storage.Tariff().UpdateStaffTarif(c.Request.Context(), &tariff)
 	if err != nil {
 		h.log.Error("error Tariff Update:", logger.Error(err))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -156,7 +156,7 @@ func (h *Handler) UpdateStaffTarif(c *gin.Context) {
 func (h *Handler) DeleteStaffTarif(c *gin.Context) {
 	id := c.Param("id")
 
-	resp, err := h.storage.Tariff().DeleteStaffTarif(&models.IdRequest{Id: id})
+	resp, err := h.storage.Tariff().DeleteStaffTarif(c.Request.Context(), &models.IdRequest{Id: id})
 	if err != nil {
 		h.log.Error("error deleting tarif:", logger.Error(err))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

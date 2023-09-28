@@ -31,7 +31,7 @@ func (h *Handler) CreateSale(c *gin.Context) {
 		return
 	}
 
-	resp, err := h.storage.Sales().CreateSale(&sale)
+	resp, err := h.storage.Sales().CreateSale(c.Request.Context(), &sale)
 	if err != nil {
 		fmt.Println("error sale Create:", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -55,7 +55,7 @@ func (h *Handler) CreateSale(c *gin.Context) {
 func (h *Handler) GetSale(c *gin.Context) {
 	id := c.Param("id")
 
-	resp, err := h.storage.Sales().GetSale(&models.IdRequest{Id: id})
+	resp, err := h.storage.Sales().GetSale(c.Request.Context(), &models.IdRequest{Id: id})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		fmt.Println("error sale get:", err.Error())
@@ -93,7 +93,7 @@ func (h *Handler) GetAllSale(c *gin.Context) {
 		return
 	}
 
-	resp, err := h.storage.Sales().GetAllSale(&models.GetAllSalesRequest{
+	resp, err := h.storage.Sales().GetAllSale(c.Request.Context(), &models.GetAllSalesRequest{
 		Page:        page,
 		Limit:       limit,
 		Client_name: c.Query("search"),
@@ -129,7 +129,7 @@ func (h *Handler) UpdateSale(c *gin.Context) {
 	}
 
 	sale.Id = c.Param("id")
-	resp, err := h.storage.Sales().UpdateSale(&sale)
+	resp, err := h.storage.Sales().UpdateSale(c.Request.Context(), &sale)
 	if err != nil {
 		h.log.Error("error sale update:", logger.Error(err))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -154,7 +154,7 @@ func (h *Handler) UpdateSale(c *gin.Context) {
 func (h *Handler) DeleteSale(c *gin.Context) {
 	id := c.Param("id")
 
-	resp, err := h.storage.Sales().DeleteSale(&models.IdRequest{Id: id})
+	resp, err := h.storage.Sales().DeleteSale(c.Request.Context(), &models.IdRequest{Id: id})
 	if err != nil {
 		h.log.Error("error deleting sale:", logger.Error(err))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -170,7 +170,7 @@ func (h *Handler) DeleteSale(c *gin.Context) {
 // 		fmt.Println(err)
 // 		return
 // 	}
-// 	branches, _ := h.strg.Branch().GetAllBranch(models.GetAllBranchRequest{})
+// 	branches, _ := h.strg.Branch().GetAllBranch(c.Request.Context(),models.GetAllBranchRequest{})
 // 	branchName := make(map[string]string)
 
 // 	for _, v := range branches.Branches {
@@ -182,22 +182,22 @@ func (h *Handler) DeleteSale(c *gin.Context) {
 // }
 
 // func (h *Handler) CancelSale(id string) {
-// 	resp, err := h.strg.Sales().CancelSale(models.IdRequest{Id: id})
+// 	resp, err := h.strg.Sales().CancelSale(c.Request.Context(),models.IdRequest{Id: id})
 // 	if err != nil {
 // 		fmt.Println("error from CreateSale:", err.Error())
 // 		return
 // 	}
 
 // 	// shop assistant change balance
-// 	sale, err := h.strg.Sales().GetSale(models.IdRequest{Id: id})
+// 	sale, err := h.strg.Sales().GetSale(c.Request.Context(),models.IdRequest{Id: id})
 // 	if err != nil {
 // 		fmt.Println("error while read data", err)
 // 		return
 // 	}
-// 	shopAsistant, err := h.strg.Staff().GetStaff(models.IdRequest{Id: sale.Shop_asissent_id})
+// 	shopAsistant, err := h.strg.Staff().GetStaff(c.Request.Context(),models.IdRequest{Id: sale.Shop_asissent_id})
 // 	if err == nil {
 // 		amount := 0.0
-// 		tarif, err := h.strg.StaffTarif().GetStaffTarif(models.IdRequest{Id: shopAsistant.TariffId})
+// 		tarif, err := h.strg.StaffTarif().GetStaffTarifc.Request.Context(),(models.IdRequest{Id: shopAsistant.TariffId})
 // 		if err != nil {
 // 			fmt.Println("error while get staff tarif")
 // 			fmt.Println(err)
@@ -232,7 +232,7 @@ func (h *Handler) DeleteSale(c *gin.Context) {
 // 			return
 // 		}
 
-// 		_, err = h.strg.Staff().ChangeBalance(models.ChangeBalance{Id: shopAsistant.Id, Balance: -amount})
+// 		_, err = h.strg.Staff().ChangeBalance(c.Request.Context(),&models.ChangeBalance{Id: shopAsistant.Id, Balance: -amount})
 // 		if err != nil {
 // 			fmt.Println("Error while change balance")
 // 			return
@@ -244,7 +244,7 @@ func (h *Handler) DeleteSale(c *gin.Context) {
 // 	cashier, err := h.strg.Staff().GetStaff(models.IdRequest{Id: sale.Cashier_id})
 // 	if err == nil {
 // 		amount := 0.0
-// 		tarif, err := h.strg.StaffTarif().GetStaffTarif(models.IdRequest{Id: cashier.TariffId})
+// 		tarif, err := h.strg.StaffTarif().GetStaffTarif(c.Request.Context(),&models.IdRequest{Id: cashier.TariffId})
 // 		if err != nil {
 // 			fmt.Println(err)
 // 			return
@@ -297,7 +297,7 @@ func (h *Handler) DeleteSale(c *gin.Context) {
 // 		fmt.Println(err)
 // 		return
 // 	}
-// 	branches, _ := h.strg.Branch().GetAllBranch(models.GetAllBranchRequest{})
+// 	branches, _ := h.strg.Branch().GetAllBranch(c.Request.Context(),&models.GetAllBranchRequest{})
 // 	branchName := make(map[string]string)
 
 // 	for _, v := range branches.Branches {
