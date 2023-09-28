@@ -51,46 +51,6 @@ func (b *userRepo) CreateUser(c context.Context, req *models.CreateUser) (string
 	return id, nil
 }
 
-func (b *userRepo) GetByLogin(c context.Context, req *models.LoginRequest) (resp *models.User, err error) {
-	var (
-		updatedAt sql.NullString
-		createdAt sql.NullString
-	)
-	query := `
-			SELECT 
-				"id", 
-				"login", 
-				"password", 
-				"name", 
-				"age", 
-				"phone_number",
-				"created_at",
-				"updated_at" 
-			FROM users 
-				WHERE "login"=$1`
-
-	user := models.User{}
-	err = b.db.QueryRow(context.Background(), query, req.Login).Scan(
-		&user.ID,
-		&user.Login,
-		&user.Password,
-		&user.Name,
-		&user.Age,
-		&user.PhoneNumber,
-		&createdAt,
-		&updatedAt,
-	)
-	if err != nil {
-		if err == pgx.ErrNoRows {
-			return nil, fmt.Errorf("user not found")
-		}
-		return nil, fmt.Errorf("failed to get user: %w", err)
-	}
-	user.CreatedAt = createdAt.String
-	user.UpdatedAt = updatedAt.String
-	return &user, nil
-}
-
 func (b *userRepo) GetUser(c context.Context, req *models.IdRequest) (resp *models.User, err error) {
 	var (
 		updatedAt sql.NullString
@@ -255,4 +215,30 @@ func (b *userRepo) DeleteUser(c context.Context, req *models.IdRequest) (resp st
 	}
 
 	return req.Id, nil
+}
+
+func (b *userRepo) GetByLogin(c context.Context, req *models.LoginRequest) (resp *models.LoginDataRespond, err error) {
+
+	query := `
+			SELECT 
+				"login", 
+				"password", 
+				"phone_number"
+			FROM users 
+				WHERE "login"=$1`
+
+	user := models.LoginDataRespond{}
+	err = b.db.QueryRow(context.Background(), query, req.Login).Scan(
+		&user.Login,
+		&user.Password,
+		&user.PhoneNumber,
+	)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, fmt.Errorf("user not found")
+		}
+		return nil, fmt.Errorf("failed to get user: %w", err)
+	}
+
+	return &user, nil
 }

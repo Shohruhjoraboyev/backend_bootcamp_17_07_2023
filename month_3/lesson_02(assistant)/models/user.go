@@ -37,6 +37,12 @@ type LoginRequest struct {
 	Password string `json:"password"`
 }
 
+type LoginDataRespond struct {
+	Login       string `json:"login"`
+	Password    string `json:"password"`
+	PhoneNumber string `json:"phone_number"`
+}
+
 type LoginRespond struct {
 	Token string
 }

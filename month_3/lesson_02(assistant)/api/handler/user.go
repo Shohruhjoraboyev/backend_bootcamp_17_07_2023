@@ -168,6 +168,50 @@ func (h *Handler) DeleteUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "success", "deleted user id": resp})
 }
 
+// SignUp godoc
+// @Router       /signup [POST]
+// @Summary      CREATES USER
+// @Description  CREATES USER BASED ON GIVEN DATA
+// @Tags         AUTH
+// @Accept       json
+// @Produce      json
+// @Param        data  body      models.CreateUser  true  "user data"
+// @Success      200  {string}  string
+// @Failure      400  {object}  response.ErrorResp
+// @Failure      404  {object}  response.ErrorResp
+// @Failure      500  {object}  response.ErrorResp
+func (h *Handler) SignUp(c *gin.Context) {
+	var user models.CreateUser
+	err := c.ShouldBind(&user)
+	if err != nil {
+		h.log.Error("error while binding:", logger.Error(err))
+		c.JSON(http.StatusBadRequest, "invalid body")
+		return
+	}
+
+	if !helper.IsValidPhone(user.PhoneNumber) {
+		c.JSON(http.StatusBadRequest, "invalid phone number")
+		return
+	}
+
+	_, err = h.storage.User().GetByLogin(context.Background(), &models.LoginRequest{
+		Login:    user.Login,
+		Password: user.Password,
+	})
+
+	if err != nil {
+		resp, err := h.storage.User().CreateUser(c.Request.Context(), &user)
+		if err != nil {
+			fmt.Println("error User Create:", err.Error())
+			c.JSON(http.StatusInternalServerError, "login or phone number is already used, enter another one")
+			return
+		}
+		c.JSON(http.StatusCreated, gin.H{"message": "created", "id": resp})
+		return
+	}
+	c.JSON(http.StatusBadGateway, gin.H{"error": "username is used, enter another one"})
+}
+
 // loginUser godoc
 // @Router       /login [POST]
 // @Summary      auth
@@ -175,7 +219,7 @@ func (h *Handler) DeleteUser(c *gin.Context) {
 // @Tags         AUTH
 // @Accept       json
 // @Produce      json
-// @Param        user    body     models.LoginRequest  true  "data of user"
+// @Param        user    body   models.LoginRequest  true  "data of user"
 // @Success      200  {object}  models.LoginRespond
 // @Failure      400  {object}  response.ErrorResp
 // @Failure      404  {object}  response.ErrorResp
@@ -196,20 +240,20 @@ func (h *Handler) Login(c *gin.Context) {
 	})
 
 	if err != nil {
-		fmt.Println("error Person GetByUsername:", err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"not found user with login:": req.Login})
 		return
 	}
 
 	if req.Password != resp.Password {
-		h.log.Error("error while binding:", logger.Error(err))
-		res := response.ErrorResp{Message: "login or password is incorrect"}
-		c.JSON(http.StatusBadRequest, res)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "login or password didn't match"})
 		return
 	}
 
 	m := make(map[string]interface{})
-	m["user_id"] = resp.ID
+	m["login"] = resp.Login
+	m["password"] = resp.Password
+	m["phone_number"] = resp.PhoneNumber
+
 	token, _ := helper.GenerateJWT(m, config.TokenExpireTime, config.JWTSecretKey)
 	c.JSON(http.StatusCreated, models.LoginRespond{Token: token})
 }
