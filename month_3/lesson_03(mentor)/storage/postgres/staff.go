@@ -379,3 +379,25 @@ func (s *staffRepo) UpdateBalance(ctx context.Context, req *models.UpdateBalance
 // 	}
 // 	return false
 // }
+
+func (s *staffRepo) ChangePassword(ctx context.Context, req *models.ChangePasswordRequest) (res string, err error) {
+	query := `
+	UPDATE "staffs"
+		SET "password" = $1, 
+		"updated_at" = NOW()
+	WHERE "id" = $2`
+
+	result, err := s.db.Exec(context.Background(), query,
+		req.NewPassword,
+		req.Id)
+
+	if err != nil {
+		return "", fmt.Errorf("failed to update staff: %w", err)
+	}
+
+	if result.RowsAffected() == 0 {
+		return "", fmt.Errorf("staff with ID %s not found", req.Id)
+	}
+
+	return req.Id, nil
+}

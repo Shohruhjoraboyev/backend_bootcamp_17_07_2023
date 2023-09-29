@@ -16,6 +16,13 @@ definitions:
       year:
         type: integer
     type: object
+  models.ChangePassword:
+    properties:
+      new_password:
+        type: string
+      old_password:
+        type: string
+    type: object
   models.CreateBranch:
     properties:
       address:
@@ -860,6 +867,46 @@ paths:
           schema:
             $ref: '#/definitions/response.ErrorResp'
       summary: UPDATE STAFF BY ID
+      tags:
+      - STAFF
+  /staff/change-password/{id}:
+    post:
+      consumes:
+      - application/json
+      description: UPDATES STAFF PASSWORD BASED ON GIVEN OLD AND NEW PASSWORD
+      parameters:
+      - description: id of staff
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: staff data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.ChangePassword'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResp'
+      summary: UPDATE STAFF PASSWORD BY ID
       tags:
       - STAFF
   /tariff:

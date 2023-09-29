@@ -2,6 +2,7 @@ package handler
 
 import (
 	"app/models"
+	"app/pkg/helper"
 	"app/pkg/logger"
 	"fmt"
 	"net/http"
@@ -30,6 +31,14 @@ func (h *Handler) CreateStaff(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "invalid body")
 		return
 	}
+
+	hashedPass, err := helper.GeneratePasswordHash(staff.Password)
+	if err != nil {
+		h.log.Error("error while generating hash password:", logger.Error(err))
+		c.JSON(http.StatusBadRequest, "invalid body")
+		return
+	}
+	staff.Password = string(hashedPass)
 
 	resp, err := h.storage.Staff().CreateStaff(c.Request.Context(), &staff)
 	if err != nil {
@@ -170,3 +179,60 @@ func (h *Handler) DeleteStaff(c *gin.Context) {
 // func (h *Handler) ChangeBalance(c *gin.Context) {
 
 // }
+
+// CHANGE PASSWORD godoc
+// @Router       /staff/change-password/{id} [POST]
+// @Summary      UPDATE STAFF PASSWORD BY ID
+// @Description  UPDATES STAFF PASSWORD BASED ON GIVEN OLD AND NEW PASSWORD
+// @Tags         STAFF
+// @Accept       json
+// @Produce      json
+// @Param        id    path     string  true  "id of staff" format(uuid)
+// @Param        data  body      models.ChangePassword  true  "staff data"
+// @Success      200  {string}  string
+// @Failure      400  {object}  response.ErrorResp
+// @Failure      404  {object}  response.ErrorResp
+// @Failure      500  {object}  response.ErrorResp
+func (h *Handler) UpdateStaffPassword(c *gin.Context) {
+	var req models.ChangePasswordRequest
+	id := c.Param("id")
+
+	err := c.ShouldBind(&req)
+	if err != nil {
+		h.log.Error("error while binding:", logger.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+
+	staff, err := h.storage.Staff().GetStaff(c.Request.Context(), &models.IdRequest{Id: id})
+	if err != nil {
+		h.log.Error("error  get staff:", logger.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error: not found staff with id:": id})
+		return
+	}
+
+	err = helper.ComparePasswords([]byte(staff.Password), []byte(req.OldPassword))
+	if err != nil {
+		h.log.Error("error: password didn't match:", logger.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error:": "password didn't match:"})
+		return
+	}
+
+	hashedPass, err := helper.GeneratePasswordHash(req.NewPassword)
+	if err != nil {
+		h.log.Error("error while generating hash password:", logger.Error(err))
+		c.JSON(http.StatusBadRequest, "invalid body")
+		return
+	}
+
+	req.Id = id
+	req.NewPassword = string(hashedPass)
+	resp, err := h.storage.Staff().ChangePassword(c.Request.Context(), &req)
+	if err != nil {
+		h.log.Error("error change password:", logger.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "password updated", "id": resp})
+}

@@ -9,6 +9,9 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 func NewServer(h *handler.Handler) *gin.Engine {
 	r := gin.Default()
 
@@ -30,6 +33,7 @@ func NewServer(h *handler.Handler) *gin.Engine {
 	r.PUT("/staff/:id", h.UpdateStaff)
 	r.DELETE("/staff/:id", h.DeleteStaff)
 	r.POST("/login", h.GetByUsername)
+	r.POST("/staff/change-password/:id", h.UpdateStaffPassword)
 
 	r.POST("/sale", h.CreateSale)
 	r.GET("/sale/:id", h.GetSale)

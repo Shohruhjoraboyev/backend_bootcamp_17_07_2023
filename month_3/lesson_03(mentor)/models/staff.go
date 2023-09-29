@@ -67,3 +67,18 @@ type StaffIdAmount struct {
 	StaffId string
 	Amount  float32
 }
+
+type GetPasswordById struct {
+	OldPassword string `json:"old_password"`
+}
+
+type ChangePassword struct {
+	OldPassword string `json:"old_password"`
+	NewPassword string `json:"new_password"`
+}
+
+type ChangePasswordRequest struct {
+	Id          string `json:"id"`
+	OldPassword string `json:"old_password"`
+	NewPassword string `json:"new_password"`
+}
