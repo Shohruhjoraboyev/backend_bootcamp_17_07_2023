@@ -3,6 +3,7 @@ package api
 import (
 	_ "app/api/docs"
 	"app/api/handler"
+	"app/pkg/helper"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -14,6 +15,8 @@ import (
 // @name Authorization
 func NewServer(h *handler.Handler) *gin.Engine {
 	r := gin.Default()
+
+	// r.Use(helper.AuthMiddleWare)
 
 	r.POST("/branch", h.CreateBranch)
 	r.GET("/branch/:id", h.GetBranch)
@@ -27,13 +30,15 @@ func NewServer(h *handler.Handler) *gin.Engine {
 	r.PUT("/tariff/:id", h.UpdateStaffTarif)
 	r.DELETE("/tariff/:id", h.DeleteStaffTarif)
 
-	r.POST("/staff", h.CreateStaff)
+	// middlewares, vor validating phone number, password and  username
+	r.POST("/staff", helper.ValidatePasswordMiddleware(), h.CreateStaff)
+	r.POST("/login", h.GetByUsername)
+	r.POST("/staff/change-password/:id", h.UpdateStaffPassword)
+
 	r.GET("/staff/:id", h.GetStaff)
 	r.GET("/staff", h.GetAllStaff)
 	r.PUT("/staff/:id", h.UpdateStaff)
 	r.DELETE("/staff/:id", h.DeleteStaff)
-	r.POST("/login", h.GetByUsername)
-	r.POST("/staff/change-password/:id", h.UpdateStaffPassword)
 
 	r.POST("/sale", h.CreateSale)
 	r.GET("/sale/:id", h.GetSale)

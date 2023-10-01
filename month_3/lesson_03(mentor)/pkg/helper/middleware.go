@@ -82,3 +82,16 @@ func AuthMiddleWare(c *gin.Context) {
 	c.Set("staff_info", staffInfo)
 	c.Next()
 }
+
+// password middleware
+func ValidatePasswordMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		password := c.PostForm("password")
+		if !IsValidPassword(password) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid password"})
+			c.Abort()
+			return
+		}
+		c.Next()
+	}
+}
