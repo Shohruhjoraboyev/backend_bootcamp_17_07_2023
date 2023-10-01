@@ -3,7 +3,67 @@ package helper
 import (
 	"errors"
 	"regexp"
+	"unicode"
 )
+
+// IsValidLogin ...
+func IsValidLogin(login string) bool {
+	r := regexp.MustCompile(`^[a-zA-Z][a-zA-Z0-9_]{5,29}$`)
+	return r.MatchString(login)
+}
+
+// IsValidPassword ...
+// The password must be at least 8 characters long.
+// The password must contain at least one uppercase letter.
+// The password must contain at least one lowercase letter.
+// The password must contain at least one digit.
+func IsValidPassword(password string) bool {
+	// Password must be at least 8 characters long
+	if len(password) < 8 {
+		return false
+	}
+
+	// Password must contain at least one uppercase letter
+	hasUppercase := false
+	for _, char := range password {
+		if unicode.IsUpper(char) {
+			hasUppercase = true
+			break
+		}
+	}
+	if !hasUppercase {
+		return false
+	}
+
+	// Password must contain at least one lowercase letter
+	hasLowercase := false
+	for _, char := range password {
+		if unicode.IsLower(char) {
+			hasLowercase = true
+			break
+		}
+	}
+	if !hasLowercase {
+		return false
+	}
+
+	// Password must contain at least one digit
+	hasDigit := false
+	for _, char := range password {
+		if unicode.IsDigit(char) {
+			hasDigit = true
+			break
+		}
+	}
+
+	return hasDigit
+}
+
+// IsValidPhone ...
+func IsValidPhone(phone string) bool {
+	r := regexp.MustCompile(`^\+998[0-9]{2}[0-9]{7}$`)
+	return r.MatchString(phone)
+}
 
 func ValidPinfl(pinfl string) error {
 	if pinfl == "" {
@@ -29,22 +89,10 @@ func ValidPassportNumber(number string) error {
 	return nil
 }
 
-// IsValidPhone ...
-func IsValidPhone(phone string) bool {
-	r := regexp.MustCompile(`^\+998[0-9]{2}[0-9]{7}$`)
-	return r.MatchString(phone)
-}
-
 // IsValidEmail ...
 func IsValidEmail(email string) bool {
 	r := regexp.MustCompile(`^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$`)
 	return r.MatchString(email)
-}
-
-// IsValidLogin ...
-func IsValidLogin(login string) bool {
-	r := regexp.MustCompile(`^[a-zA-Z][a-zA-Z0-9_]{5,29}$`)
-	return r.MatchString(login)
 }
 
 // IsValidUUID ...
