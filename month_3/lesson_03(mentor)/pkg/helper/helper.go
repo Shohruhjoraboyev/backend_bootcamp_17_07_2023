@@ -4,7 +4,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/xtgo/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -23,10 +22,6 @@ func ReplaceQueryParams(namedQuery string, params map[string]interface{}) (strin
 	}
 
 	return namedQuery, args
-}
-func IsValidUUID(u string) bool {
-	_, err := uuid.Parse(u)
-	return err == nil
 }
 
 func GeneratePasswordHash(pass string) ([]byte, error) {
