@@ -88,7 +88,7 @@ func ValidatePasswordMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		password := c.PostForm("password")
 		if !IsValidPassword(password) {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid password"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid password. Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one digit."})
 			c.Abort()
 			return
 		}
