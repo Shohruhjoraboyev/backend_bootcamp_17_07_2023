@@ -19,7 +19,7 @@ func IsValidLogin(login string) bool {
 // The password must contain at least one digit.
 func IsValidPassword(password string) bool {
 	// Password must be at least 8 characters long
-	if len(password) <= 8 {
+	if len(password) < 8 {
 		return false
 	}
 
