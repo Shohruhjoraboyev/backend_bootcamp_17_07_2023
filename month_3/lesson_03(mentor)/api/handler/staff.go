@@ -24,8 +24,9 @@ import (
 // @Failure      404  {object}  response.ErrorResp
 // @Failure      500  {object}  response.ErrorResp
 func (h *Handler) CreateStaff(c *gin.Context) {
+
 	var staff models.CreateStaff
-	err := c.ShouldBind(&staff)
+	err := c.ShouldBindJSON(&staff)
 	if err != nil {
 		h.log.Error("error while binding:", logger.Error(err))
 		c.JSON(http.StatusBadRequest, "invalid body")

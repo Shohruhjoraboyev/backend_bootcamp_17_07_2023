@@ -3,7 +3,10 @@ package helper
 import (
 	"app/config"
 	"app/models"
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"time"
 
@@ -84,24 +87,39 @@ func AuthMiddleWare(c *gin.Context) {
 	c.Next()
 }
 
-// password middleware
-func ValidatePasswordMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		var req models.CreateStaff
-
-		if err := c.ShouldBindJSON(&req); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
-			c.Abort()
-			return
-		}
-
-		if !IsValidPassword(req.Password) {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid password. Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one digit."})
-			c.Abort()
-			return
-		}
-		c.Next()
+func ValidatePasswordMiddleware(c *gin.Context) {
+	// Read the request body
+	requestBody, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to read request body"})
+		c.Abort()
+		return
 	}
+
+	// Restore the request body
+	c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(requestBody))
+
+	var requestData struct {
+		Password string `json:"password"`
+	}
+
+	// Unmarshal the request body into the requestData struct
+	if err := json.Unmarshal(requestBody, &requestData); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		c.Abort()
+		return
+	}
+
+	password := requestData.Password
+
+	if !IsValidPassword(password) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid password. Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one digit."})
+		c.Abort()
+		return
+	}
+
+	// Continue with other middleware or the final endpoint handler
+	c.Next()
 }
 
 // login(username) middleware
