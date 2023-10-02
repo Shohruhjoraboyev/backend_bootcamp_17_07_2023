@@ -2,6 +2,7 @@ package helper
 
 import (
 	"app/config"
+	"app/models"
 	"fmt"
 	"net/http"
 	"time"
@@ -86,8 +87,15 @@ func AuthMiddleWare(c *gin.Context) {
 // password middleware
 func ValidatePasswordMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		password := c.PostForm("password")
-		if !IsValidPassword(password) {
+		var req models.CreateStaff
+
+		if err := c.ShouldBindJSON(&req); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+			c.Abort()
+			return
+		}
+
+		if !IsValidPassword(req.Password) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid password. Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one digit."})
 			c.Abort()
 			return
@@ -98,30 +106,42 @@ func ValidatePasswordMiddleware() gin.HandlerFunc {
 
 // login(username) middleware
 func ValidateUsernameMiddleware() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		username := ctx.PostForm("username")
+	return func(c *gin.Context) {
+		var req models.LoginRequest
 
-		if !IsValidLogin(username) {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid username. Username must start with a letter, contain only alphanumeric characters and underscores, and be between 6 to 30 characters long."})
-			ctx.Abort()
+		if err := c.ShouldBindJSON(&req); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+			c.Abort()
 			return
 		}
 
-		ctx.Next()
+		if !IsValidLogin(req.Username) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid username. Username must start with a letter, contain only alphanumeric characters and underscores, and be between 6 to 30 characters long."})
+			c.Abort()
+			return
+		}
+
+		c.Next()
 	}
 }
 
 // phoneNumber middleware
-func ValidatePhoneNumberMiddleware() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		phoneNumber := ctx.PostForm("phone_number")
+// func ValidatePhoneNumberMiddleware() gin.HandlerFunc {
+// 	return func(c *gin.Context) {
+// 		var req models.PhoneNumberRequest
 
-		if !IsValidPhone(phoneNumber) {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid phone number. Phone number must start with '+998'"})
-			ctx.Abort()
-			return
-		}
+// 		if err := c.ShouldBindJSON(&req); err != nil {
+// 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+// 			c.Abort()
+// 			return
+// 		}
 
-		ctx.Next()
-	}
-}
+// 		if !IsValidPhone(req.PhoneNumber) {
+// 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid phone number. Phone number must start with '+998'"})
+// 			c.Abort()
+// 			return
+// 		}
+
+// 		c.Next()
+// 	}
+// }
