@@ -58,14 +58,14 @@ func afterRequest(c *gin.Context) {
 	fmt.Printf("Completed %s %s in %v\n", c.Request.Method, c.Request.URL.Path, duration)
 }
 
-// task
+// AuthMiddleWare is a middleware function for authentication
 func AuthMiddleWare(c *gin.Context) {
 	token := c.GetHeader("Authorization")
 
 	if token == "" {
 		c.JSON(http.StatusUnauthorized, map[string]interface{}{
 			"code":    "UNAUTHORIZED!",
-			"message": "token not found...",
+			"message": "Token not found...",
 		})
 		return
 	}
@@ -74,7 +74,7 @@ func AuthMiddleWare(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, map[string]interface{}{
 			"code":    "INVALID TOKEN!",
-			"message": "provided token is not valid...",
+			"message": "Provided token is not valid...",
 		})
 		return
 	}
@@ -93,5 +93,35 @@ func ValidatePasswordMiddleware() gin.HandlerFunc {
 			return
 		}
 		c.Next()
+	}
+}
+
+// login(username) middleware
+func ValidateUsernameMiddleware() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		username := ctx.PostForm("username")
+
+		if !IsValidLogin(username) {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid username. Username must start with a letter, contain only alphanumeric characters and underscores, and be between 6 to 30 characters long."})
+			ctx.Abort()
+			return
+		}
+
+		ctx.Next()
+	}
+}
+
+// phoneNumber middleware
+func ValidatePhoneNumberMiddleware() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		phoneNumber := ctx.PostForm("phone_number")
+
+		if !IsValidPhone(phoneNumber) {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid phone number. Phone number must start with '+998'"})
+			ctx.Abort()
+			return
+		}
+
+		ctx.Next()
 	}
 }

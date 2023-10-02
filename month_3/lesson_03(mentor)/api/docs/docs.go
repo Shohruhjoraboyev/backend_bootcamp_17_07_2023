@@ -357,7 +357,7 @@ const docTemplate = `{
                 "tags": [
                     "STAFF"
                 ],
-                "summary": "create staff",
+                "summary": "login and return token",
                 "parameters": [
                     {
                         "description": "data of staff",

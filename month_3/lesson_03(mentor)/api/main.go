@@ -32,8 +32,8 @@ func NewServer(h *handler.Handler) *gin.Engine {
 
 	// middlewares, vor validating phone number, password and  username
 	r.POST("/staff", helper.ValidatePasswordMiddleware(), h.CreateStaff)
-	r.POST("/login", h.GetByUsername)
-	r.POST("/staff/change-password/:id", h.UpdateStaffPassword)
+	r.POST("/login", helper.ValidateUsernameMiddleware(), helper.ValidatePasswordMiddleware(), h.GetByUsername)
+	r.POST("/staff/change-password/:id", helper.ValidatePasswordMiddleware(), h.UpdateStaffPassword)
 
 	r.GET("/staff/:id", h.GetStaff)
 	r.GET("/staff", h.GetAllStaff)

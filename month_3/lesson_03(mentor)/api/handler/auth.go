@@ -13,9 +13,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// create person handler
+// login  handler
 // @Router       /login [post]
-// @Summary      create staff
+// @Summary      login and return token
 // @Description  api for create staffes
 // @Tags         STAFF
 // @Accept       json
