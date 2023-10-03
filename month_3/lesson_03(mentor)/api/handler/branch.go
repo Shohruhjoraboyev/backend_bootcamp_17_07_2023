@@ -24,7 +24,8 @@ import (
 // @Failure      500  {object}  response.ErrorResp
 func (h *Handler) CreateBranch(c *gin.Context) {
 	var branch models.CreateBranch
-	err := c.ShouldBind(&branch)
+
+	err := c.ShouldBindJSON(&branch)
 	if err != nil {
 		h.log.Error("error while binding:", logger.Error(err))
 		c.JSON(http.StatusBadRequest, "invalid body")

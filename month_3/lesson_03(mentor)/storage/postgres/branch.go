@@ -29,13 +29,13 @@ func (b *branchRepo) CreateBranch(c context.Context, req *models.CreateBranch) (
 	year := yearNow - req.FoundedAt
 
 	query := `
-		INSERT INTO branches(
-			id, 
-			name, 
-			adress, 
-			year, 
-			founded_at, 
-			created_at)
+		INSERT INTO "branches"(
+			"id", 
+			"name", 
+			"adress", 
+			"year", 
+			"founded_at", 
+			"created_at")
 		VALUES ($1, $2, $3, $4, $5, $6)
 	`
 	_, err := b.db.Exec(context.Background(), query,
