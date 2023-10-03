@@ -80,6 +80,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "CREATES BRANCH BASED ON GIVEN DATA",
                 "consumes": [
                     "application/json"

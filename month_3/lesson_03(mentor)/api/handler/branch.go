@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// @Security ApiKeyAuth
 // CreateBranch godoc
 // @Router       /branch [POST]
 // @Summary      CREATES BRANCH

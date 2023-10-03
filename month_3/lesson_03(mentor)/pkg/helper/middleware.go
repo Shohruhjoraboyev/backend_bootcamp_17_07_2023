@@ -68,6 +68,7 @@ func AuthMiddleWare(c *gin.Context) {
 			"code":    "UNAUTHORIZED!",
 			"message": "Token not found...",
 		})
+		c.Abort()
 		return
 	}
 
@@ -77,6 +78,7 @@ func AuthMiddleWare(c *gin.Context) {
 			"code":    "INVALID TOKEN!",
 			"message": "Provided token is not valid...",
 		})
+		c.Abort()
 		return
 	}
 

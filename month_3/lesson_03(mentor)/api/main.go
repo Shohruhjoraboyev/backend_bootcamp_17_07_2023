@@ -18,7 +18,7 @@ func NewServer(h *handler.Handler) *gin.Engine {
 
 	// r.Use(helper.AuthMiddleWare)
 
-	r.POST("/branch", h.CreateBranch)
+	r.POST("/branch", helper.AuthMiddleWare, h.CreateBranch)
 	r.GET("/branch/:id", h.GetBranch)
 	r.GET("/branch", h.GetAllBranch)
 	r.PUT("/branch/:id", h.UpdateBranch)

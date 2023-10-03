@@ -321,6 +321,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorResp'
+      security:
+      - ApiKeyAuth: []
       summary: CREATES BRANCH
       tags:
       - BRANCH
