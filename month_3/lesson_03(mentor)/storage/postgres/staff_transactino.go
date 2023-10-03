@@ -104,6 +104,7 @@ func (t *transactionRepo) GetAllTransaction(ctx context.Context, req *models.Get
 			updated_at
 		FROM transactions
 		WHERE text ILIKE '%' || $1 || '%'
+		ORDER BY created_at DESC
 		LIMIT $2 OFFSET $3
 	`
 

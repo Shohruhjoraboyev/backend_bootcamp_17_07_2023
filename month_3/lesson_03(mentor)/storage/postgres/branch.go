@@ -155,7 +155,7 @@ func (b *branchRepo) GetAllBranch(c context.Context, req *models.GetAllBranchReq
 
 	limit := fmt.Sprintf(" LIMIT %d", req.Limit)
 	offsetQ := fmt.Sprintf(" OFFSET %d", offset)
-	query := s + filter + limit + offsetQ
+	query := s + filter + " ORDER BY created_at DESC" + limit + offsetQ
 
 	q, pArr := helper.ReplaceQueryParams(query, params)
 	rows, err := b.db.Query(context.Background(), q, pArr...)

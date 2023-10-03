@@ -2,14 +2,14 @@ package models
 
 type CreateBranch struct {
 	Name      string `json:"name"`
-	Address   string `json:"address"`
+	Address   string `json:"adress"`
 	FoundedAt int    `json:"founded_at"`
 }
 
 type UpdateBranch struct {
 	ID        string `json:"id"`
 	Name      string `json:"name"`
-	Address   string `json:"address"`
+	Address   string `json:"adress"`
 	FoundedAt int    `json:"founded_at"`
 }
 
@@ -25,7 +25,7 @@ type UpdateBranch struct {
 type Branch struct {
 	ID        string `json:"id"`
 	Name      string `json:"name"`
-	Address   string `json:"address"`
+	Address   string `json:"adress"`
 	Year      int    `json:"year"`
 	FoundedAt int    `json:"founded_at"`
 	CreatedAt string `json:"created_at"`
