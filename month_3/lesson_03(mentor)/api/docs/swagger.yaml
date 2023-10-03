@@ -1,7 +1,7 @@
 definitions:
   models.Branch:
     properties:
-      address:
+      adress:
         type: string
       created_at:
         type: string
@@ -25,7 +25,7 @@ definitions:
     type: object
   models.CreateBranch:
     properties:
-      address:
+      adress:
         type: string
       founded_at:
         type: integer

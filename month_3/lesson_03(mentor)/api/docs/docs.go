@@ -1554,7 +1554,7 @@ const docTemplate = `{
         "models.Branch": {
             "type": "object",
             "properties": {
-                "address": {
+                "adress": {
                     "type": "string"
                 },
                 "created_at": {
@@ -1591,7 +1591,7 @@ const docTemplate = `{
         "models.CreateBranch": {
             "type": "object",
             "properties": {
-                "address": {
+                "adress": {
                     "type": "string"
                 },
                 "founded_at": {

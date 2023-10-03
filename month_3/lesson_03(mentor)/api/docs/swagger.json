@@ -1543,7 +1543,7 @@
         "models.Branch": {
             "type": "object",
             "properties": {
-                "address": {
+                "adress": {
                     "type": "string"
                 },
                 "created_at": {
@@ -1580,7 +1580,7 @@
         "models.CreateBranch": {
             "type": "object",
             "properties": {
-                "address": {
+                "adress": {
                     "type": "string"
                 },
                 "founded_at": {
