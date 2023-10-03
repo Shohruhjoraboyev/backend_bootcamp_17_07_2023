@@ -16,9 +16,8 @@ type TokenInfo struct {
 
 // GenerateJWT ...
 func GenerateJWT(m map[string]interface{}, tokenExpireTime time.Duration, tokenSecretKey string) (tokenString string, err error) {
-	var token *jwt.Token
 
-	token = jwt.New(jwt.SigningMethodHS256)
+	var token = jwt.New(jwt.SigningMethodHS256)
 
 	claims := token.Claims.(jwt.MapClaims)
 

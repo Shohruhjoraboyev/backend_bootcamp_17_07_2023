@@ -32,6 +32,10 @@ type IdRequest struct {
 	Id string `json:"id"`
 }
 
+type Login struct {
+	Login string `json:"login"`
+}
+
 type LoginRequest struct {
 	Login    string `json:"login"`
 	Password string `json:"password"`

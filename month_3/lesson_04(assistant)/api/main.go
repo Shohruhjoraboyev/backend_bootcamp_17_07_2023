@@ -13,6 +13,8 @@ import (
 func NewServer(h *handler.Handler) *gin.Engine {
 	r := gin.Default()
 
+	// r.POST("/user", helper.ValidateLoginMiddleware, helper.ValidatePhoneNumberMiddleware, h.CreateUser)
+
 	r.POST("/user", h.CreateUser)
 	r.GET("/user/:id", h.GetUser)
 	r.GET("/user", h.GetAllUser)
