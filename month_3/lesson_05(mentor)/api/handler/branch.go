@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -55,7 +56,17 @@ func (h *Handler) CreateBranch(c *gin.Context) {
 // @Failure      404  {object}  response.ErrorResp
 // @Failure      500  {object}  response.ErrorResp
 func (h *Handler) GetBranch(c *gin.Context) {
+	response := models.Branch{}
 	id := c.Param("id")
+
+	ok, err := h.redis.Cache().Get(c.Request.Context(), id, &response)
+	if err != nil {
+		fmt.Println("not found branch in redis: ", err)
+	}
+	if ok {
+		c.JSON(http.StatusOK, response)
+		return
+	}
 
 	resp, err := h.storage.Branch().GetBranch(c.Request.Context(), &models.IdRequest{Id: id})
 	if err != nil {
@@ -65,6 +76,11 @@ func (h *Handler) GetBranch(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, resp)
+
+	err = h.redis.Cache().Create(c.Request.Context(), id, &resp, time.Hour)
+	if err != nil {
+		fmt.Println("error creating branch in redis: ", err)
+	}
 }
 
 // ListBranchs godoc

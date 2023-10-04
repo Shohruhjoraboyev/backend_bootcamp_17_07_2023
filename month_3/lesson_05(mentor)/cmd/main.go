@@ -5,6 +5,7 @@ import (
 	"app/api/handler"
 	"app/config"
 	"app/storage/postgres"
+	"app/storage/redis"
 	"fmt"
 
 	"app/pkg/logger"
@@ -18,9 +19,14 @@ func main() {
 	if err != nil {
 		return
 	}
+	redisStrg, err := redis.NewCache(context.Background(), cfg)
+	if err != nil {
+		return
+	}
 
-	h := handler.NewHandler(strg, log)
+	h := handler.NewHandler(strg, redisStrg, log)
 
 	r := api.NewServer(h)
 	r.Run(fmt.Sprintf(":%s", cfg.Port))
+
 }

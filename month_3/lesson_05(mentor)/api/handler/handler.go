@@ -8,8 +8,9 @@ import (
 type Handler struct {
 	storage storage.StorageI
 	log     logger.LoggerI
+	redis   storage.RedisI
 }
 
-func NewHandler(strg storage.StorageI, loger logger.LoggerI) *Handler {
-	return &Handler{storage: strg, log: loger}
+func NewHandler(strg storage.StorageI, strgR storage.RedisI, loger logger.LoggerI) *Handler {
+	return &Handler{storage: strg, redis: strgR, log: loger}
 }
