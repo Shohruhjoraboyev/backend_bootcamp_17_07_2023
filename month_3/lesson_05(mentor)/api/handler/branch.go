@@ -157,6 +157,11 @@ func (h *Handler) UpdateBranch(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Branch successfully updated", "id": resp})
+
+	err = h.redis.Cache().Delete(c.Request.Context(), branch.ID)
+	if err != nil {
+		fmt.Println("error deleting branch in redis: ", err)
+	}
 }
 
 // DeleteBranch godoc
@@ -182,4 +187,9 @@ func (h *Handler) DeleteBranch(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Branch successfully deleted", "id": resp})
+
+	err = h.redis.Cache().Delete(c.Request.Context(), id)
+	if err != nil {
+		fmt.Println("error deleting branch in redis: ", err)
+	}
 }

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -53,7 +54,17 @@ func (h *Handler) CreateSale(c *gin.Context) {
 // @Failure      404  {object}  response.ErrorResp
 // @Failure      500  {object}  response.ErrorResp
 func (h *Handler) GetSale(c *gin.Context) {
+	response := models.Sales{}
 	id := c.Param("id")
+
+	ok, err := h.redis.Cache().Get(c.Request.Context(), id, &response)
+	if err != nil {
+		fmt.Println("error getting sale from redis: ", err)
+	}
+	if ok {
+		c.JSON(http.StatusOK, response)
+		return
+	}
 
 	resp, err := h.storage.Sales().GetSale(c.Request.Context(), &models.IdRequest{Id: id})
 	if err != nil {
@@ -63,6 +74,11 @@ func (h *Handler) GetSale(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "success", "data": resp})
+
+	err = h.redis.Cache().Create(c.Request.Context(), id, &resp, time.Hour)
+	if err != nil {
+		fmt.Println("error creating sale in redis: ", err)
+	}
 }
 
 // ListSales godoc
@@ -137,6 +153,11 @@ func (h *Handler) UpdateSale(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "sale successfully updated", "id": resp})
+
+	err = h.redis.Cache().Delete(c.Request.Context(), sale.Id)
+	if err != nil {
+		fmt.Println("error deleting sale in redis: ", err)
+	}
 }
 
 // DeleteSale godoc
@@ -162,6 +183,10 @@ func (h *Handler) DeleteSale(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "tariff successfully deleted", "id": resp})
+	err = h.redis.Cache().Delete(c.Request.Context(), id)
+	if err != nil {
+		fmt.Println("error deleting sale in redis: ", err)
+	}
 }
 
 // func (h *Handler) GetTopSaleBranch() {

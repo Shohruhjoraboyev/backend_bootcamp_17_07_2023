@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -63,7 +64,18 @@ func (h *Handler) CreateStaff(c *gin.Context) {
 // @Failure      404  {object}  response.ErrorResp
 // @Failure      500  {object}  response.ErrorResp
 func (h *Handler) GetStaff(c *gin.Context) {
+	response := models.Staff{}
 	id := c.Param("id")
+
+	ok, err := h.redis.Cache().Get(c.Request.Context(), id, &response)
+	if err != nil {
+		fmt.Println("not found staff in redis cache")
+	}
+
+	if ok {
+		c.JSON(http.StatusOK, response)
+		return
+	}
 
 	resp, err := h.storage.Staff().GetStaff(c.Request.Context(), &models.IdRequest{Id: id})
 	if err != nil {
@@ -73,6 +85,11 @@ func (h *Handler) GetStaff(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "success", "data": resp})
+
+	err = h.redis.Cache().Create(c.Request.Context(), id, resp, time.Hour)
+	if err != nil {
+		fmt.Println("error staff Create in redis cache:", err.Error())
+	}
 }
 
 // ListStaffes godoc
@@ -149,6 +166,11 @@ func (h *Handler) UpdateStaff(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "staff successfully updated", "id": resp})
+
+	err = h.redis.Cache().Delete(c.Request.Context(), staff.ID)
+	if err != nil {
+		fmt.Println("error staff Delete in redis cache:", err.Error())
+	}
 }
 
 // DeleteStaff godoc
@@ -174,6 +196,11 @@ func (h *Handler) DeleteStaff(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "staff successfully deleted", "id": resp})
+
+	err = h.redis.Cache().Delete(c.Request.Context(), id)
+	if err != nil {
+		fmt.Println("error staff Delete in redis cache:", err.Error())
+	}
 
 }
 
@@ -236,4 +263,9 @@ func (h *Handler) UpdateStaffPassword(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "password updated", "id": resp})
+
+	err = h.redis.Cache().Delete(c.Request.Context(), id)
+	if err != nil {
+		fmt.Println("error staff Delete in redis cache:", err.Error())
+	}
 }

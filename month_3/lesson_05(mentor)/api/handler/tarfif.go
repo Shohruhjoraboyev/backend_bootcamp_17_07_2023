@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -53,7 +54,18 @@ func (h *Handler) CreateStaffTarif(c *gin.Context) {
 // @Failure      404  {object}  response.ErrorResp
 // @Failure      500  {object}  response.ErrorResp
 func (h *Handler) GetStaffTarif(c *gin.Context) {
+	response := models.StaffTarif{}
 	id := c.Param("id")
+
+	ok, err := h.redis.Cache().Get(c.Request.Context(), id, &response)
+	if err != nil {
+		fmt.Println("not found tariff in redis cache")
+	}
+
+	if ok {
+		c.JSON(http.StatusOK, response)
+		return
+	}
 
 	resp, err := h.storage.Tariff().GetStaffTarif(c.Request.Context(), &models.IdRequest{Id: id})
 	if err != nil {
@@ -63,6 +75,11 @@ func (h *Handler) GetStaffTarif(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "success", "data": resp})
+
+	err = h.redis.Cache().Create(c.Request.Context(), id, resp, time.Hour)
+	if err != nil {
+		fmt.Println("error create tariff in redis cache: ", err)
+	}
 }
 
 // ListTariffs godoc
@@ -139,6 +156,11 @@ func (h *Handler) UpdateStaffTarif(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Tariff successfully updated", "id": resp})
+
+	err = h.redis.Cache().Delete(c.Request.Context(), tariff.Id)
+	if err != nil {
+		fmt.Println("error delete tariff in redis cache: ", err)
+	}
 }
 
 // DeleteTariff godoc
@@ -164,4 +186,9 @@ func (h *Handler) DeleteStaffTarif(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "tariff successfully deleted", "id": resp})
+
+	err = h.redis.Cache().Delete(c.Request.Context(), id)
+	if err != nil {
+		fmt.Println("error delete tariff in redis cache: ", err)
+	}
 }

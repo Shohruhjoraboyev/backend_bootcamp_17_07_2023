@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -53,7 +54,18 @@ func (h *Handler) CreateTransaction(c *gin.Context) {
 // @Failure      404  {object}  response.ErrorResp
 // @Failure      500  {object}  response.ErrorResp
 func (h *Handler) GetTransaction(c *gin.Context) {
+	response := models.Transaction{}
 	id := c.Param("id")
+
+	ok, err := h.redis.Cache().Get(c.Request.Context(), id, &response)
+	if err != nil {
+		fmt.Println("not found transaction in cache", id)
+	}
+
+	if ok {
+		c.JSON(http.StatusOK, response)
+		return
+	}
 
 	resp, err := h.storage.Transaction().GetTransaction(c.Request.Context(), &models.IdRequest{Id: id})
 	if err != nil {
@@ -63,6 +75,11 @@ func (h *Handler) GetTransaction(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "success", "data": resp})
+
+	err = h.redis.Cache().Create(c.Request.Context(), id, resp, time.Hour)
+	if err != nil {
+		fmt.Println("error from storage set transaction in cache:", err.Error())
+	}
 }
 
 // ListTransaction godoc
@@ -137,6 +154,11 @@ func (h *Handler) UpdateTransaction(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "updated", "id": resp})
+
+	err = h.redis.Cache().Delete(c.Request.Context(), transaction.Id)
+	if err != nil {
+		fmt.Println("error deleting transaction in redis: ", err)
+	}
 }
 
 // DeleteTransaction godoc
@@ -162,6 +184,11 @@ func (h *Handler) DeleteTransaction(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "transaction successfully deleted", "id": resp})
+
+	err = h.redis.Cache().Delete(c.Request.Context(), id)
+	if err != nil {
+		fmt.Println("error deleting transaction in redis: ", err)
+	}
 }
 
 // func (h *Handler) GetTopStaffs(c *gin.Context) {
