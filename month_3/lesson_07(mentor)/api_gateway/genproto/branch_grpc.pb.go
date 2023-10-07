@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BranchServiceClient interface {
 	Create(ctx context.Context, in *CreateBranchRequest, opts ...grpc.CallOption) (*CreateBranchResponse, error)
-	Get(ctx context.Context, in *GetBranchRequest, opts ...grpc.CallOption) (*GetBranchResponse, error)
+	Get(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*GetBranchResponse, error)
 	List(ctx context.Context, in *ListBranchRequest, opts ...grpc.CallOption) (*ListBranchResponse, error)
 	Update(ctx context.Context, in *UpdateBranchRequest, opts ...grpc.CallOption) (*Response, error)
 	Delete(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*Response, error)
@@ -46,7 +46,7 @@ func (c *branchServiceClient) Create(ctx context.Context, in *CreateBranchReques
 	return out, nil
 }
 
-func (c *branchServiceClient) Get(ctx context.Context, in *GetBranchRequest, opts ...grpc.CallOption) (*GetBranchResponse, error) {
+func (c *branchServiceClient) Get(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*GetBranchResponse, error) {
 	out := new(GetBranchResponse)
 	err := c.cc.Invoke(ctx, "/branches.BranchService/Get", in, out, opts...)
 	if err != nil {
@@ -87,7 +87,7 @@ func (c *branchServiceClient) Delete(ctx context.Context, in *IdRequest, opts ..
 // for forward compatibility
 type BranchServiceServer interface {
 	Create(context.Context, *CreateBranchRequest) (*CreateBranchResponse, error)
-	Get(context.Context, *GetBranchRequest) (*GetBranchResponse, error)
+	Get(context.Context, *IdRequest) (*GetBranchResponse, error)
 	List(context.Context, *ListBranchRequest) (*ListBranchResponse, error)
 	Update(context.Context, *UpdateBranchRequest) (*Response, error)
 	Delete(context.Context, *IdRequest) (*Response, error)
@@ -101,7 +101,7 @@ type UnimplementedBranchServiceServer struct {
 func (UnimplementedBranchServiceServer) Create(context.Context, *CreateBranchRequest) (*CreateBranchResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedBranchServiceServer) Get(context.Context, *GetBranchRequest) (*GetBranchResponse, error) {
+func (UnimplementedBranchServiceServer) Get(context.Context, *IdRequest) (*GetBranchResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
 func (UnimplementedBranchServiceServer) List(context.Context, *ListBranchRequest) (*ListBranchResponse, error) {
@@ -145,7 +145,7 @@ func _BranchService_Create_Handler(srv interface{}, ctx context.Context, dec fun
 }
 
 func _BranchService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetBranchRequest)
+	in := new(IdRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -157,7 +157,7 @@ func _BranchService_Get_Handler(srv interface{}, ctx context.Context, dec func(i
 		FullMethod: "/branches.BranchService/Get",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BranchServiceServer).Get(ctx, req.(*GetBranchRequest))
+		return srv.(BranchServiceServer).Get(ctx, req.(*IdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

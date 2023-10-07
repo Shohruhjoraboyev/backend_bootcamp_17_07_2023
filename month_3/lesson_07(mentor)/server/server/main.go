@@ -71,16 +71,14 @@ func (s *server) List(ctx context.Context, req *branches.ListBranchRequest) (*br
 	}, nil
 }
 
-func (s *server) Get(ctx context.Context, req *branches.GetBranchRequest) (*branches.GetBranchResponse, error) {
+func (s *server) Get(ctx context.Context, req *branches.IdRequest) (*branches.GetBranchResponse, error) {
 	log.Printf("Received id: %s", req.Id)
 
 	branch := &branches.GetBranchResponse{}
 
 	for _, b := range s.branches {
 		if req.Id == b.Id {
-			branch.Id = b.Id
-			branch.Name = b.Name
-			branch.Address = b.Address
+			branch.Branch = b
 			return branch, nil
 		}
 	}

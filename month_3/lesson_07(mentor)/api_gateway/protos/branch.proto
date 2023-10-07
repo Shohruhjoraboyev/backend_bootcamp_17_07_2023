@@ -5,7 +5,7 @@ option go_package = "genproto/branches";
 
 service BranchService {
     rpc Create(CreateBranchRequest) returns (CreateBranchResponse) {}
-    rpc Get(GetBranchRequest) returns (GetBranchResponse) {}
+    rpc Get(IdRequest) returns (GetBranchResponse) {}
     rpc List(ListBranchRequest) returns (ListBranchResponse) {}
     rpc Update(UpdateBranchRequest) returns (Response) {}
     rpc Delete(IdRequest) returns (Response) {}
@@ -26,14 +26,8 @@ message CreateBranchResponse {
     string id = 1;
 }
 
-message GetBranchRequest {
-    string id = 1;
-}
-
 message GetBranchResponse { 
-    string id = 1;
-    string name = 2;
-    string address = 3;
+    Branch branch = 1;
 }
 
 message UpdateBranchRequest {

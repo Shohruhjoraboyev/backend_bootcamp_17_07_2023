@@ -72,7 +72,7 @@ func getBranchByID(c branches.BranchServiceClient) {
 	fmt.Print("Enter id: ")
 	fmt.Scan(&id)
 
-	r, err := c.Get(context.Background(), &branches.GetBranchRequest{Id: id})
+	r, err := c.Get(context.Background(), &branches.IdRequest{Id: id})
 	if err != nil {
 		log.Fatalf("Could not get branch: %v", err)
 	}
