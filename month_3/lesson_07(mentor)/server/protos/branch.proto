@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package branches;
+option go_package = "genproto/branches";
+
+service BranchService {
+    rpc Create(CreateBranchRequest) returns (CreateBranchResponse) {}
+    rpc Get(GetBranchRequest) returns (GetBranchResponse) {}
+    rpc List(ListBranchRequest) returns (ListBranchResponse) {}
+    rpc Update(UpdateBranchRequest) returns (Response) {}
+    rpc Delete(IdRequest) returns (Response) {}
+}
+
+message CreateBranchRequest { 
+    string name = 1;
+    string address = 2;
+}
+
+message Branch { 
+    string id = 1;
+    string name = 2;
+    string address = 3;
+}
+
+message CreateBranchResponse {
+    string id = 1;
+}
+
+message GetBranchRequest {
+    string id = 1;
+}
+
+message GetBranchResponse { 
+    string id = 1;
+    string name = 2;
+    string address = 3;
+}
+
+message UpdateBranchRequest {
+    string id = 1;
+    string name = 2;
+    string address = 3;
+}
+
+message Response {
+    string message = 1;
+}
+
+message IdRequest {
+    string id = 1;
+}
+
+message ListBranchRequest {
+    int32 limit = 1;
+}
+
+message ListBranchResponse {
+     repeated Branch branches = 1;
+     int32 count = 2;
+}
+
+
