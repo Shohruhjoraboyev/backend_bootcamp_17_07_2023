@@ -4,7 +4,7 @@
 // - protoc             v3.17.3
 // source: tariff.proto
 
-package tariff
+package sale
 
 import (
 	context "context"
@@ -39,7 +39,7 @@ func NewTariffServiceClient(cc grpc.ClientConnInterface) TariffServiceClient {
 
 func (c *tariffServiceClient) Create(ctx context.Context, in *CreateTariffRequest, opts ...grpc.CallOption) (*CreateTariffResponse, error) {
 	out := new(CreateTariffResponse)
-	err := c.cc.Invoke(ctx, "/tariff.TariffService/Create", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/sale.TariffService/Create", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (c *tariffServiceClient) Create(ctx context.Context, in *CreateTariffReques
 
 func (c *tariffServiceClient) Get(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*GetTariffResponse, error) {
 	out := new(GetTariffResponse)
-	err := c.cc.Invoke(ctx, "/tariff.TariffService/Get", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/sale.TariffService/Get", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (c *tariffServiceClient) Get(ctx context.Context, in *IdRequest, opts ...gr
 
 func (c *tariffServiceClient) List(ctx context.Context, in *ListTariffsRequest, opts ...grpc.CallOption) (*ListTariffsResponse, error) {
 	out := new(ListTariffsResponse)
-	err := c.cc.Invoke(ctx, "/tariff.TariffService/List", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/sale.TariffService/List", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +66,7 @@ func (c *tariffServiceClient) List(ctx context.Context, in *ListTariffsRequest, 
 
 func (c *tariffServiceClient) Update(ctx context.Context, in *UpdateTariffRequest, opts ...grpc.CallOption) (*Response, error) {
 	out := new(Response)
-	err := c.cc.Invoke(ctx, "/tariff.TariffService/Update", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/sale.TariffService/Update", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ func (c *tariffServiceClient) Update(ctx context.Context, in *UpdateTariffReques
 
 func (c *tariffServiceClient) Delete(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*Response, error) {
 	out := new(Response)
-	err := c.cc.Invoke(ctx, "/tariff.TariffService/Delete", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/sale.TariffService/Delete", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +136,7 @@ func _TariffService_Create_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/tariff.TariffService/Create",
+		FullMethod: "/sale.TariffService/Create",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TariffServiceServer).Create(ctx, req.(*CreateTariffRequest))
@@ -154,7 +154,7 @@ func _TariffService_Get_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/tariff.TariffService/Get",
+		FullMethod: "/sale.TariffService/Get",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TariffServiceServer).Get(ctx, req.(*IdRequest))
@@ -172,7 +172,7 @@ func _TariffService_List_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/tariff.TariffService/List",
+		FullMethod: "/sale.TariffService/List",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TariffServiceServer).List(ctx, req.(*ListTariffsRequest))
@@ -190,7 +190,7 @@ func _TariffService_Update_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/tariff.TariffService/Update",
+		FullMethod: "/sale.TariffService/Update",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TariffServiceServer).Update(ctx, req.(*UpdateTariffRequest))
@@ -208,7 +208,7 @@ func _TariffService_Delete_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/tariff.TariffService/Delete",
+		FullMethod: "/sale.TariffService/Delete",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TariffServiceServer).Delete(ctx, req.(*IdRequest))
@@ -220,7 +220,7 @@ func _TariffService_Delete_Handler(srv interface{}, ctx context.Context, dec fun
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var TariffService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "tariff.TariffService",
+	ServiceName: "sale.TariffService",
 	HandlerType: (*TariffServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

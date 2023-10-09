@@ -65,7 +65,7 @@ func listBranches(c branches.BranchServiceClient) {
 	fmt.Print("Enter search: ")
 	fmt.Scan(&search)
 
-	r, err := c.List(context.Background(), &branches.ListBranchRequest{
+	r, err := c.List(context.Background(), &branches.ListRequest{
 		Limit:  int32(limit),
 		Page:   int32(page),
 		Search: search,

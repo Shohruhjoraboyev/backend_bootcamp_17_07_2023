@@ -1,12 +1,13 @@
 syntax = "proto3";
 
-package tariff;
-option go_package = "genproto/tariff";
+package sale;
+option go_package = "genproto/sale";
+import "branch.proto";
 
 service TariffService {
-    rpc Create(CreateTariffRequest) returns (CreateTariffResponse) {}
+    rpc CreateTariff(CreateTariffRequest) returns (CreateTariffResponse) {}
     rpc Get(IdRequest) returns (GetTariffResponse) {}
-    rpc List(ListTariffsRequest) returns (ListTariffsResponse) {}
+    rpc List(ListRequest) returns (ListTariffsResponse) {}
     rpc Update(UpdateTariffRequest) returns (Response) {}
     rpc Delete(IdRequest) returns (Response) {}
 }
@@ -35,10 +36,6 @@ enum TariffType {
     Tariff tariff = 1;
   }
   
-  message IdRequest {
-    string id = 1;
-  }
-  
   message GetTariffResponse {
     Tariff tariff = 1;
   }
@@ -50,16 +47,8 @@ message UpdateTariffRequest {
     double amount_for_cash = 4;
     double amount_for_card = 5;
 }
-
-message Response {
-    string message = 1;
-}
   
-  message ListTariffsRequest {
-    int32 limit = 1;
-  }
-  
-  message ListTariffsResponse {
+message ListTariffsResponse {
     repeated Tariff tariffs = 1;
     int32 count = 2;
-  }
+}

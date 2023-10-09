@@ -1,12 +1,12 @@
 syntax = "proto3";
 
-package branches;
-option go_package = "genproto/branches";
+package sale;
+option go_package = "genproto/sale";
 
 service BranchService {
     rpc Create(CreateBranchRequest) returns (CreateBranchResponse) {}
     rpc Get(IdRequest) returns (GetBranchResponse) {}
-    rpc List(ListBranchRequest) returns (ListBranchResponse) {}
+    rpc List(ListRequest) returns (ListBranchResponse) {}
     rpc Update(UpdateBranchRequest) returns (Response) {}
     rpc Delete(IdRequest) returns (Response) {}
 }
@@ -44,7 +44,7 @@ message IdRequest {
     string id = 1;
 }
 
-message ListBranchRequest {
+message ListRequest {
     int32 limit = 1;
     int32 page = 2;
     string search = 3;
