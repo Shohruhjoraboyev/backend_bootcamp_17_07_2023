@@ -11,12 +11,23 @@ service StreamService {
   // bidirectional stream
   rpc Sqr(stream Request) returns (stream Response) {}
 
-  // fibonacci bidirectional stream
-  rpc Fibonacci(stream Request) returns (stream Response) {}
+  // fibonacci  stream
+  rpc Fibonacci(Request) returns (stream Response) {}
+
+  // translate bidirectional stream
+  rpc Translate(stream RequestWords) returns (stream RespondWords) {}
 }
 
 message Request{
     int32 number=1;
+}
+
+message RequestWords {
+  string word =1;
+}
+
+message RespondWords {
+  string word =1;
 }
 
 message Response{

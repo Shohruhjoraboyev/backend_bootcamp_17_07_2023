@@ -28,7 +28,8 @@ func main() {
 	// serverSideStreaming(streamService)
 	// clientSideStreaming(streamService)
 	// bidirectionalStreaming(streamService)
-	fibonacciStreaming(streamService)
+	// fibonacciStreaming(streamService)
+	translateStreaming(streamService)
 }
 
 // Function for server-side streaming
@@ -107,15 +108,11 @@ func bidirectionalStreaming(client sale_service.StreamServiceClient) {
 
 // Function for Fibonacci streaming
 func fibonacciStreaming(client sale_service.StreamServiceClient) {
-	stream, err := client.Fibonacci(context.Background())
-	if err != nil {
-		log.Fatalln("Opening stream", err)
-	}
 
 	num := 20
-	err = stream.Send(&sale_service.Request{Number: int32(num)})
+	stream, err := client.Fibonacci(context.Background(), &sale_service.Request{Number: int32(num)})
 	if err != nil {
-		log.Fatalln("Sending value", err)
+		log.Fatalln("Opening stream", err)
 	}
 	fmt.Println("sent:", num)
 
@@ -132,6 +129,39 @@ func fibonacciStreaming(client sale_service.StreamServiceClient) {
 			log.Fatalln("Closing", err)
 		}
 		fmt.Println("Received:", res.GetCount())
+		time.Sleep(time.Second)
+	}
+}
+
+// Function for bidirectional streaming
+func translateStreaming(client sale_service.StreamServiceClient) {
+	words := []string{"yellow", "red", "green", "yellow", "green", "blue"}
+	stream, err := client.Translate(context.Background())
+	if err != nil {
+		log.Fatalln("Opening stream", err)
+	}
+
+	for _, word := range words {
+		err := stream.Send(&sale_service.RequestWords{Word: word})
+		if err != nil {
+			log.Fatalln("Sending value", err)
+		}
+		fmt.Println("sent:", word)
+	}
+
+	if err := stream.CloseSend(); err != nil {
+		log.Fatalln("CloseSend", err)
+	}
+
+	for {
+		res, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatalln("Closing", err)
+		}
+		fmt.Println("Received:", res.GetWord())
 		time.Sleep(time.Second)
 	}
 }

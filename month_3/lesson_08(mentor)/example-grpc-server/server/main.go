@@ -122,8 +122,36 @@ func (s *server) Sqr(stream pb.StreamService_SqrServer) error {
 	}
 }
 
-func (s *server) Fibonacci(stream pb.StreamService_FibonacciServer) error {
-	for {
+func (s *server) Fibonacci(req *pb.Request, res pb.StreamService_FibonacciServer) error {
+	fmt.Println("request:", req.GetNumber())
+
+	a, b := 0, 1
+	for i := 0; a < int(req.GetNumber()); i++ {
+
+		if err := res.Send(&pb.Response{Count: int32(a)}); err != nil {
+			return err
+		}
+
+		fmt.Println("sent: ", a)
+		a, b = b, a+b
+		time.Sleep(time.Second)
+	}
+	return nil
+}
+
+func (s *server) Translate(stream pb.StreamService_TranslateServer) error {
+
+	wordsMap := map[string]string{
+		"yellow": "sariq",
+		"blue":   "moviy",
+		"red":    "qizil",
+		"green":  "yashil",
+		"white":  "oq",
+		"black":  "qora",
+		"brown":  "kulrang",
+		"pink":   "pushti",
+	}
+	for _, word := range wordsMap {
 		value, err := stream.Recv()
 		if err == io.EOF {
 			return nil
@@ -132,18 +160,15 @@ func (s *server) Fibonacci(stream pb.StreamService_FibonacciServer) error {
 			return err
 		}
 
-		fmt.Println("received number:", value.GetNumber())
+		fmt.Println("received word:", value.GetWord())
 
-		a, b := 0, 1
-		for i := 0; a < int(value.GetNumber()); i++ {
-
-			if err := stream.Send(&pb.Response{Count: int32(a)}); err != nil {
+		if word == value.GetWord() {
+			if err := stream.Send(&pb.RespondWords{
+				Word: word,
+			}); err != nil {
 				return err
 			}
-
-			fmt.Println("sent: ", a)
-			a, b = b, a+b
-			time.Sleep(time.Second)
 		}
 	}
+	return nil
 }

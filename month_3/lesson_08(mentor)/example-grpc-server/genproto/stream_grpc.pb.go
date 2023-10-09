@@ -28,8 +28,10 @@ type StreamServiceClient interface {
 	Sum(ctx context.Context, opts ...grpc.CallOption) (StreamService_SumClient, error)
 	// bidirectional stream
 	Sqr(ctx context.Context, opts ...grpc.CallOption) (StreamService_SqrClient, error)
-	// fibonacci
-	Fibonacci(ctx context.Context, opts ...grpc.CallOption) (StreamService_FibonacciClient, error)
+	// fibonacci bidirectional stream
+	Fibonacci(ctx context.Context, in *Request, opts ...grpc.CallOption) (StreamService_FibonacciClient, error)
+	// translate bidirectional stream
+	Translate(ctx context.Context, opts ...grpc.CallOption) (StreamService_TranslateClient, error)
 }
 
 type streamServiceClient struct {
@@ -137,17 +139,22 @@ func (x *streamServiceSqrClient) Recv() (*Response, error) {
 	return m, nil
 }
 
-func (c *streamServiceClient) Fibonacci(ctx context.Context, opts ...grpc.CallOption) (StreamService_FibonacciClient, error) {
+func (c *streamServiceClient) Fibonacci(ctx context.Context, in *Request, opts ...grpc.CallOption) (StreamService_FibonacciClient, error) {
 	stream, err := c.cc.NewStream(ctx, &StreamService_ServiceDesc.Streams[3], "/sale.StreamService/Fibonacci", opts...)
 	if err != nil {
 		return nil, err
 	}
 	x := &streamServiceFibonacciClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
 	return x, nil
 }
 
 type StreamService_FibonacciClient interface {
-	Send(*Request) error
 	Recv() (*Response, error)
 	grpc.ClientStream
 }
@@ -156,12 +163,39 @@ type streamServiceFibonacciClient struct {
 	grpc.ClientStream
 }
 
-func (x *streamServiceFibonacciClient) Send(m *Request) error {
+func (x *streamServiceFibonacciClient) Recv() (*Response, error) {
+	m := new(Response)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *streamServiceClient) Translate(ctx context.Context, opts ...grpc.CallOption) (StreamService_TranslateClient, error) {
+	stream, err := c.cc.NewStream(ctx, &StreamService_ServiceDesc.Streams[4], "/sale.StreamService/Translate", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &streamServiceTranslateClient{stream}
+	return x, nil
+}
+
+type StreamService_TranslateClient interface {
+	Send(*RequestWords) error
+	Recv() (*RespondWords, error)
+	grpc.ClientStream
+}
+
+type streamServiceTranslateClient struct {
+	grpc.ClientStream
+}
+
+func (x *streamServiceTranslateClient) Send(m *RequestWords) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *streamServiceFibonacciClient) Recv() (*Response, error) {
-	m := new(Response)
+func (x *streamServiceTranslateClient) Recv() (*RespondWords, error) {
+	m := new(RespondWords)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -178,8 +212,10 @@ type StreamServiceServer interface {
 	Sum(StreamService_SumServer) error
 	// bidirectional stream
 	Sqr(StreamService_SqrServer) error
-	// fibonacci
-	Fibonacci(StreamService_FibonacciServer) error
+	// fibonacci bidirectional stream
+	Fibonacci(*Request, StreamService_FibonacciServer) error
+	// translate bidirectional stream
+	Translate(StreamService_TranslateServer) error
 	mustEmbedUnimplementedStreamServiceServer()
 }
 
@@ -196,8 +232,11 @@ func (UnimplementedStreamServiceServer) Sum(StreamService_SumServer) error {
 func (UnimplementedStreamServiceServer) Sqr(StreamService_SqrServer) error {
 	return status.Errorf(codes.Unimplemented, "method Sqr not implemented")
 }
-func (UnimplementedStreamServiceServer) Fibonacci(StreamService_FibonacciServer) error {
+func (UnimplementedStreamServiceServer) Fibonacci(*Request, StreamService_FibonacciServer) error {
 	return status.Errorf(codes.Unimplemented, "method Fibonacci not implemented")
+}
+func (UnimplementedStreamServiceServer) Translate(StreamService_TranslateServer) error {
+	return status.Errorf(codes.Unimplemented, "method Translate not implemented")
 }
 func (UnimplementedStreamServiceServer) mustEmbedUnimplementedStreamServiceServer() {}
 
@@ -286,12 +325,15 @@ func (x *streamServiceSqrServer) Recv() (*Request, error) {
 }
 
 func _StreamService_Fibonacci_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(StreamServiceServer).Fibonacci(&streamServiceFibonacciServer{stream})
+	m := new(Request)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(StreamServiceServer).Fibonacci(m, &streamServiceFibonacciServer{stream})
 }
 
 type StreamService_FibonacciServer interface {
 	Send(*Response) error
-	Recv() (*Request, error)
 	grpc.ServerStream
 }
 
@@ -303,8 +345,26 @@ func (x *streamServiceFibonacciServer) Send(m *Response) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *streamServiceFibonacciServer) Recv() (*Request, error) {
-	m := new(Request)
+func _StreamService_Translate_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(StreamServiceServer).Translate(&streamServiceTranslateServer{stream})
+}
+
+type StreamService_TranslateServer interface {
+	Send(*RespondWords) error
+	Recv() (*RequestWords, error)
+	grpc.ServerStream
+}
+
+type streamServiceTranslateServer struct {
+	grpc.ServerStream
+}
+
+func (x *streamServiceTranslateServer) Send(m *RespondWords) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *streamServiceTranslateServer) Recv() (*RequestWords, error) {
+	m := new(RequestWords)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -338,6 +398,11 @@ var StreamService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "Fibonacci",
 			Handler:       _StreamService_Fibonacci_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "Translate",
+			Handler:       _StreamService_Translate_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},
