@@ -58,8 +58,18 @@ func listBranches(c branches.BranchServiceClient) {
 	limit := 0
 	fmt.Print("Enter limit: ")
 	fmt.Scan(&limit)
+	page := 0
+	fmt.Print("Enter page: ")
+	fmt.Scan(&page)
+	search := ""
+	fmt.Print("Enter search: ")
+	fmt.Scan(&search)
 
-	r, err := c.List(context.Background(), &branches.ListBranchRequest{Limit: int32(limit)})
+	r, err := c.List(context.Background(), &branches.ListBranchRequest{
+		Limit:  int32(limit),
+		Page:   int32(page),
+		Search: search,
+	})
 	if err != nil {
 		log.Fatalf("Could not list branches: %v", err)
 	}

@@ -46,6 +46,8 @@ message IdRequest {
 
 message ListBranchRequest {
     int32 limit = 1;
+    int32 page = 2;
+    string search = 3;
 }
 
 message ListBranchResponse {

@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	branches "server/genproto"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/jackc/fake"
@@ -63,11 +64,53 @@ func (s *server) Create(ctx context.Context, req *branches.CreateBranchRequest) 
 }
 
 func (s *server) List(ctx context.Context, req *branches.ListBranchRequest) (*branches.ListBranchResponse, error) {
-	log.Printf("Received: %v", req.Limit)
+	log.Printf("Received: %v", req)
+
+	page := req.Page
+	limit := req.Limit
+	searchQuery := req.Search
+
+	// Filter branches based on the search
+	filteredBranches := make([]*branches.Branch, 0)
+	for _, branch := range s.branches {
+		if searchQuery == "" || strings.Contains(strings.ToLower(branch.Name), strings.ToLower(searchQuery)) {
+			filteredBranches = append(filteredBranches, branch)
+		}
+	}
+
+	// Calculate the total number of filtered branches
+	totalBranches := int32(len(filteredBranches))
+
+	// Check if req.Limit is 0
+	if limit == 0 {
+		limit = int32(len(filteredBranches))
+	}
+
+	// Check if req.Page is 0
+	if page == 0 {
+		page = 1
+	}
+
+	startIndex := (page - 1) * limit
+	endIndex := page * limit
+
+	if startIndex >= int32(len(filteredBranches)) {
+		return &branches.ListBranchResponse{
+			Branches: nil,
+			Count:    totalBranches,
+		}, nil
+	}
+
+	if endIndex > int32(len(filteredBranches)) {
+		endIndex = int32(len(filteredBranches))
+	}
+
+	// Get the branches within the specified range
+	pagedBranches := filteredBranches[startIndex:endIndex]
 
 	return &branches.ListBranchResponse{
-		Branches: s.branches[:req.Limit],
-		Count:    int32(len(s.branches)),
+		Branches: pagedBranches,
+		Count:    totalBranches,
 	}, nil
 }
 
