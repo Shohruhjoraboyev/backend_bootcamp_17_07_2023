@@ -10,6 +10,9 @@ service StreamService {
   rpc Sum(stream Request) returns (Response) {}
   //bidirectional stream
   rpc Sqr (stream Request) returns (stream Response) {}
+
+  // fibonacci bidirectional stream
+  rpc Fibonacci(stream Request) returns (stream Response) {}
 }
 
 message Request{

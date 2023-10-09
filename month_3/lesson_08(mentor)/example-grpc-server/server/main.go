@@ -21,7 +21,7 @@ package main
 
 import (
 	pb "example-grpc-server/genproto"
-	sale_service "example-grpc-server/genproto"
+
 	"fmt"
 	"io"
 	"log"
@@ -87,7 +87,7 @@ func (s *server) Sum(stream pb.StreamService_SumServer) error {
 		value, err := stream.Recv()
 		if err == io.EOF {
 			fmt.Println("respond:", total)
-			return stream.SendAndClose(&sale_service.Response{
+			return stream.SendAndClose(&pb.Response{
 				Count: total,
 			})
 		}
@@ -100,6 +100,7 @@ func (s *server) Sum(stream pb.StreamService_SumServer) error {
 		total += value.GetNumber()
 	}
 }
+
 func (s *server) Sqr(stream pb.StreamService_SqrServer) error {
 	for {
 		value, err := stream.Recv()
@@ -113,11 +114,36 @@ func (s *server) Sqr(stream pb.StreamService_SqrServer) error {
 
 		fmt.Println("received number:", value.GetNumber())
 
-		if err := stream.Send(&sale_service.Response{
+		if err := stream.Send(&pb.Response{
 			Count: int32(math.Pow(float64(value.GetNumber()), 2)),
 		}); err != nil {
 			return err
 		}
+	}
+}
 
+func (s *server) Fibonacci(stream pb.StreamService_FibonacciServer) error {
+	for {
+		value, err := stream.Recv()
+		if err == io.EOF {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+
+		fmt.Println("received number:", value.GetNumber())
+
+		a, b := 0, 1
+		for i := 0; a < int(value.GetNumber()); i++ {
+
+			if err := stream.Send(&pb.Response{Count: int32(a)}); err != nil {
+				return err
+			}
+
+			fmt.Println("sent: ", a)
+			a, b = b, a+b
+			time.Sleep(time.Second)
+		}
 	}
 }
