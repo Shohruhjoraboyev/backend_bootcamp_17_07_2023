@@ -19,104 +19,79 @@ func main() {
 		log.Fatalf("did not connect: %v", err)
 	}
 	defer conn.Close()
-	// c := sale_service.NewBranchServiceClient(conn)
-	// Contact the server and print out its response.
-	// for {
-	// 	name := ""
-	// 	address := ""
-	// 	fmt.Scan(&name)
-	// 	fmt.Scan(&address)
-	// 	r, err := c.Create(context.Background(), &branch.CreateBranch{Name: name, Address: address})
-	// 	if err != nil {
-	// 		log.Fatalf("could not greet: %v", err)
-	// 	}
-	// 	log.Printf("new branch: %v", r)
-	// }
+
 	streamService := sale_service.NewStreamServiceClient(conn)
-	//  server side streaming
-	// resStream, err := streamService.Count(context.Background(), &sale_service.Request{Number: 12})
-	// if err != nil {
-	// 	log.Fatalln(err.Error())
-	// }
 
-	// for {
-	// 	resp, err := resStream.Recv()
-	// 	if err == io.EOF { //End Of File
-	// 		return
-	// 	}
-	// 	if err != nil {
-	// 		log.Fatalln(err.Error())
-	// 	}
-	// 	fmt.Println("resp received: ", resp.GetCount())
-	// }
+	// Call the desired streaming function
+	// Uncomment the function you want to execute
 
-	// ***** client side streaming
-	// stream, err := streamService.Sum(context.Background())
-	// if err != nil {
-	// 	log.Fatalln("Consuming stream", err)
-	// }
+	// serverSideStreaming(streamService)
+	// clientSideStreaming(streamService)
+	// bidirectionalStreaming(streamService)
+	fibonacciStreaming(streamService)
+}
 
-	// for i := 0; i < 10; i++ {
-	// 	err := stream.Send(&sale_service.Request{Number: int32(i)})
-	// 	if err != nil {
-	// 		log.Fatalln("Sending value", err)
-	// 	}
-	// 	fmt.Println("sent:", i)
-	// 	time.Sleep(time.Second)
-	// }
-
-	// res, err := stream.CloseAndRecv()
-	// if err != nil {
-	// 	log.Fatalln("Closing", err)
-	// }
-	// fmt.Println("Total sum", res.GetCount())
-
-	// bidirectional streaming
-	// stream, err := streamService.Sqr(context.Background())
-	// if err != nil {
-	// 	log.Fatalln("Opening stream", err)
-	// }
-
-	// for i := 0; i < 10; i++ {
-	// 	err := stream.Send(&sale_service.Request{Number: int32(i)})
-	// 	if err != nil {
-	// 		log.Fatalln("Sending value", err)
-	// 	}
-	// 	fmt.Println("send:", i)
-
-	// }
-	// if err := stream.CloseSend(); err != nil {
-	// 	log.Fatalln("CloseSend", err)
-	// }
-	// for {
-	// 	res, err := stream.Recv()
-	// 	if err == io.EOF {
-	// 		break
-	// 	}
-	// 	if err != nil {
-	// 		log.Fatalln("Closing", err)
-	// 	}
-	// 	fmt.Println("Received:", res.GetCount())
-	// 	time.Sleep(time.Second)
-	// }
-
-	// stream, err := streamService.Sqr(context.Background())
-	// if err != nil {
-	// 	log.Fatalln("Opening stream", err)
-	// }
-
-	// fibonacci streaming
-	stream, err := streamService.Fibonacci(context.Background())
-	num := 20
-	err = stream.Send(&sale_service.Request{Number: int32(num)})
+// Function for server-side streaming
+func serverSideStreaming(client sale_service.StreamServiceClient) {
+	resStream, err := client.Count(context.Background(), &sale_service.Request{Number: 12})
 	if err != nil {
-		log.Fatalln("Sending value", err)
+		log.Fatalln(err.Error())
 	}
-	fmt.Println("sent:", 20)
+
+	for {
+		resp, err := resStream.Recv()
+		if err == io.EOF {
+			return
+		}
+		if err != nil {
+			log.Fatalln(err.Error())
+		}
+		fmt.Println("resp received: ", resp.GetCount())
+	}
+}
+
+// Function for client-side streaming
+func clientSideStreaming(client sale_service.StreamServiceClient) {
+	stream, err := client.Sum(context.Background())
+	if err != nil {
+		log.Fatalln("Consuming stream", err)
+	}
+
+	for i := 0; i < 10; i++ {
+		err := stream.Send(&sale_service.Request{Number: int32(i)})
+		if err != nil {
+			log.Fatalln("Sending value", err)
+		}
+		fmt.Println("sent:", i)
+		time.Sleep(time.Second)
+	}
+
+	res, err := stream.CloseAndRecv()
+	if err != nil {
+		log.Fatalln("Closing", err)
+	}
+	fmt.Println("Total sum", res.GetCount())
+}
+
+// Function for bidirectional streaming
+func bidirectionalStreaming(client sale_service.StreamServiceClient) {
+	stream, err := client.Sqr(context.Background())
+	if err != nil {
+		log.Fatalln("Opening stream", err)
+	}
+
+	for i := 0; i < 10; i++ {
+		err := stream.Send(&sale_service.Request{Number: int32(i)})
+		if err != nil {
+			log.Fatalln("Sending value", err)
+		}
+		fmt.Println("send:", i)
+	}
 
 	if err := stream.CloseSend(); err != nil {
 		log.Fatalln("CloseSend", err)
 	}
+
 	for {
 		res, err := stream.Recv()
 		if err == io.EOF {
@@ -128,5 +103,35 @@ func main() {
 		fmt.Println("Received:", res.GetCount())
 		time.Sleep(time.Second)
 	}
+}
 
+// Function for Fibonacci streaming
+func fibonacciStreaming(client sale_service.StreamServiceClient) {
+	stream, err := client.Fibonacci(context.Background())
+	if err != nil {
+		log.Fatalln("Opening stream", err)
+	}
+
+	num := 20
+	err = stream.Send(&sale_service.Request{Number: int32(num)})
+	if err != nil {
+		log.Fatalln("Sending value", err)
+	}
+	fmt.Println("sent:", num)
+
+	if err := stream.CloseSend(); err != nil {
+		log.Fatalln("CloseSend", err)
+	}
+
+	for {
+		res, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatalln("Closing", err)
+		}
+		fmt.Println("Received:", res.GetCount())
+		time.Sleep(time.Second)
+	}
 }
