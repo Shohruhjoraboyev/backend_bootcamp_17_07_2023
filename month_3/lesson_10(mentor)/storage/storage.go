@@ -22,7 +22,7 @@ type RedisI interface {
 type BranchI interface {
 	CreateBranch(context.Context, *sale_service.CreateBranchRequest) (string, error)
 	// GetBranch(context.Context, *models.IdRequest) (*models.Branch, error)
-	// GetAllBranch(context.Context, *models.GetAllBranchRequest) (*models.GetAllBranch, error)
+	GetAllBranch(context.Context, *sale_service.ListBranchRequest) (*sale_service.ListBranchResponse, error)
 	// UpdateBranch(context.Context, *models.Branch) (string, error)
 	// DeleteBranch(context.Context, *models.IdRequest) (string, error)
 }

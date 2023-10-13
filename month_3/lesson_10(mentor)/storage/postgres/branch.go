@@ -55,7 +55,7 @@ func (b *branchRepo) CreateBranch(c context.Context, req *sale_service.CreateBra
 	return id, nil
 }
 
-func (b *branchRepo) GetBranch(c context.Context, req *models.IdRequest) (resp *models.Branch, err error) {
+func (b *branchRepo) GetBranch(c context.Context, req *sale_service.IdRequest) (resp *sale_service.Branch, err error) {
 	query := `
 				SELECT 
 					id, 
@@ -73,9 +73,9 @@ func (b *branchRepo) GetBranch(c context.Context, req *models.IdRequest) (resp *
 		updatedAt sql.NullTime
 	)
 
-	branch := models.Branch{}
+	branch := sale_service.Branch{}
 	err = b.db.QueryRow(context.Background(), query, req.Id).Scan(
-		&branch.ID,
+		&branch.Id,
 		&branch.Name,
 		&branch.Address,
 		&branch.Year,
@@ -132,10 +132,15 @@ func (b *branchRepo) UpdateBranch(c context.Context, req *models.Branch) (string
 	return req.ID, nil
 }
 
-func (b *branchRepo) GetAllBranch(c context.Context, req *models.GetAllBranchRequest) (*models.GetAllBranch, error) {
+func (b *branchRepo) GetAllBranch(c context.Context, req *sale_service.ListBranchRequest) (*sale_service.ListBranchResponse, error) {
 	params := make(map[string]interface{})
 	filter := ""
-	offset := (req.Page - 1) * req.Limit
+	offset := 0
+
+	if req.Page != 0 {
+		offset = int((req.Page - 1) * req.Limit)
+	}
+
 	createdAt := time.Time{}
 	updatedAt := sql.NullTime{}
 
@@ -150,9 +155,9 @@ func (b *branchRepo) GetAllBranch(c context.Context, req *models.GetAllBranchReq
 			updated_at 
 		FROM branches`
 
-	if req.Name != "" {
+	if req.Search != "" {
 		filter += ` WHERE name ILIKE '%' || :search || '%' `
-		params["search"] = req.Name
+		params["search"] = req.Search
 	}
 
 	limit := fmt.Sprintf(" LIMIT %d", req.Limit)
@@ -166,14 +171,14 @@ func (b *branchRepo) GetAllBranch(c context.Context, req *models.GetAllBranchReq
 	}
 	defer rows.Close()
 
-	resp := &models.GetAllBranch{}
-	resp.Branches = make([]models.Branch, 0)
+	resp := &sale_service.ListBranchResponse{}
+	resp.Branches = make([]*sale_service.Branch, 0)
 	count := 0
 	for rows.Next() {
-		var branch models.Branch
+		var branch sale_service.Branch
 		count++
 		err := rows.Scan(
-			&branch.ID,
+			&branch.Id,
 			&branch.Name,
 			&branch.Address,
 			&branch.Year,
@@ -188,10 +193,10 @@ func (b *branchRepo) GetAllBranch(c context.Context, req *models.GetAllBranchReq
 		if updatedAt.Valid {
 			branch.UpdatedAt = updatedAt.Time.Format(time.RFC3339)
 		}
-		resp.Branches = append(resp.Branches, branch)
+		resp.Branches = append(resp.Branches, &branch)
 	}
 
-	resp.Count = count
+	resp.Count = int32(count)
 	return resp, nil
 }
 

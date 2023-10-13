@@ -31,3 +31,13 @@ func (b *BranchService) Create(ctx context.Context, req *sale_service.CreateBran
 
 	return &sale_service.CreateBranchResponse{Id: id}, nil
 }
+
+func (b *BranchService) List(ctx context.Context, req *sale_service.ListBranchRequest) (*sale_service.ListBranchResponse, error) {
+	branches, err := b.storage.Branch().GetAllBranch(context.Background(), req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &sale_service.ListBranchResponse{Branches: branches.Branches,
+		Count: branches.Count}, nil
+}

@@ -6,7 +6,7 @@ option go_package = "genproto/sale_service";
 service BranchService {
     rpc Create(CreateBranchRequest) returns (CreateBranchResponse) {}
     rpc Get(IdRequest) returns (GetBranchResponse) {}
-    rpc List(ListRequest) returns (ListBranchResponse) {}
+    rpc List(ListBranchRequest) returns (ListBranchResponse) {}
     rpc Update(UpdateBranchRequest) returns (Response) {}
     rpc Delete(IdRequest) returns (Response) {}
 }
@@ -22,6 +22,10 @@ message Branch {
     string name = 2;
     string address = 3;
     int32 founded_at = 4;
+    int32 year = 5;
+    string created_at = 6;
+    string updated_at = 7;
+    // string deleted_at = 8;
 }
 
 message CreateBranchResponse {
@@ -48,7 +52,7 @@ message IdRequest {
     string id = 1;
 }
 
-message ListRequest {
+message ListBranchRequest {
     int32 limit = 1;
     int32 page = 2;
     string search = 3;

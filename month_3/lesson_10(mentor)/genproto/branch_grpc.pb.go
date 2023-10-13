@@ -24,7 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type BranchServiceClient interface {
 	Create(ctx context.Context, in *CreateBranchRequest, opts ...grpc.CallOption) (*CreateBranchResponse, error)
 	Get(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*GetBranchResponse, error)
-	List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListBranchResponse, error)
+	List(ctx context.Context, in *ListBranchRequest, opts ...grpc.CallOption) (*ListBranchResponse, error)
 	Update(ctx context.Context, in *UpdateBranchRequest, opts ...grpc.CallOption) (*Response, error)
 	Delete(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*Response, error)
 }
@@ -55,7 +55,7 @@ func (c *branchServiceClient) Get(ctx context.Context, in *IdRequest, opts ...gr
 	return out, nil
 }
 
-func (c *branchServiceClient) List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListBranchResponse, error) {
+func (c *branchServiceClient) List(ctx context.Context, in *ListBranchRequest, opts ...grpc.CallOption) (*ListBranchResponse, error) {
 	out := new(ListBranchResponse)
 	err := c.cc.Invoke(ctx, "/sale_service.BranchService/List", in, out, opts...)
 	if err != nil {
@@ -88,7 +88,7 @@ func (c *branchServiceClient) Delete(ctx context.Context, in *IdRequest, opts ..
 type BranchServiceServer interface {
 	Create(context.Context, *CreateBranchRequest) (*CreateBranchResponse, error)
 	Get(context.Context, *IdRequest) (*GetBranchResponse, error)
-	List(context.Context, *ListRequest) (*ListBranchResponse, error)
+	List(context.Context, *ListBranchRequest) (*ListBranchResponse, error)
 	Update(context.Context, *UpdateBranchRequest) (*Response, error)
 	Delete(context.Context, *IdRequest) (*Response, error)
 	mustEmbedUnimplementedBranchServiceServer()
@@ -104,7 +104,7 @@ func (UnimplementedBranchServiceServer) Create(context.Context, *CreateBranchReq
 func (UnimplementedBranchServiceServer) Get(context.Context, *IdRequest) (*GetBranchResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedBranchServiceServer) List(context.Context, *ListRequest) (*ListBranchResponse, error) {
+func (UnimplementedBranchServiceServer) List(context.Context, *ListBranchRequest) (*ListBranchResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
 }
 func (UnimplementedBranchServiceServer) Update(context.Context, *UpdateBranchRequest) (*Response, error) {
@@ -163,7 +163,7 @@ func _BranchService_Get_Handler(srv interface{}, ctx context.Context, dec func(i
 }
 
 func _BranchService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListRequest)
+	in := new(ListBranchRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -175,7 +175,7 @@ func _BranchService_List_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: "/sale_service.BranchService/List",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BranchServiceServer).List(ctx, req.(*ListRequest))
+		return srv.(BranchServiceServer).List(ctx, req.(*ListBranchRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
