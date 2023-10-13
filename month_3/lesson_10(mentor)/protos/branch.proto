@@ -41,7 +41,6 @@ message UpdateBranchRequest {
     string name = 2;
     string address = 3;
     int32 founded_at = 4;
-
 }
 
 message Response {

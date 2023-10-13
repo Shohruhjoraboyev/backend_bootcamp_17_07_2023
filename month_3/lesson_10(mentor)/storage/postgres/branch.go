@@ -3,7 +3,6 @@ package postgres
 import (
 	"context"
 	"database/sql"
-	"example-grpc-server/models"
 	"example-grpc-server/pkg/helper"
 	"fmt"
 	"time"
@@ -85,10 +84,11 @@ func (b *branchRepo) GetBranch(c context.Context, req *sale_service.IdRequest) (
 	)
 	if err != nil {
 		if err == pgx.ErrNoRows {
-			return nil, fmt.Errorf("sale not found")
+			return nil, fmt.Errorf("branch not found")
 		}
-		return nil, fmt.Errorf("failed to get sale: %w", err)
+		return nil, fmt.Errorf("failed to get branch: %w", err)
 	}
+
 	branch.CreatedAt = createdAt.Format(time.RFC3339)
 	if updatedAt.Valid {
 		branch.UpdatedAt = updatedAt.Time.Format(time.RFC3339)
@@ -97,9 +97,9 @@ func (b *branchRepo) GetBranch(c context.Context, req *sale_service.IdRequest) (
 	return &branch, nil
 }
 
-func (b *branchRepo) UpdateBranch(c context.Context, req *models.Branch) (string, error) {
+func (b *branchRepo) UpdateBranch(c context.Context, req *sale_service.UpdateBranchRequest) (string, error) {
 	yearNow := time.Now().Year()
-	year := yearNow - req.FoundedAt
+	year := yearNow - int(req.FoundedAt)
 
 	query := `
 				UPDATE branches 
@@ -118,7 +118,7 @@ func (b *branchRepo) UpdateBranch(c context.Context, req *models.Branch) (string
 		req.Address,
 		year,
 		req.FoundedAt,
-		req.ID,
+		req.Id,
 	)
 
 	if err != nil {
@@ -126,10 +126,10 @@ func (b *branchRepo) UpdateBranch(c context.Context, req *models.Branch) (string
 	}
 
 	if result.RowsAffected() == 0 {
-		return "", fmt.Errorf("branch with ID %s not found", req.ID)
+		return "", fmt.Errorf("branch with ID %s not found", req.Id)
 	}
 
-	return req.ID, nil
+	return fmt.Sprintf("branch with ID %s updated", req.Id), nil
 }
 
 func (b *branchRepo) GetAllBranch(c context.Context, req *sale_service.ListBranchRequest) (*sale_service.ListBranchResponse, error) {
@@ -200,7 +200,7 @@ func (b *branchRepo) GetAllBranch(c context.Context, req *sale_service.ListBranc
 	return resp, nil
 }
 
-func (b *branchRepo) DeleteBranch(c context.Context, req *models.IdRequest) (resp string, err error) {
+func (b *branchRepo) DeleteBranch(c context.Context, req *sale_service.IdRequest) (resp string, err error) {
 	query := `
 			DELETE 
 				FROM branches 
@@ -220,5 +220,5 @@ func (b *branchRepo) DeleteBranch(c context.Context, req *models.IdRequest) (res
 
 	}
 
-	return req.Id, nil
+	return fmt.Sprintf("branch with ID %s deleted", req.Id), nil
 }
