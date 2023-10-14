@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"time"
 
-	sale_service "branch_service/genproto"
+	branch_service "branch_service/genproto"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx"
@@ -24,7 +24,7 @@ func NewBranch(db *pgxpool.Pool) *branchRepo {
 	}
 }
 
-func (b *branchRepo) CreateBranch(c context.Context, req *sale_service.CreateBranchRequest) (string, error) {
+func (b *branchRepo) CreateBranch(c context.Context, req *branch_service.CreateBranchRequest) (string, error) {
 	id := uuid.NewString()
 	yearNow := time.Now().Year()
 	year := yearNow - int(req.FoundedAt)
@@ -54,7 +54,7 @@ func (b *branchRepo) CreateBranch(c context.Context, req *sale_service.CreateBra
 	return id, nil
 }
 
-func (b *branchRepo) GetBranch(c context.Context, req *sale_service.IdRequest) (resp *sale_service.Branch, err error) {
+func (b *branchRepo) GetBranch(c context.Context, req *branch_service.IdRequest) (resp *branch_service.Branch, err error) {
 	query := `
 				SELECT 
 					id, 
@@ -72,7 +72,7 @@ func (b *branchRepo) GetBranch(c context.Context, req *sale_service.IdRequest) (
 		updatedAt sql.NullTime
 	)
 
-	branch := sale_service.Branch{}
+	branch := branch_service.Branch{}
 	err = b.db.QueryRow(context.Background(), query, req.Id).Scan(
 		&branch.Id,
 		&branch.Name,
@@ -97,7 +97,7 @@ func (b *branchRepo) GetBranch(c context.Context, req *sale_service.IdRequest) (
 	return &branch, nil
 }
 
-func (b *branchRepo) UpdateBranch(c context.Context, req *sale_service.UpdateBranchRequest) (string, error) {
+func (b *branchRepo) UpdateBranch(c context.Context, req *branch_service.UpdateBranchRequest) (string, error) {
 	yearNow := time.Now().Year()
 	year := yearNow - int(req.FoundedAt)
 
@@ -132,19 +132,31 @@ func (b *branchRepo) UpdateBranch(c context.Context, req *sale_service.UpdateBra
 	return fmt.Sprintf("branch with ID %s updated", req.Id), nil
 }
 
-func (b *branchRepo) GetAllBranch(c context.Context, req *sale_service.ListBranchRequest) (*sale_service.ListBranchResponse, error) {
-	params := make(map[string]interface{})
-	filter := ""
-	offset := 0
+func (b *branchRepo) GetAllBranch(c context.Context, req *branch_service.ListBranchRequest) (*branch_service.ListBranchResponse, error) {
+	var (
+		resp   branch_service.ListBranchResponse
+		err    error
+		filter string
+		params = make(map[string]interface{})
+	)
 
-	if req.Page != 0 {
-		offset = int((req.Page - 1) * req.Limit)
+	if req.Search != "" {
+		filter += " AND name ILIKE '%' || :search || '%' "
+		params["search"] = req.Search
 	}
 
-	createdAt := time.Time{}
-	updatedAt := sql.NullTime{}
+	countQuery := `SELECT count(1) FROM branches WHERE true ` + filter
 
-	s := `
+	q, arr := helper.ReplaceQueryParams(countQuery, params)
+	err = b.db.QueryRow(c, q, arr...).Scan(
+		&resp.Count,
+	)
+
+	if err != nil {
+		return nil, fmt.Errorf("error while scanning count %w", err)
+	}
+
+	query := `
 		SELECT 
 			id, 
 			name, 
@@ -153,31 +165,26 @@ func (b *branchRepo) GetAllBranch(c context.Context, req *sale_service.ListBranc
 			founded_at, 
 			created_at, 
 			updated_at 
-		FROM branches`
+		FROM branches 
+		WHERE true` + filter
 
-	if req.Search != "" {
-		filter += ` WHERE name ILIKE '%' || :search || '%' `
-		params["search"] = req.Search
-	}
+	query += " ORDER BY created_at DESC LIMIT :limit OFFSET :offset"
+	params["limit"] = req.Limit
+	params["offset"] = req.Offset
 
-	limit := fmt.Sprintf(" LIMIT %d", req.Limit)
-	offsetQ := fmt.Sprintf(" OFFSET %d", offset)
-	query := s + filter + " ORDER BY created_at DESC" + limit + offsetQ
-
-	q, pArr := helper.ReplaceQueryParams(query, params)
-	rows, err := b.db.Query(context.Background(), q, pArr...)
+	q, arr = helper.ReplaceQueryParams(query, params)
+	rows, err := b.db.Query(c, q, arr...)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error while getting rows %w", err)
 	}
 	defer rows.Close()
 
-	resp := &sale_service.ListBranchResponse{}
-	resp.Branches = make([]*sale_service.Branch, 0)
-	count := 0
+	createdAt := time.Time{}
+	updatedAt := time.Time{}
 	for rows.Next() {
-		var branch sale_service.Branch
-		count++
-		err := rows.Scan(
+		var branch branch_service.Branch
+
+		err = rows.Scan(
 			&branch.Id,
 			&branch.Name,
 			&branch.Address,
@@ -187,20 +194,19 @@ func (b *branchRepo) GetAllBranch(c context.Context, req *sale_service.ListBranc
 			&updatedAt,
 		)
 		if err != nil {
-			return nil, fmt.Errorf("failed to scan row: %w", err)
+			return nil, fmt.Errorf("error while scanning branch err: %w", err)
 		}
+
 		branch.CreatedAt = createdAt.Format(time.RFC3339)
-		if updatedAt.Valid {
-			branch.UpdatedAt = updatedAt.Time.Format(time.RFC3339)
-		}
+		branch.UpdatedAt = updatedAt.Format(time.RFC3339)
+
 		resp.Branches = append(resp.Branches, &branch)
 	}
 
-	resp.Count = int32(count)
-	return resp, nil
+	return &resp, nil
 }
 
-func (b *branchRepo) DeleteBranch(c context.Context, req *sale_service.IdRequest) (resp string, err error) {
+func (b *branchRepo) DeleteBranch(c context.Context, req *branch_service.IdRequest) (resp string, err error) {
 	query := `
 			DELETE 
 				FROM branches 

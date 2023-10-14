@@ -45,7 +45,7 @@ message UpdateBranchRequest {
 
 message ListBranchRequest {
     int32 limit = 1;
-    int32 page = 2;
+    int32 offset = 2;
     string search = 3;
 }
 

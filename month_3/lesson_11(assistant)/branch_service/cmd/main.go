@@ -3,7 +3,7 @@ package main
 import (
 	"branch_service/config"
 	"branch_service/grpc"
-	grpc_client "branch_service/grpc/client"
+
 	"branch_service/pkg/logger"
 	"branch_service/storage/postgres"
 	"context"
@@ -20,12 +20,7 @@ func main() {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
 
-	clients, err := grpc_client.New(cfg)
-	if err != nil {
-		log.Fatalf("failed to connect to services: %v", err)
-	}
-
-	s := grpc.SetUpServer(lg, strg, clients)
+	s := grpc.SetUpServer(cfg, lg, strg)
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", 50051))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)

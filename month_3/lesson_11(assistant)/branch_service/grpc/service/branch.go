@@ -1,25 +1,25 @@
 package service
 
 import (
+	"branch_service/config"
 	branch_service "branch_service/genproto"
-	grpc_client "branch_service/grpc/client"
 	"branch_service/pkg/logger"
 	"branch_service/storage"
 	"context"
 )
 
 type BranchService struct {
-	logger  logger.LoggerI
+	cfg     config.Config
+	log     logger.LoggerI
 	storage storage.StorageI
-	clients grpc_client.GrpcClientI
 	branch_service.UnimplementedBranchServiceServer
 }
 
-func NewBranchService(log logger.LoggerI, strg storage.StorageI, grpcClients grpc_client.GrpcClientI) *BranchService {
+func NewBranchService(cfg config.Config, log logger.LoggerI, strg storage.StorageI) *BranchService {
 	return &BranchService{
-		logger:  log,
+		cfg:     cfg,
+		log:     log,
 		storage: strg,
-		clients: grpcClients,
 	}
 }
 
