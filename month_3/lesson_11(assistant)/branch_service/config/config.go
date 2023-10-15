@@ -80,10 +80,6 @@ func Load() Config {
 	config.RedisPassword = cast.ToString(getOrReturnDefaultValue("REDIS_PASSWORD", ""))
 	config.RedisDatabase = cast.ToInt(getOrReturnDefaultValue("REDIS_DATABASE", 0))
 
-	// branch configuration
-	config.BranchServiceHost = cast.ToString(getOrReturnDefaultValue("BRANCH_SERVICE_HOST", "localhost"))
-	config.BranchServicePort = cast.ToString(getOrReturnDefaultValue("BRANCH_SERVICE_PORT", "8000"))
-
 	return config
 
 }

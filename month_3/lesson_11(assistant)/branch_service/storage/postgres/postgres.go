@@ -10,8 +10,9 @@ import (
 )
 
 type strg struct {
-	db     *pgxpool.Pool
-	branch *branchRepo
+	db            *pgxpool.Pool
+	branch        *branchRepo
+	branchProduct *branchProductRepo
 }
 
 func NewStorage(ctx context.Context, cfg config.Config) (storage.StorageI, error) {
@@ -47,4 +48,11 @@ func (d *strg) Branch() storage.BranchI {
 		d.branch = NewBranch(d.db)
 	}
 	return d.branch
+}
+
+func (d *strg) BranchProduct() storage.BranchProductI {
+	if d.branchProduct == nil {
+		d.branchProduct = NewBranchProduct(d.db)
+	}
+	return d.branchProduct
 }

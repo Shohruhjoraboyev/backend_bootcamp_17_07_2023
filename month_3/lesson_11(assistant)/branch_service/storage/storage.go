@@ -1,13 +1,14 @@
 package storage
 
 import (
-	sale_service "branch_service/genproto"
+	pb "branch_service/genproto"
 	"context"
 	"time"
 )
 
 type StorageI interface {
 	Branch() BranchI
+	BranchProduct() BranchProductI
 }
 type CacheI interface {
 	Cache() RedisI
@@ -20,9 +21,17 @@ type RedisI interface {
 }
 
 type BranchI interface {
-	CreateBranch(context.Context, *sale_service.CreateBranchRequest) (string, error)
-	GetBranch(context.Context, *sale_service.IdRequest) (*sale_service.Branch, error)
-	GetAllBranch(context.Context, *sale_service.ListBranchRequest) (*sale_service.ListBranchResponse, error)
-	UpdateBranch(context.Context, *sale_service.UpdateBranchRequest) (string, error)
-	DeleteBranch(context.Context, *sale_service.IdRequest) (string, error)
+	CreateBranch(context.Context, *pb.CreateBranchRequest) (string, error)
+	GetBranch(context.Context, *pb.IdRequest) (*pb.Branch, error)
+	GetAllBranch(context.Context, *pb.ListBranchRequest) (*pb.ListBranchResponse, error)
+	UpdateBranch(context.Context, *pb.UpdateBranchRequest) (string, error)
+	DeleteBranch(context.Context, *pb.IdRequest) (string, error)
+}
+
+type BranchProductI interface {
+	CreateBranchProduct(context.Context, *pb.CreateBranchProductRequest) (string, error)
+	GetBranchProduct(context.Context, *pb.IdRequest) (*pb.BranchProduct, error)
+	GetAllBranchProduct(context.Context, *pb.ListBranchProductRequest) (*pb.ListBranchProductResponse, error)
+	UpdateBranchProduct(context.Context, *pb.UpdateBranchProductRequest) (string, error)
+	DeleteBranchProduct(context.Context, *pb.IdRequest) (string, error)
 }

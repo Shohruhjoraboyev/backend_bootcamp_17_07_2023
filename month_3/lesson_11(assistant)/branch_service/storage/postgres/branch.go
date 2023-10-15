@@ -3,7 +3,6 @@ package postgres
 import (
 	"branch_service/pkg/helper"
 	"context"
-	"database/sql"
 	"fmt"
 	"time"
 
@@ -69,7 +68,7 @@ func (b *branchRepo) GetBranch(c context.Context, req *branch_service.IdRequest)
 
 	var (
 		createdAt time.Time
-		updatedAt sql.NullTime
+		updatedAt time.Time
 	)
 
 	branch := branch_service.Branch{}
@@ -90,9 +89,7 @@ func (b *branchRepo) GetBranch(c context.Context, req *branch_service.IdRequest)
 	}
 
 	branch.CreatedAt = createdAt.Format(time.RFC3339)
-	if updatedAt.Valid {
-		branch.UpdatedAt = updatedAt.Time.Format(time.RFC3339)
-	}
+	branch.UpdatedAt = createdAt.Format(time.RFC3339)
 
 	return &branch, nil
 }
