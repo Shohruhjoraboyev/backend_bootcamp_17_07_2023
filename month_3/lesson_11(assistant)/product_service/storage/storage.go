@@ -1,14 +1,14 @@
 package storage
 
 import (
-	pb "branch_service/genproto"
 	"context"
+	pb "product_service/genproto"
 	"time"
 )
 
 type StorageI interface {
-	Branch() BranchI
-	BranchProduct() BranchProductI
+	Product() ProductI
+	Category() CategoryI
 }
 type CacheI interface {
 	Cache() RedisI
@@ -20,18 +20,18 @@ type RedisI interface {
 	Delete(ctx context.Context, key string) error
 }
 
-type BranchI interface {
-	CreateBranch(context.Context, *pb.CreateBranchRequest) (string, error)
-	GetBranch(context.Context, *pb.IdRequest) (*pb.Branch, error)
-	GetAllBranch(context.Context, *pb.ListBranchRequest) (*pb.ListBranchResponse, error)
-	UpdateBranch(context.Context, *pb.UpdateBranchRequest) (string, error)
-	DeleteBranch(context.Context, *pb.IdRequest) (string, error)
+type ProductI interface {
+	CreateProduct(context.Context, *pb.CreateProductRequest) (string, error)
+	GetProduct(context.Context, *pb.IdRequest) (*pb.Product, error)
+	GetAllProduct(context.Context, *pb.ListProductRequest) (*pb.ListProductResponse, error)
+	UpdateProduct(context.Context, *pb.UpdateProductRequest) (string, error)
+	DeleteProduct(context.Context, *pb.IdRequest) (string, error)
 }
 
-type BranchProductI interface {
-	CreateBranchProduct(context.Context, *pb.CreateBranchProductRequest) (string, error)
-	GetBranchProduct(context.Context, *pb.IdRequest) (*pb.BranchProduct, error)
-	GetAllBranchProduct(context.Context, *pb.ListBranchProductRequest) (*pb.ListBranchProductResponse, error)
-	UpdateBranchProduct(context.Context, *pb.UpdateBranchProductRequest) (string, error)
-	DeleteBranchProduct(context.Context, *pb.IdRequest) (string, error)
+type CategoryI interface {
+	CreateCategory(context.Context, *pb.CreateCategoryRequest) (string, error)
+	GetCategory(context.Context, *pb.IdRequest) (*pb.Category, error)
+	GetAllCategory(context.Context, *pb.ListCategoryRequest) (*pb.ListCategoryResponse, error)
+	UpdateCategory(context.Context, *pb.UpdateCategoryRequest) (string, error)
+	DeleteCategory(context.Context, *pb.IdRequest) (string, error)
 }

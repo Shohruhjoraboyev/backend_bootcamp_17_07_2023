@@ -1,18 +1,18 @@
 package postgres
 
 import (
-	"branch_service/config"
-	"branch_service/storage"
 	"context"
 	"fmt"
+	"product_service/config"
+	"product_service/storage"
 
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
 type strg struct {
-	db            *pgxpool.Pool
-	branch        *branchRepo
-	branchProduct *branchProductRepo
+	db       *pgxpool.Pool
+	product  *productRepo
+	category *categoryRepo
 }
 
 func NewStorage(ctx context.Context, cfg config.Config) (storage.StorageI, error) {
@@ -43,16 +43,16 @@ func NewStorage(ctx context.Context, cfg config.Config) (storage.StorageI, error
 	}, nil
 }
 
-func (d *strg) Branch() storage.BranchI {
-	if d.branch == nil {
-		d.branch = NewBranch(d.db)
+func (d *strg) Product() storage.ProductI {
+	if d.product == nil {
+		d.product = NewProduct(d.db)
 	}
-	return d.branch
+	return d.product
 }
 
-func (d *strg) BranchProduct() storage.BranchProductI {
-	if d.branchProduct == nil {
-		d.branchProduct = NewBranchProduct(d.db)
+func (d *strg) Category() storage.CategoryI {
+	if d.category == nil {
+		d.category = NewCategory(d.db)
 	}
-	return d.branchProduct
+	return d.category
 }

@@ -1,9 +1,9 @@
 package redis
 
 import (
-	"branch_service/config"
-	"branch_service/storage"
 	"context"
+	"product_service/config"
+	"product_service/storage"
 
 	"fmt"
 

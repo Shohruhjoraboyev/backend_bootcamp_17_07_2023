@@ -1,12 +1,12 @@
 package grpc
 
 import (
-	"branch_service/config"
-	branch_service "branch_service/genproto"
+	"product_service/config"
+	product_service "product_service/genproto"
+	"product_service/grpc/service"
 
-	"branch_service/grpc/service"
-	"branch_service/pkg/logger"
-	"branch_service/storage"
+	"product_service/pkg/logger"
+	"product_service/storage"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -15,8 +15,8 @@ import (
 func SetUpServer(cfg config.Config, log logger.LoggerI, strg storage.StorageI) (grpcServer *grpc.Server) {
 	grpcServer = grpc.NewServer()
 
-	branch_service.RegisterBranchServiceServer(grpcServer, service.NewBranchService(cfg, log, strg))
-	branch_service.RegisterBranchProductServiceServer(grpcServer, service.NewBranchProductService(cfg, log, strg))
+	product_service.RegisterProductServiceServer(grpcServer, service.NewProductService(cfg, log, strg))
+	product_service.RegisterCategoryServiceServer(grpcServer, service.NewCategoryService(cfg, log, strg))
 	reflection.Register(grpcServer)
 	return
 }

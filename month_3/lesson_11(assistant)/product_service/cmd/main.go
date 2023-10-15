@@ -1,15 +1,15 @@
 package main
 
 import (
-	"branch_service/config"
-	"branch_service/grpc"
+	"product_service/config"
+	"product_service/grpc"
 
-	"branch_service/pkg/logger"
-	"branch_service/storage/postgres"
 	"context"
 	"fmt"
 	"log"
 	"net"
+	"product_service/pkg/logger"
+	"product_service/storage/postgres"
 )
 
 func main() {
@@ -21,7 +21,7 @@ func main() {
 	}
 
 	s := grpc.SetUpServer(cfg, lg, strg)
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", 50051))
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", 50052))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
