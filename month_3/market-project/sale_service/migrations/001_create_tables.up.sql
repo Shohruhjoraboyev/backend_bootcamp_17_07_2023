@@ -18,6 +18,11 @@ CREATE TYPE "source_type" AS ENUM (
   'bonus'
 );
 
+CREATE TYPE "br_pr_tr_type" AS ENUM (
+  'plus',
+  'minus'
+);
+
 CREATE TABLE "sale" (
   "id" uuid PRIMARY KEY,
   "client_name" varchar(20) NOT NULL,
@@ -54,4 +59,17 @@ CREATE TABLE "staff_transactions" (
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz,
   "deleted_at" timestamptz
+);
+
+CREATE TABLE "branch_product_transactions" (
+  "id" uuid PRIMARY KEY,
+  "branch_id" uuid not null,
+  "staff_id" uuid not null,
+  "product_id" uuid not null,
+  "price" numeric not null,
+  "type" br_pr_tr_type not null,
+  "quantity" integer not null,
+  "created_at" timestamp DEFAULT (now()),
+  "updated_at" timestamp,
+  "deleted_at" timestamp
 );

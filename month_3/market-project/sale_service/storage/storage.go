@@ -10,6 +10,7 @@ type StorageI interface {
 	Sale() SaleI
 	SaleProduct() SaleProductI
 	StaffTransaction() StaffTransactionI
+	BranchProductTransactions() BranchPrTransactionI
 }
 type CacheI interface {
 	Cache() RedisI
@@ -43,4 +44,12 @@ type StaffTransactionI interface {
 	GetAllStaffTransaction(context.Context, *pb.ListStaffTransactionRequest) (*pb.ListStaffTransactionResponse, error)
 	UpdateStaffTransaction(context.Context, *pb.UpdateStaffTransactionRequest) (string, error)
 	DeleteStaffTransaction(context.Context, *pb.IdRequest) (string, error)
+}
+
+type BranchPrTransactionI interface {
+	CreateBranchPrTran(context.Context, *pb.CreateBranchPrTransactionRequest) (string, error)
+	GetBranchPrTran(context.Context, *pb.IdRequest) (*pb.BranchPrTransaction, error)
+	GetAllBranchPrTran(context.Context, *pb.ListBranchPrTransactionRequest) (*pb.ListBranchPrTransactionResponse, error)
+	UpdateBranchPrTran(context.Context, *pb.UpdateBranchPrTransactionRequest) (string, error)
+	DeleteBranchPrTran(context.Context, *pb.IdRequest) (string, error)
 }

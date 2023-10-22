@@ -18,6 +18,7 @@ func SetUpServer(cfg config.Config, log logger.LoggerI, strg storage.StorageI) (
 	sale_service.RegisterSaleServiceServer(grpcServer, service.NewSaleService(cfg, log, strg))
 	sale_service.RegisterSaleProductServiceServer(grpcServer, service.NewSaleProductService(cfg, log, strg))
 	sale_service.RegisterStaffTransactionServiceServer(grpcServer, service.NewStaffTransactionService(cfg, log, strg))
+	sale_service.RegisterBranchPrTransactionServiceServer(grpcServer, service.NewBranchProductTransactionsService(cfg, log, strg))
 
 	reflection.Register(grpcServer)
 	return
