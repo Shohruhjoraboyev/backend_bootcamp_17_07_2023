@@ -9,6 +9,7 @@ import (
 type StorageI interface {
 	Sale() SaleI
 	SaleProduct() SaleProductI
+	StaffTransaction() StaffTransactionI
 }
 type CacheI interface {
 	Cache() RedisI
@@ -34,4 +35,12 @@ type SaleProductI interface {
 	GetAllSaleProduct(context.Context, *pb.ListSaleProductRequest) (*pb.ListSaleProductResponse, error)
 	UpdateSaleProduct(context.Context, *pb.UpdateSaleProductRequest) (string, error)
 	DeleteSaleProduct(context.Context, *pb.IdRequest) (string, error)
+}
+
+type StaffTransactionI interface {
+	CreateStaffTransaction(context.Context, *pb.CreateStaffTransactionRequest) (string, error)
+	GetStaffTransaction(context.Context, *pb.IdRequest) (*pb.StaffTransaction, error)
+	GetAllStaffTransaction(context.Context, *pb.ListStaffTransactionRequest) (*pb.ListStaffTransactionResponse, error)
+	UpdateStaffTransaction(context.Context, *pb.UpdateStaffTransactionRequest) (string, error)
+	DeleteStaffTransaction(context.Context, *pb.IdRequest) (string, error)
 }

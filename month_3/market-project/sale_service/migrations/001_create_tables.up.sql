@@ -43,14 +43,14 @@ CREATE TABLE "sale_products" (
   "deleted_at" timestamptz
 );
 
-CREATE TABLE "transactions" (
+CREATE TABLE "staff_transactions" (
   "id" uuid PRIMARY KEY,
   "type" transaction_type NOT NULL,
   "amount" NUMERIC(12, 2),
   "source_type" source_type NOT NULL,
-  "text" varchar,
   "sale_id" uuid NOT NULL REFERENCES "sale"("id"),
   "staff_id" uuid NOT NULL,
+  "text" varchar(100),
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz,
   "deleted_at" timestamptz
