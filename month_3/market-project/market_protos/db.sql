@@ -281,7 +281,7 @@ CREATE TABLE "sales" (
 );
 
 CREATE TABLE "sale_products" (
-  "sale_id" uuid,
+  "sale_id" uuid REFERENCES "sale" ("id"),
   "product_id" uuid,
   "quantity" integer,
   "price" numeric

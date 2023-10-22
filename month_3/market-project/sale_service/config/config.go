@@ -33,10 +33,6 @@ type Config struct {
 	RedisPort     int
 	RedisPassword string
 	RedisDatabase int
-
-	// branch configuration
-	BranchServiceHost string
-	BranchServicePort string
 }
 
 const (
@@ -62,9 +58,6 @@ func Load() Config {
 	}
 
 	config := Config{}
-
-	config.Environment = cast.ToString(getOrReturnDefaultValue("ENVIRONMENT", DebugMode))
-	config.Port = cast.ToString(getOrReturnDefaultValue("PORT", 8000))
 
 	config.PostgresHost = cast.ToString(getOrReturnDefaultValue("POSTGRES_HOST", "localhost"))
 	config.PostgresPort = cast.ToInt(getOrReturnDefaultValue("POSTGRES_PORT", 5432))

@@ -32,6 +32,17 @@ CREATE TABLE "sale" (
   "deleted_at" timestamptz
 );
 
+CREATE TABLE "sale_products" (
+  "id" uuid PRIMARY KEY,
+  "sale_id" uuid NOT NULL REFERENCES "sale"("id"),
+  "product_id" uuid NOT NULL,
+  "quantity" integer,
+  "price" NUMERIC(12, 2),
+  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "updated_at" timestamptz,
+  "deleted_at" timestamptz
+);
+
 CREATE TABLE "transactions" (
   "id" uuid PRIMARY KEY,
   "type" transaction_type NOT NULL,
