@@ -1,0 +1,3233 @@
+definitions:
+  branch_service.Branch:
+    properties:
+      address:
+        type: string
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      founded_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  branch_service.BranchCreateReq:
+    properties:
+      address:
+        type: string
+      founded_at:
+        type: string
+      name:
+        type: string
+    type: object
+  branch_service.BranchCreateResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  branch_service.BranchDeleteResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  branch_service.BranchProduct:
+    properties:
+      branch_id:
+        type: string
+      count:
+        type: integer
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      product_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  branch_service.BranchProductCreateReq:
+    properties:
+      branch_id:
+        type: string
+      count:
+        type: integer
+      product_id:
+        type: string
+    type: object
+  branch_service.BranchProductCreateResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  branch_service.BranchProductDeleteResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  branch_service.BranchProductUpdateReq:
+    properties:
+      branch_id:
+        type: string
+      count:
+        type: integer
+      product_id:
+        type: string
+    type: object
+  branch_service.BranchProductUpdateResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  branch_service.BranchUpdateReq:
+    properties:
+      address:
+        type: string
+      founded_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  branch_service.BranchUpdateResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  handler.Response:
+    properties:
+      data: {}
+      description:
+        type: string
+      status:
+        type: integer
+    type: object
+  product_service.Category:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      parent_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  product_service.CategoryCreateReq:
+    properties:
+      name:
+        type: string
+      parent_id:
+        type: string
+    type: object
+  product_service.CategoryCreateResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  product_service.CategoryDeleteResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  product_service.CategoryUpdateReq:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      parent_id:
+        type: string
+    type: object
+  product_service.CategoryUpdateResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  product_service.Product:
+    properties:
+      barcode:
+        type: string
+      category_id:
+        type: string
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      updated_at:
+        type: string
+    type: object
+  product_service.ProductCreateReq:
+    properties:
+      barcode:
+        type: string
+      category_id:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+    type: object
+  product_service.ProductCreateResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  product_service.ProductDeleteResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  product_service.ProductUpdateReq:
+    properties:
+      barcode:
+        type: string
+      category_id:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+    type: object
+  product_service.ProductUpdateResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  sale_service.BrPrTrCreateReq:
+    properties:
+      branch_id:
+        type: string
+      price:
+        type: number
+      product_id:
+        type: string
+      quantity:
+        type: integer
+      staff_id:
+        type: string
+      typ:
+        type: string
+    type: object
+  sale_service.BrPrTrCreateResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  sale_service.BrPrTrDeleteResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  sale_service.BrPrTrUpdateReq:
+    properties:
+      branch_id:
+        type: string
+      id:
+        type: string
+      price:
+        type: number
+      product_id:
+        type: string
+      quantity:
+        type: integer
+      staff_id:
+        type: string
+      typ:
+        type: string
+    type: object
+  sale_service.BrPrTrUpdateResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  sale_service.BrPrTransaction:
+    properties:
+      branch_id:
+        type: string
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: string
+      price:
+        type: number
+      product_id:
+        type: string
+      quantity:
+        type: integer
+      staff_id:
+        type: string
+      typ:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  sale_service.Sale:
+    properties:
+      branch_id:
+        type: string
+      cashier_id:
+        type: string
+      client_name:
+        type: string
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: string
+      payment_type:
+        type: string
+      price:
+        type: number
+      shop_assistant_id:
+        type: string
+      status:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  sale_service.SaleCreateReq:
+    properties:
+      branch_id:
+        type: string
+      cashier_id:
+        type: string
+      client_name:
+        type: string
+      payment_type:
+        type: string
+      price:
+        type: number
+      shop_assistant_id:
+        type: string
+      status:
+        type: string
+    type: object
+  sale_service.SaleCreateResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  sale_service.SaleDeleteResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  sale_service.SaleProduct:
+    properties:
+      price:
+        type: number
+      product_id:
+        type: string
+      quantity:
+        type: integer
+      sale_id:
+        type: string
+    type: object
+  sale_service.SaleProductCreateReq:
+    properties:
+      price:
+        type: number
+      product_id:
+        type: string
+      quantity:
+        type: integer
+      sale_id:
+        type: string
+    type: object
+  sale_service.SaleProductCreateResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  sale_service.SaleProductDeleteResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  sale_service.SaleProductUpdateReq:
+    properties:
+      price:
+        type: number
+      product_id:
+        type: string
+      quantity:
+        type: integer
+      sale_id:
+        type: string
+    type: object
+  sale_service.SaleProductUpdateResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  sale_service.SaleUpdateReq:
+    properties:
+      branch_id:
+        type: string
+      cashier_id:
+        type: string
+      client_name:
+        type: string
+      id:
+        type: string
+      payment_type:
+        type: string
+      price:
+        type: number
+      shop_assistant_id:
+        type: string
+      status:
+        type: string
+    type: object
+  sale_service.SaleUpdateResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  sale_service.StaffTrCreateReq:
+    properties:
+      about_text:
+        type: string
+      amount:
+        type: number
+      sale_id:
+        type: string
+      source_typ:
+        type: string
+      staff_id:
+        type: string
+      typ:
+        type: string
+    type: object
+  sale_service.StaffTrCreateResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  sale_service.StaffTrDeleteResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  sale_service.StaffTrUpdateReq:
+    properties:
+      about_text:
+        type: string
+      amount:
+        type: number
+      id:
+        type: string
+      sale_id:
+        type: string
+      source_typ:
+        type: string
+      staff_id:
+        type: string
+      typ:
+        type: string
+    type: object
+  sale_service.StaffTrUpdateResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  sale_service.StaffTransaction:
+    properties:
+      about_text:
+        type: string
+      amount:
+        type: number
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: string
+      sale_id:
+        type: string
+      source_typ:
+        type: string
+      staff_id:
+        type: string
+      typ:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  staff_service.Staff:
+    properties:
+      balance:
+        type: number
+      birth_date:
+        type: string
+      branch_id:
+        type: string
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      tariff_id:
+        type: string
+      typ:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  staff_service.StaffCreateReq:
+    properties:
+      balance:
+        type: number
+      birth_date:
+        type: string
+      branch_id:
+        type: string
+      name:
+        type: string
+      tariff_id:
+        type: string
+      typ:
+        type: string
+    type: object
+  staff_service.StaffCreateResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  staff_service.StaffDeleteResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  staff_service.StaffTariff:
+    properties:
+      amount_for_card:
+        type: number
+      amount_for_cash:
+        type: number
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      typ:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  staff_service.StaffUpdateReq:
+    properties:
+      balance:
+        type: number
+      birth_date:
+        type: string
+      branch_id:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      tariff_id:
+        type: string
+      typ:
+        type: string
+    type: object
+  staff_service.StaffUpdateResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  staff_service.TariffCreateReq:
+    properties:
+      amount_for_card:
+        type: number
+      amount_for_cash:
+        type: number
+      name:
+        type: string
+      typ:
+        type: string
+    type: object
+  staff_service.TariffCreateResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  staff_service.TariffDeleteResp:
+    properties:
+      msg:
+        type: string
+    type: object
+  staff_service.TariffUpdateReq:
+    properties:
+      amount_for_card:
+        type: number
+      amount_for_cash:
+        type: number
+      id:
+        type: string
+      name:
+        type: string
+      typ:
+        type: string
+    type: object
+  staff_service.TariffUpdateResp:
+    properties:
+      msg:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /v1/branch-product-transactions:
+    get:
+      consumes:
+      - application/json
+      description: get branch-product-transactions
+      parameters:
+      - default: 10
+        description: limit for response
+        in: query
+        name: limit
+        type: integer
+      - default: 1
+        description: page for response
+        in: query
+        name: page
+        type: integer
+      - description: search by branch_id
+        in: query
+        name: branch_id
+        type: string
+      - description: search by type
+        in: query
+        name: type
+        type: string
+      - description: search by staff_id
+        in: query
+        name: staff_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/sale_service.BrPrTransaction'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: List branch-product-transactions
+      tags:
+      - branch-product-transactions
+    post:
+      consumes:
+      - application/json
+      description: Create a new branch-product-transaction with the provided details
+      parameters:
+      - description: data of the staff transaction
+        in: body
+        name: br_pr_tr
+        required: true
+        schema:
+          $ref: '#/definitions/sale_service.BrPrTrCreateReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/sale_service.BrPrTrCreateResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Create a new branch-product-transaction
+      tags:
+      - branch-product-transactions
+  /v1/branch-product-transactions/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete a branch-product-transaction by its unique identifier
+      parameters:
+      - description: br_pr_transaction ID to retrieve
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sale_service.BrPrTrDeleteResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Delete a branch-product-transaction
+      tags:
+      - branch-product-transactions
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a branch-product-transaction by its unique identifier
+      parameters:
+      - description: br_pr_transaction ID to retrieve
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sale_service.BrPrTransaction'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Get a branch-product-transaction by ID
+      tags:
+      - branch-product-transactions
+    put:
+      consumes:
+      - application/json
+      description: Update an existing branch-product-transaction with the provided
+        details
+      parameters:
+      - description: br_pr_transaction ID to update
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated data for the br_pr_tr
+        in: body
+        name: br_pr_transaction
+        required: true
+        schema:
+          $ref: '#/definitions/sale_service.BrPrTrUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sale_service.BrPrTrUpdateResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Update an existing branch-product-transaction
+      tags:
+      - branch-product-transactions
+  /v1/branch-products:
+    get:
+      consumes:
+      - application/json
+      description: get branch_products
+      parameters:
+      - default: 10
+        description: limit for response
+        in: query
+        name: limit
+        type: integer
+      - default: 1
+        description: page for response
+        in: query
+        name: page
+        type: integer
+      - description: search by branch_id
+        in: query
+        name: branch_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/branch_service.BranchProduct'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: List branch_products
+      tags:
+      - branch-products
+    post:
+      consumes:
+      - application/json
+      description: Create a new branch_product with the provided details
+      parameters:
+      - description: data of the branch_product
+        in: body
+        name: branch_product
+        required: true
+        schema:
+          $ref: '#/definitions/branch_service.BranchProductCreateReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/branch_service.BranchProductCreateResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Create a new branch_product
+      tags:
+      - branch-products
+  /v1/branch-products/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete a branch_product by its product_id
+      parameters:
+      - description: product_id to retrieve
+        in: path
+        name: product_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/branch_service.BranchProductDeleteResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Delete a branch_product
+      tags:
+      - branch-products
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a branch_product by its product_id
+      parameters:
+      - description: product_id to retrieve
+        in: path
+        name: product_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/branch_service.BranchProduct'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Get a branch_product by product_id
+      tags:
+      - branch-products
+    put:
+      consumes:
+      - application/json
+      description: Update an existing branch_product with the provided details
+      parameters:
+      - description: product_id to update
+        in: path
+        name: product_id
+        required: true
+        type: string
+      - description: Updated data for the branch_product
+        in: body
+        name: branch_product
+        required: true
+        schema:
+          $ref: '#/definitions/branch_service.BranchProductUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/branch_service.BranchProductUpdateResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Update an existing branch_product
+      tags:
+      - branch-products
+  /v1/branches:
+    get:
+      consumes:
+      - application/json
+      description: get branches
+      parameters:
+      - default: 10
+        description: limit for response
+        in: query
+        name: limit
+        type: integer
+      - default: 1
+        description: page for response
+        in: query
+        name: page
+        type: integer
+      - description: search by name and address
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/branch_service.Branch'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: List branches
+      tags:
+      - branches
+    post:
+      consumes:
+      - application/json
+      description: Create a new branch with the provided details
+      parameters:
+      - description: data of the branch
+        in: body
+        name: branch
+        required: true
+        schema:
+          $ref: '#/definitions/branch_service.BranchCreateReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/branch_service.BranchCreateResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Create a new branch
+      tags:
+      - branches
+  /v1/branches/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete a branch by its unique identifier
+      parameters:
+      - description: Branch ID to retrieve
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/branch_service.BranchDeleteResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Delete a branch
+      tags:
+      - branches
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a branch by its unique identifier
+      parameters:
+      - description: Branch ID to retrieve
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/branch_service.Branch'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Get a branch by ID
+      tags:
+      - branches
+    put:
+      consumes:
+      - application/json
+      description: Update an existing branch with the provided details
+      parameters:
+      - description: Branch ID to update
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated data for the branch
+        in: body
+        name: branch
+        required: true
+        schema:
+          $ref: '#/definitions/branch_service.BranchUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/branch_service.BranchUpdateResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Update an existing branch
+      tags:
+      - branches
+  /v1/categories:
+    get:
+      consumes:
+      - application/json
+      description: get categories
+      parameters:
+      - default: 10
+        description: limit for response
+        in: query
+        name: limit
+        type: integer
+      - default: 1
+        description: page for response
+        in: query
+        name: page
+        type: integer
+      - description: search by name
+        in: query
+        name: name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/product_service.Category'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: List categories
+      tags:
+      - categories
+    post:
+      consumes:
+      - application/json
+      description: Create a new category with the provided details
+      parameters:
+      - description: data of the category
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/product_service.CategoryCreateReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/product_service.CategoryCreateResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Create a new category
+      tags:
+      - categories
+  /v1/categories/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete a category by its unique identifier
+      parameters:
+      - description: Category ID to retrieve
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/product_service.CategoryDeleteResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Delete a category
+      tags:
+      - categories
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a category by its unique identifier
+      parameters:
+      - description: Category ID to retrieve
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/product_service.Category'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Get a category by ID
+      tags:
+      - categories
+    put:
+      consumes:
+      - application/json
+      description: Update an existing category with the provided details
+      parameters:
+      - description: Category ID to update
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated data for the category
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/product_service.CategoryUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/product_service.CategoryUpdateResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Update an existing category
+      tags:
+      - categories
+  /v1/products:
+    get:
+      consumes:
+      - application/json
+      description: get products
+      parameters:
+      - default: 10
+        description: limit for response
+        in: query
+        name: limit
+        type: integer
+      - default: 1
+        description: page for response
+        in: query
+        name: page
+        type: integer
+      - description: search by name
+        in: query
+        name: name
+        type: string
+      - description: search by barcode
+        in: query
+        name: barcode
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/product_service.Product'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: List products
+      tags:
+      - products
+    post:
+      consumes:
+      - application/json
+      description: Create a new product with the provided details
+      parameters:
+      - description: data of the product
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/product_service.ProductCreateReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/product_service.ProductCreateResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Create a new product
+      tags:
+      - products
+  /v1/products/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete a product by its unique identifier
+      parameters:
+      - description: Product ID to retrieve
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/product_service.ProductDeleteResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Delete a product
+      tags:
+      - products
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a product by its unique identifier
+      parameters:
+      - description: Product ID to retrieve
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/product_service.Product'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Get a product by ID
+      tags:
+      - products
+    put:
+      consumes:
+      - application/json
+      description: Update an existing product with the provided details
+      parameters:
+      - description: Product ID to update
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated data for the product
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/product_service.ProductUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/product_service.ProductUpdateResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Update an existing product
+      tags:
+      - products
+  /v1/sale-products:
+    get:
+      consumes:
+      - application/json
+      description: get sale-products
+      parameters:
+      - default: 10
+        description: limit for response
+        in: query
+        name: limit
+        type: integer
+      - default: 1
+        description: page for response
+        in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/sale_service.SaleProduct'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: List sale-products
+      tags:
+      - sale-products
+    post:
+      consumes:
+      - application/json
+      description: Create a new sale-product with the provided details
+      parameters:
+      - description: data of the sale-product
+        in: body
+        name: sale-product
+        required: true
+        schema:
+          $ref: '#/definitions/sale_service.SaleProductCreateReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/sale_service.SaleProductCreateResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Create a new sale-product
+      tags:
+      - sale-products
+  /v1/sale-products/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete a sale-product by its unique identifier
+      parameters:
+      - description: Sale ID to retrieve
+        in: path
+        name: sale_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sale_service.SaleProductDeleteResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Delete a sale-product
+      tags:
+      - sale-products
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a sale by its unique identifier
+      parameters:
+      - description: SaleProduct ID to retrieve
+        in: path
+        name: sale_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sale_service.SaleProduct'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Get a sale_product by ID
+      tags:
+      - sale-products
+    put:
+      consumes:
+      - application/json
+      description: Update an existing sale_product with the provided details
+      parameters:
+      - description: sale ID to update
+        in: path
+        name: sale_id
+        required: true
+        type: string
+      - description: Updated data for the sale_product
+        in: body
+        name: sale_product
+        required: true
+        schema:
+          $ref: '#/definitions/sale_service.SaleProductUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sale_service.SaleProductUpdateResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Update an existing sale_product
+      tags:
+      - sale-products
+  /v1/sales:
+    get:
+      consumes:
+      - application/json
+      description: get sales
+      parameters:
+      - default: 10
+        description: limit for response
+        in: query
+        name: limit
+        type: integer
+      - default: 1
+        description: page for response
+        in: query
+        name: page
+        type: integer
+      - description: search by branch_id
+        in: query
+        name: branch_id
+        type: string
+      - description: search by client_name
+        in: query
+        name: client_name
+        type: string
+      - description: search by payment_type
+        in: query
+        name: payment_type
+        type: string
+      - description: search by shop_assistant_id
+        in: query
+        name: shop_assistant_id
+        type: string
+      - description: search by cashier_id
+        in: query
+        name: cashier_id
+        type: string
+      - description: search by status
+        in: query
+        name: status
+        type: string
+      - description: search by created_at_from
+        in: query
+        name: created_at_from
+        type: string
+      - description: search by created_at_to
+        in: query
+        name: created_at_to
+        type: string
+      - description: search by price_from
+        in: query
+        name: price_from
+        type: string
+      - description: search by price_to
+        in: query
+        name: price_to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/sale_service.Sale'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: List sales
+      tags:
+      - sales
+    post:
+      consumes:
+      - application/json
+      description: Create a new sale with the provided details
+      parameters:
+      - description: data of the sale
+        in: body
+        name: sale
+        required: true
+        schema:
+          $ref: '#/definitions/sale_service.SaleCreateReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/sale_service.SaleCreateResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Create a new sale
+      tags:
+      - sales
+  /v1/sales/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete a sale by its unique identifier
+      parameters:
+      - description: Sale ID to retrieve
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sale_service.SaleDeleteResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Delete a sale
+      tags:
+      - sales
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a sale by its unique identifier
+      parameters:
+      - description: Sale ID to retrieve
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sale_service.Sale'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Get a sale by ID
+      tags:
+      - sales
+    put:
+      consumes:
+      - application/json
+      description: Update an existing sale with the provided details
+      parameters:
+      - description: Sale ID to update
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated data for the sale
+        in: body
+        name: sale
+        required: true
+        schema:
+          $ref: '#/definitions/sale_service.SaleUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sale_service.SaleUpdateResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Update an existing sale
+      tags:
+      - sales
+  /v1/staff-tariffs:
+    get:
+      consumes:
+      - application/json
+      description: get staff-tariffs
+      parameters:
+      - default: 10
+        description: limit for response
+        in: query
+        name: limit
+        type: integer
+      - default: 1
+        description: page for response
+        in: query
+        name: page
+        type: integer
+      - description: search by type
+        in: query
+        name: type
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/staff_service.StaffTariff'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: List staff-tariffs
+      tags:
+      - staff-tariffs
+    post:
+      consumes:
+      - application/json
+      description: Create a new staff tariff with the provided details
+      parameters:
+      - description: data of the staff tariff
+        in: body
+        name: tariff
+        required: true
+        schema:
+          $ref: '#/definitions/staff_service.TariffCreateReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/staff_service.TariffCreateResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Create a new staff tariff
+      tags:
+      - staff-tariffs
+  /v1/staff-tariffs/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete a staff-tariff by its unique identifier
+      parameters:
+      - description: StaffTariff ID to retrieve
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/staff_service.TariffDeleteResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Delete a staff-tariff
+      tags:
+      - staff-tariffs
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a staff-tariff by its unique identifier
+      parameters:
+      - description: Staff Tariff ID to retrieve
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/staff_service.StaffTariff'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Get a staff-tariff by ID
+      tags:
+      - staff-tariffs
+    put:
+      consumes:
+      - application/json
+      description: Update an existing staff-tariff with the provided details
+      parameters:
+      - description: Staff Tariff ID to update
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated data for the staff-tariff
+        in: body
+        name: staff-tariff
+        required: true
+        schema:
+          $ref: '#/definitions/staff_service.TariffUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/staff_service.TariffUpdateResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Update an existing staff-tariff
+      tags:
+      - staff-tariffs
+  /v1/staff-transactions:
+    get:
+      consumes:
+      - application/json
+      description: get staff-transactions
+      parameters:
+      - default: 10
+        description: limit for response
+        in: query
+        name: limit
+        type: integer
+      - default: 1
+        description: page for response
+        in: query
+        name: page
+        type: integer
+      - description: search by amount_from
+        in: query
+        name: amount_from
+        type: string
+      - description: search by amount_to
+        in: query
+        name: amount_to
+        type: string
+      - description: search by sale_id
+        in: query
+        name: sale_id
+        type: string
+      - description: search by type
+        in: query
+        name: type
+        type: string
+      - description: search by staff_id
+        in: query
+        name: staff_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/sale_service.StaffTransaction'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: List staff-transactions
+      tags:
+      - staff-transactions
+    post:
+      consumes:
+      - application/json
+      description: Create a new staff-transaction with the provided details
+      parameters:
+      - description: data of the staff transaction
+        in: body
+        name: staff_transaction
+        required: true
+        schema:
+          $ref: '#/definitions/sale_service.StaffTrCreateReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/sale_service.StaffTrCreateResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Create a new staff-transaction
+      tags:
+      - staff-transactions
+  /v1/staff-transactions/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete a staff-transaction by its unique identifier
+      parameters:
+      - description: Transaction ID to retrieve
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sale_service.StaffTrDeleteResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Delete a staff-transaction
+      tags:
+      - staff-transactions
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a staff-transaction by its unique identifier
+      parameters:
+      - description: transaction ID to retrieve
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sale_service.StaffTransaction'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Get a staff-transaction by ID
+      tags:
+      - staff-transactions
+    put:
+      consumes:
+      - application/json
+      description: Update an existing staff-transaction with the provided details
+      parameters:
+      - description: Transaction ID to update
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated data for the sale
+        in: body
+        name: staff_transaction
+        required: true
+        schema:
+          $ref: '#/definitions/sale_service.StaffTrUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/sale_service.StaffTrUpdateResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Update an existing staff-transaction
+      tags:
+      - staff-transactions
+  /v1/staffs:
+    get:
+      consumes:
+      - application/json
+      description: get staffs
+      parameters:
+      - default: 10
+        description: limit for response
+        in: query
+        name: limit
+        type: integer
+      - default: 1
+        description: page for response
+        in: query
+        name: page
+        type: integer
+      - description: search by name
+        in: query
+        name: name
+        type: string
+      - description: search by branch_id
+        in: query
+        name: branch_id
+        type: string
+      - description: search by tariff_id
+        in: query
+        name: tariff_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/staff_service.Staff'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: List staffs
+      tags:
+      - staffs
+    post:
+      consumes:
+      - application/json
+      description: Create a new staff with the provided details
+      parameters:
+      - description: data of the staff
+        in: body
+        name: staff
+        required: true
+        schema:
+          $ref: '#/definitions/staff_service.StaffCreateReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/staff_service.StaffCreateResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Create a new staff
+      tags:
+      - staffs
+  /v1/staffs/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete a staff by its unique identifier
+      parameters:
+      - description: Staff ID to retrieve
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/staff_service.StaffDeleteResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Delete a staff
+      tags:
+      - staffs
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a staff by its unique identifier
+      parameters:
+      - description: Staff ID to retrieve
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/staff_service.Staff'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Get a staff by ID
+      tags:
+      - staffs
+    put:
+      consumes:
+      - application/json
+      description: Update an existing staff with the provided details
+      parameters:
+      - description: Staff ID to update
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated data for the staff
+        in: body
+        name: staff
+        required: true
+        schema:
+          $ref: '#/definitions/staff_service.StaffUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/staff_service.StaffUpdateResp'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Update an existing staff
+      tags:
+      - staffs
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
