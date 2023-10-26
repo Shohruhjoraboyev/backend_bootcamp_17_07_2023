@@ -24,13 +24,6 @@ func NewStaffTarif(db *pgxpool.Pool) *staffTarifRepo {
 	}
 }
 
-/*
-	Name          string  `json:"name"`
-	Type          string  `json:"type"` //1-fixed,2-percent
-	AmountForCash float64 `json:"amount_for_cash"`
-	AmountForCard float64 `json:"amount_for_card"`
-*/
-
 func (b *staffTarifRepo) CreateStaffTarif(c context.Context, req *staff_service.CreateStaffTarifRequest) (string, error) {
 	id := uuid.NewString()
 	query := `

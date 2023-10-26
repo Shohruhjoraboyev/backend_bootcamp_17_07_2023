@@ -151,7 +151,7 @@ func (b *staffRepo) GetAllStaff(c context.Context, req *staff_service.GetAllStaf
 	)
 
 	if req.Search != "" {
-		filter += " AND (name ILIKE '%' || :search || '%' OR type_id ILIKE '%' || :search || '%') "
+		filter += " AND (name ILIKE '%' || :search || '%' OR type_id ILIKE '%' || :search || '%' OR branch_id ILIKE '%' || :search || '%')"
 		params["search"] = req.Search
 	}
 
@@ -255,3 +255,74 @@ func (b *staffRepo) DeleteStaff(c context.Context, req *staff_service.IdRequest)
 
 	return fmt.Sprintf("staff with ID %s deleted", req.Id), nil
 }
+
+// func (b *staffRepo) GetTopStaff(c context.Context, req *staff_service.GetTopStaffRequest) (*staff_service.GetTopStaffResponse, error) {
+// 	var (
+// 		resp   staff_service.GetTopStaffResponse
+// 		err    error
+// 		query  string
+// 		params []interface{}
+// 	)
+
+// 	// Determine the staff type
+// 	switch req.Type {
+// 	case staff_service.StaffType_ST_Cashier:
+// 		query = `
+// 			SELECT
+// 				s.name,
+// 				b.name AS branch,
+// 				SUM(sa.price) AS earned_sum
+// 			FROM sales sa
+// 			INNER JOIN staffs s ON s.id = sa.cashier_id
+// 			INNER JOIN branches b ON b.id = sa.branch_id
+// 			WHERE sa.created_at >= $1 AND sa.created_at <= $2
+// 			GROUP BY s.name, b.name
+// 			ORDER BY earned_sum DESC
+// 			LIMIT $3`
+// 	case staff_service.StaffType_ST_ShopAssistant:
+// 		query = `
+// 			SELECT
+// 				s.name,
+// 				b.name AS branch,
+// 				SUM(sa.price) AS earned_sum
+// 			FROM sales sa
+// 			INNER JOIN staffs s ON s.id = sa.shop_assistant_id
+// 			INNER JOIN branches b ON b.id = sa.branch_id
+// 			WHERE sa.created_at >= $1 AND sa.created_at <= $2
+// 			GROUP BY s.name, b.name
+// 			ORDER BY earned_sum DESC
+// 			LIMIT $3`
+// 	default:
+// 		return nil, fmt.Errorf("invalid staff type")
+// 	}
+
+// 	params = append(params, req.StartDate, req.EndDate, req.Limit)
+
+// 	rows, err := b.db.Query(c, query, params...)
+// 	if err != nil {
+// 		return nil, fmt.Errorf("error while executing query: %w", err)
+// 	}
+// 	defer rows.Close()
+
+// 	for rows.Next() {
+// 		var (
+// 			name      string
+// 			branch    string
+// 			earnedSum int64
+// 			topStaff  staff_service.TopStaff
+// 		)
+
+// 		err = rows.Scan(&name, &branch, &earnedSum)
+// 		if err != nil {
+// 			return nil, fmt.Errorf("error while scanning row: %w", err)
+// 		}
+
+// 		topStaff.Name = name
+// 		topStaff.Branch = branch
+// 		topStaff.EarnedSum = earnedSum
+
+// 		resp.TopStaff = append(resp.TopStaff, &topStaff)
+// 	}
+
+// 	return &resp, nil
+// }
