@@ -17,6 +17,7 @@ message CreateProductRequest {
   string name = 1;
   string price = 2;
   string barcode=3;
+  string category_id=4;
 }
 
 message Product {
@@ -24,8 +25,9 @@ message Product {
   string name = 2;
   string price = 3;
   string barcode=4;
-  string created_at = 5;
-  string updated_at = 6;
+  string category_id=5;
+  string created_at = 6;
+  string updated_at = 7;
 }
 
 
@@ -35,7 +37,8 @@ message UpdateProductRequest {
     string name = 2;
     string price = 3;
     string barcode=4;
-}
+    string category_id=5;
+  }
 
 message GetProductResponse {
   Product product = 1;

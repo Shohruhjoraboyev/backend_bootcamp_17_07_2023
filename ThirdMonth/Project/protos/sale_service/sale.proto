@@ -59,6 +59,12 @@ message GetAllSaleRequest {
   int32 limit = 1;
   int32 offset = 2;
   string search = 3;
+  string branch_Id = 4;
+  string payment_type =5;
+  string shop_assistant_Id = 6;
+  string cashier_id = 7;
+  string createdAtFrom = 8;
+  string createdAtTo = 9;
 }
 
 message GetAllSaleResponse {

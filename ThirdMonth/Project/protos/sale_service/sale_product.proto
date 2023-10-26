@@ -44,16 +44,15 @@ message UpdateSaleProductRequest {
 }
 
 message GetSaleProductResponse {
-  SaleProduct STransaction = 1;
+  SaleProduct SaleProduct = 1;
 }
 
 message GetAllSaleProductRequest {
   int32 limit = 1;
-  int32 offset = 2;
-  string search = 3;
+  int32 page = 2;
 }
 
 message GetAllSaleProductResponse {
-  repeated SaleProduct STransactions = 1;
+  repeated SaleProduct SaleProducts = 1;
   int32 count = 2;
 }

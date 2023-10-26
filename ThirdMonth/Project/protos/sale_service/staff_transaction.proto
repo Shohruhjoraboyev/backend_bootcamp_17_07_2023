@@ -55,7 +55,12 @@ message GetStaffTransactionResponse {
 message GetAllStaffTransactionRequest {
   int32 limit = 1;
   int32 offset = 2;
-  string search = 3;
+  string type = 3;
+  string sale_id = 4;
+  string staff_id = 5;
+  float amount =6;
+
+
 }
 
 message GetAllStaffTransactionResponse {
