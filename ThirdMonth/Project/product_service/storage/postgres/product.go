@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"fmt"
 	"product_service/pkg/helper"
-	"time"
 
 	product_service "product_service/genproto"
 
@@ -33,15 +32,15 @@ func (b *productRepo) CreateProduct(c context.Context, req *product_service.Crea
 			"price", 
 			"barcode", 
 			"created_at",
-			"updated_at")
-		VALUES ($1, $2, $3, $4, $5, NOW())
+		     "category_id")
+		VALUES ($1, $2, $3, $4, NOW(), $5)
 	`
 	_, err := b.db.Exec(context.Background(), query,
 		id,
 		req.Name,
 		req.Price,
 		req.Barcode,
-		time.Now(),
+		req.CategoryId,
 	)
 	if err != nil {
 		return "", fmt.Errorf("failed to create Product: %w", err)
@@ -49,29 +48,32 @@ func (b *productRepo) CreateProduct(c context.Context, req *product_service.Crea
 
 	return id, nil
 }
-func (b *productRepo) GetProduct(c context.Context, req *product_service.IdRequest) (resp *product_service.Product, err error) {
+func (b *productRepo) GetProduct(c context.Context, req *product_service.IdRequest) (*product_service.Product, error) {
 	query := `
-				SELECT 
-					id, 
-					"name", 
-					"price", 
-					"barcode", 
-					"created_at",
-					"updated_at"
-				FROM products 
-				WHERE id=$1`
+		SELECT 
+			id, 
+			"name", 
+			"price", 
+			"barcode", 
+			"created_at",
+			"updated_at",
+			"category_id"
+		FROM products 
+		WHERE id=$1`
 
 	var (
-		createdAt sql.NullString
-		updatedAt sql.NullString
+		createdAt  sql.NullString
+		updatedAt  sql.NullString
+		categoryID sql.NullString
+		product    product_service.Product
 	)
 
-	product := product_service.Product{}
-	err = b.db.QueryRow(context.Background(), query, req.Id).Scan(
+	err := b.db.QueryRow(c, query, req.Id).Scan(
 		&product.Id,
 		&product.Name,
 		&product.Price,
 		&product.Barcode,
+		&categoryID,
 		&createdAt,
 		&updatedAt,
 	)
@@ -81,8 +83,18 @@ func (b *productRepo) GetProduct(c context.Context, req *product_service.IdReque
 		}
 		return nil, fmt.Errorf("failed to get product: %w", err)
 	}
-	product.CreatedAt = createdAt.String
-	product.UpdatedAt = updatedAt.String
+
+	if categoryID.Valid {
+		product.CategoryId = categoryID.String
+	}
+
+	if createdAt.Valid {
+		product.CreatedAt = createdAt.String
+	}
+
+	if updatedAt.Valid {
+		product.UpdatedAt = updatedAt.String
+	}
 
 	return &product, nil
 }
@@ -95,8 +107,9 @@ func (b *productRepo) UpdateProduct(c context.Context, req *product_service.Upda
 					name = $1, 
 					price = $2, 
 					barcode = $3, 
+					category_id =$4,
 					updated_at = NOW() 
-				WHERE id = $4 RETURNING id`
+				WHERE id = $5 RETURNING id`
 
 	result, err := b.db.Exec(
 		context.Background(),
@@ -104,6 +117,7 @@ func (b *productRepo) UpdateProduct(c context.Context, req *product_service.Upda
 		req.Name,
 		req.Price,
 		req.Barcode,
+		req.CategoryId,
 		req.Id,
 	)
 
@@ -148,6 +162,7 @@ func (b *productRepo) GetAllProduct(c context.Context, req *product_service.GetA
 			  "name", 
 			  "price", 
 			  "barcode", 
+			  "category_id",
 			  "created_at",
 			  "updated_at"
 		FROM products 
@@ -174,6 +189,7 @@ func (b *productRepo) GetAllProduct(c context.Context, req *product_service.GetA
 			&product.Name,
 			&product.Price,
 			&product.Barcode,
+			&product.CategoryId,
 			&createdAt,
 			&updatedAt,
 		)
