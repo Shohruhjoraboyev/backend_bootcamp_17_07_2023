@@ -5,6 +5,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strconv"
 	"time"
 
 	branch_service "branch_service/genproto"
@@ -31,29 +32,31 @@ func (b *branchRepo) CreateBranch(c context.Context, req *branch_service.CreateB
 
 	query := `
 		INSERT INTO "branches"(
-			"id", 
-			"name", 
-			"address", 
-			"year", 
-			"founded_at", 
+			"id",
+			"name",
+			"address",
+			"founded_at",
+			"year",
 			"created_at")
-		VALUES ($1, $2, $3, $4, $5, $6)
-	`
+		VALUES ($1, $2, $3, $4, $5, NOW() )`
+
+	text := strconv.Itoa(int(req.FoundedAt))
+
 	_, err := b.db.Exec(context.Background(), query,
 		id,
 		req.Name,
 		req.Address,
+		text,
 		year,
-		req.FoundedAt,
-		time.Now(),
 	)
+
 	if err != nil {
+		fmt.Println("error", err)
 		return "", fmt.Errorf("failed to create branch: %w", err)
 	}
 
 	return id, nil
 }
-
 func (b *branchRepo) GetBranch(c context.Context, req *branch_service.IdRequest) (resp *branch_service.Branch, err error) {
 	query := `
 				SELECT 
@@ -141,7 +144,7 @@ func (b *branchRepo) GetAllBranch(c context.Context, req *branch_service.GetAllB
 	)
 
 	if req.Search != "" {
-		filter += " AND name ILIKE '%' || :search || '%' "
+		filter += " AND (name ILIKE '%' || :search || '%' OR address ILIKE '%' || :search || '%')"
 		params["search"] = req.Search
 	}
 
