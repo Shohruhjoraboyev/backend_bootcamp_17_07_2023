@@ -21,7 +21,7 @@ func main() {
 	}
 
 	s := grpc.SetUpServer(cfg, lg, strg)
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", 50052))
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", 50054))
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}

@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"sale_service/pkg/helper"
+	"time"
 
 	sale_service "sale_service/genproto"
 
@@ -29,19 +30,19 @@ func (b *saleRepo) CreateSale(c context.Context, req *sale_service.CreateSaleReq
 		INSERT INTO "sales"(
 			"id", 
 			"branch_id", 
-			"shop_assisstant_id", 
+			"shop_assistant_id", 
 			"cashier_id", 
+			"price",
 			"payment_type", 
-			"client_name",
-			"created_at",
-			"updated_at")
-		VALUES ($1, $2, $3, $4, $5, $6,  NOW(), NOW())
+			"client_name")
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
 	`
 	_, err := b.db.Exec(context.Background(), query,
 		id,
 		req.Branch_Id,
 		req.ShopAssistant_Id,
 		req.CashierId,
+		req.Price,
 		req.PaymentType,
 		req.ClientName,
 	)
@@ -53,30 +54,31 @@ func (b *saleRepo) CreateSale(c context.Context, req *sale_service.CreateSaleReq
 }
 func (b *saleRepo) GetSale(c context.Context, req *sale_service.IdRequest) (resp *sale_service.Sale, err error) {
 	query := `
-				SELECT 
-				       "id", 
-				       "branch_id", 
-				       "shop_assisstant_id", 
-				       "cashier_id", 
-				       "payment_type", 
-			           "status",
-				       "client_name",
-				       "created_at",
-				       "updated_at"
-				FROM sales 
-				WHERE id=$1`
-
-	var (
-		createdAt sql.NullString
-		updatedAt sql.NullString
-	)
+		SELECT 
+			"id",
+			"branch_id",
+			"shop_assistant_id",
+			"cashier_id",
+			"price",
+			"payment_type",
+			"status",
+			"client_name",
+			"created_at",
+			"updated_at"
+		FROM sales
+		WHERE id=$1`
 
 	sale := sale_service.Sale{}
-	err = b.db.QueryRow(context.Background(), query, req.Id).Scan(
+	var (
+		createdAt time.Time
+		updatedAt sql.NullTime
+	)
+	err = b.db.QueryRow(c, query, req.Id).Scan(
 		&sale.Id,
 		&sale.Branch_Id,
 		&sale.ShopAssistant_Id,
 		&sale.CashierId,
+		&sale.Price,
 		&sale.PaymentType,
 		&sale.Status,
 		&sale.ClientName,
@@ -89,8 +91,11 @@ func (b *saleRepo) GetSale(c context.Context, req *sale_service.IdRequest) (resp
 		}
 		return nil, fmt.Errorf("failed to get sale: %w", err)
 	}
-	sale.CreatedAt = createdAt.String
-	sale.UpdatedAt = updatedAt.String
+
+	// Assign values from sql.NullString to the fields
+
+	sale.CreatedAt = createdAt.Format(time.RFC3339)
+	sale.UpdatedAt = updatedAt.Time.Format(time.RFC3339)
 
 	return &sale, nil
 }
@@ -98,16 +103,15 @@ func (b *saleRepo) GetSale(c context.Context, req *sale_service.IdRequest) (resp
 func (b *saleRepo) UpdateSale(c context.Context, req *sale_service.UpdateSaleRequest) (string, error) {
 
 	query := `
-				UPDATE staffs 
+				UPDATE sales 
 				SET  
-				       "branch_id", 
-				       "shop_assisstant_id", 
-				       "cashier_id", 
-				       "payment_type", 
-				       "status",
-				       "client_name",
+				       "branch_id"=$1, 
+				       "shop_assistant_id"=$2, 
+				       "cashier_id"=$3, 
+				       "payment_type"=$4, 
+				       "client_name"=$5,
 					updated_at = NOW() 
-				WHERE id = $7 RETURNING id`
+				WHERE id = $6 RETURNING id`
 
 	result, err := b.db.Exec(
 		context.Background(),
@@ -116,7 +120,6 @@ func (b *saleRepo) UpdateSale(c context.Context, req *sale_service.UpdateSaleReq
 		req.ShopAssistant_Id,
 		req.CashierId,
 		req.PaymentType,
-		req.Status,
 		req.ClientName,
 		req.Id,
 	)
@@ -140,9 +143,37 @@ func (b *saleRepo) GetAllSale(c context.Context, req *sale_service.GetAllSaleReq
 		params = make(map[string]interface{})
 	)
 
+	// Search filter
 	if req.Search != "" {
 		filter += " AND (client_name ILIKE '%' || :search || '%' OR status ILIKE '%' || :search || '%') "
 		params["search"] = req.Search
+	}
+
+	// Additional filters
+	if req.Branch_Id != "" {
+		filter += " AND branch_id = :branchId "
+		params["branchId"] = req.Branch_Id
+	}
+	if req.PaymentType != "" {
+		filter += " AND payment_type = :payment_type "
+		params["payment_type"] = req.PaymentType
+	}
+	if req.ShopAssistant_Id != "" {
+		filter += " AND shop_assisstant_id = :shopAssistantId "
+		params["shopAssistantId"] = req.ShopAssistant_Id
+	}
+	if req.CashierId != "" {
+		filter += " AND cashier_id = :cashierId "
+		params["cashierId"] = req.CashierId
+	}
+
+	if req.CreatedAtFrom != "" {
+		filter += " AND created_at >= :createdAtFrom "
+		params["createdAtFrom"] = req.CreatedAtFrom
+	}
+	if req.CreatedAtTo != "" {
+		filter += " AND created_at <= :createdAtTo "
+		params["createdAtTo"] = req.CreatedAtTo
 	}
 
 	countQuery := `SELECT count(1) FROM sales WHERE true ` + filter
@@ -160,17 +191,21 @@ func (b *saleRepo) GetAllSale(c context.Context, req *sale_service.GetAllSaleReq
 		SELECT 
 		        "id", 
 		        "branch_id", 
-				"shop_assisstant_id", 
+				"shop_assistant_id", 
 				"cashier_id", 
 				"payment_type", 
 				"status",
 				"client_name",
+
 			    created_at, 
 			    updated_at 
 		FROM sales 
 		WHERE true` + filter
 
-	query += " ORDER BY created_at DESC LIMIT :limit OFFSET :offset"
+	// Sorting by price
+	query += " ORDER BY price "
+
+	query += " LIMIT :limit OFFSET :offset"
 	params["limit"] = req.Limit
 	params["offset"] = req.Offset
 
@@ -183,6 +218,9 @@ func (b *saleRepo) GetAllSale(c context.Context, req *sale_service.GetAllSaleReq
 
 	createdAt := sql.NullString{}
 	updatedAt := sql.NullString{}
+	payment_type := sql.NullString{}
+	status := sql.NullString{}
+
 	for rows.Next() {
 		var sale sale_service.Sale
 
@@ -191,10 +229,10 @@ func (b *saleRepo) GetAllSale(c context.Context, req *sale_service.GetAllSaleReq
 			&sale.Branch_Id,
 			&sale.ShopAssistant_Id,
 			&sale.CashierId,
-			&sale.Price,
-			&sale.PaymentType,
-			&sale.Status,
+			&payment_type,
+			&status,
 			&sale.ClientName,
+			// float64(sale.Price),
 			&createdAt,
 			&updatedAt,
 		)
@@ -202,14 +240,25 @@ func (b *saleRepo) GetAllSale(c context.Context, req *sale_service.GetAllSaleReq
 			return nil, fmt.Errorf("error while scanning sale err: %w", err)
 		}
 
-		sale.CreatedAt = createdAt.String
-		sale.UpdatedAt = updatedAt.String
+		if createdAt.Valid {
+			sale.CreatedAt = createdAt.String
+		}
+		if updatedAt.Valid {
+			sale.UpdatedAt = updatedAt.String
+		}
+		if payment_type.Valid {
+			sale.PaymentType = payment_type.String
+		}
+		if status.Valid {
+			sale.Status = status.String
+		}
 
 		resp.Sales = append(resp.Sales, &sale)
 	}
 
 	return &resp, nil
 }
+
 func (b *saleRepo) DeleteSale(c context.Context, req *sale_service.IdRequest) (resp string, err error) {
 	query := `
 			DELETE 

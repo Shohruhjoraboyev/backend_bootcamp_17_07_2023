@@ -142,9 +142,24 @@ func (b *staffTransactionRepo) GetAllStaffTransaction(c context.Context, req *sa
 		params = make(map[string]interface{})
 	)
 
-	if req.Search != "" {
+	if req.Type != "" {
 		filter += " AND type ILIKE '%' || :search || '%' "
-		params["search"] = req.Search
+		params["search"] = req.Type
+	}
+
+	if req.SaleId != "" {
+		filter += ` AND sale_id = :sale_id`
+		params["sale_id"] = req.SaleId
+	}
+
+	if req.StaffId != "" {
+		filter += ` AND sale_id = :staff_id`
+		params["staff_id"] = req.StaffId
+	}
+
+	if req.Amount != 0 {
+		filter += ` AND amount = :amount`
+		params["amount"] = req.Amount
 	}
 
 	countQuery := `SELECT count(1) FROM stafftransactions WHERE true ` + filter
@@ -211,6 +226,7 @@ func (b *staffTransactionRepo) GetAllStaffTransaction(c context.Context, req *sa
 
 	return &resp, nil
 }
+
 func (b *staffTransactionRepo) DeleteStaffTransaction(c context.Context, req *sale_service.IdRequest) (resp string, err error) {
 	query := `
 			DELETE 
