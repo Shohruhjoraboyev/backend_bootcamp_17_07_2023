@@ -1,14 +1,14 @@
 package main
 
 import (
+	"api-gateway-service/api"
+	"api-gateway-service/api/handler"
+	"api-gateway-service/config"
+	"api-gateway-service/pkg/logger"
+	"api-gateway-service/services"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	"gitlab.com/market3723841/api-gateway-service/api"
-	"gitlab.com/market3723841/api-gateway-service/api/handler"
-	"gitlab.com/market3723841/api-gateway-service/config"
-	"gitlab.com/market3723841/api-gateway-service/pkg/logger"
-	"gitlab.com/market3723841/api-gateway-service/services"
 )
 
 func main() {

@@ -4,8 +4,9 @@ import (
 	"net/http"
 	"strconv"
 
+	staff_service "api-gateway-service/genproto/staff_service"
+
 	"github.com/gin-gonic/gin"
-	staff_service "gitlab.com/market3723841/api-gateway-service/genproto/staff-service"
 )
 
 // CreateStaff godoc
@@ -15,8 +16,8 @@ import (
 // @Tags         staffs
 // @Accept       json
 // @Produce      json
-// @Param        staff     body  staff_service.StaffCreateReq  true  "data of the staff"
-// @Success      201  {object}  staff_service.StaffCreateResp
+// @Param        staff     body  staff_service.CreateStaffRequest true  "data of the staff"
+// @Success      201  {object}  staff_service.IdResponse
 // @Failure      400  {object}  Response{data=string}
 // @Failure      404  {object}  Response{data=string}
 // @Failure      500  {object}  Response{data=string}
@@ -29,13 +30,14 @@ func (h *Handler) CreateStaff(ctx *gin.Context) {
 		return
 	}
 
-	resp, err := h.services.StaffService().Create(ctx, &staff_service.StaffCreateReq{
+	resp, err := h.services.StaffService().Create(ctx, &staff_service.CreateStaffRequest{
 		BranchId:  staff.BranchId,
 		TariffId:  staff.TariffId,
 		Name:      staff.Name,
-		Typ:       staff.Typ,
-		Balance:   staff.Balance,
-		BirthDate: staff.BirthDate,
+		StaffType: staff.StaffType,
+		Login:     staff.Login,
+		Password:  staff.Password,
+		Phone:     staff.Phone,
 	})
 
 	if err != nil {
@@ -47,9 +49,9 @@ func (h *Handler) CreateStaff(ctx *gin.Context) {
 	h.handlerResponse(ctx, "create staff response", http.StatusOK, resp)
 }
 
-// ListStaffs godoc
+// GetAllStaffs godoc
 // @Router       /v1/staffs [get]
-// @Summary      List staffs
+// @Summary      GetAll staffs
 // @Description  get staffs
 // @Tags         staffs
 // @Accept       json
@@ -63,7 +65,7 @@ func (h *Handler) CreateStaff(ctx *gin.Context) {
 // @Failure      400  {object}  Response{data=string}
 // @Failure      404  {object}  Response{data=string}
 // @Failure      500  {object}  Response{data=string}
-func (h *Handler) GetListStaff(ctx *gin.Context) {
+func (h *Handler) GetAllStaff(ctx *gin.Context) {
 	page, err := strconv.Atoi(ctx.DefaultQuery("page", "1"))
 	if err != nil {
 		h.handlerResponse(ctx, "error get page", http.StatusBadRequest, err.Error())
@@ -76,12 +78,26 @@ func (h *Handler) GetListStaff(ctx *gin.Context) {
 		return
 	}
 
-	resp, err := h.services.StaffService().GetList(ctx.Request.Context(), &staff_service.StaffGetListReq{
-		Page:     int64(page),
-		Limit:    int64(limit),
-		Name:     ctx.Query("name"),
-		BranchId: ctx.Query("branch_id"),
-		TarifId:  ctx.Query("tariff_id"),
+	balanceFromStr := ctx.Query("balanceFrom")
+	balanceFrom, err := strconv.ParseFloat(balanceFromStr, 64)
+	if err != nil {
+		h.handlerResponse(ctx, "error parsing balanceFrom", http.StatusBadRequest, err.Error())
+		return
+	}
+
+	balanceToStr := ctx.Query("balanceTo")
+	balanceTo, err := strconv.ParseFloat(balanceToStr, 64)
+	if err != nil {
+		h.handlerResponse(ctx, "error parsing balanceTo", http.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp, err := h.services.StaffService().GetAll(ctx.Request.Context(), &staff_service.GetAllStaffRequest{
+		Offset:      int32(page),
+		Limit:       int32(limit),
+		Search:      ctx.Query("name"),
+		BalanceFrom: balanceFrom,
+		BalanceTo:   balanceTo,
 	})
 
 	if err != nil {
@@ -107,7 +123,7 @@ func (h *Handler) GetListStaff(ctx *gin.Context) {
 func (h *Handler) GetStaff(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	resp, err := h.services.StaffService().GetById(ctx.Request.Context(), &staff_service.StaffIdReq{Id: id})
+	resp, err := h.services.StaffService().Get(ctx.Request.Context(), &staff_service.IdRequest{Id: id})
 	if err != nil {
 		h.handlerResponse(ctx, "error staff GetById", http.StatusBadRequest, err.Error())
 		return
@@ -124,8 +140,8 @@ func (h *Handler) GetStaff(ctx *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        id       path    string     true    "Staff ID to update"
-// @Param        staff   body    staff_service.StaffUpdateReq  true    "Updated data for the staff"
-// @Success      200  {object}  staff_service.StaffUpdateResp
+// @Param        staff   body    staff_service.UpdateStaffRequest  true    "Updated data for the staff"
+// @Success      200  {object}  Response{data=string}
 // @Failure      400  {object}  Response{data=string}
 // @Failure      404  {object}  Response{data=string}
 // @Failure      500  {object}  Response{data=string}
@@ -138,14 +154,16 @@ func (h *Handler) UpdateStaff(ctx *gin.Context) {
 		return
 	}
 
-	resp, err := h.services.StaffService().Update(ctx.Request.Context(), &staff_service.StaffUpdateReq{
+	resp, err := h.services.StaffService().Update(ctx.Request.Context(), &staff_service.UpdateStaffRequest{
 		Id:        staff.Id,
 		BranchId:  staff.BranchId,
 		TariffId:  staff.TariffId,
+		StaffType: staff.StaffType,
 		Name:      staff.Name,
-		Typ:       staff.Typ,
 		Balance:   staff.Balance,
-		BirthDate: staff.BirthDate,
+		Login:     staff.Login,
+		Password:  staff.Password,
+		Phone:     staff.Phone,
 	})
 
 	if err != nil {
@@ -153,7 +171,7 @@ func (h *Handler) UpdateStaff(ctx *gin.Context) {
 		return
 	}
 
-	h.handlerResponse(ctx, "update staff response", http.StatusOK, resp.Msg)
+	h.handlerResponse(ctx, "update staff response", http.StatusOK, resp)
 }
 
 // DeleteStaff godoc
@@ -164,18 +182,18 @@ func (h *Handler) UpdateStaff(ctx *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        id   path    string     true    "Staff ID to retrieve"
-// @Success      200  {object}  staff_service.StaffDeleteResp
+// @Success      200  {object}  staff_service.IdRequest
 // @Failure      400  {object}  Response{data=string}
 // @Failure      404  {object}  Response{data=string}
 // @Failure      500  {object}  Response{data=string}
 func (h *Handler) DeleteStaff(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	resp, err := h.services.StaffService().Delete(ctx.Request.Context(), &staff_service.StaffIdReq{Id: id})
+	resp, err := h.services.StaffService().Delete(ctx.Request.Context(), &staff_service.IdRequest{Id: id})
 	if err != nil {
 		h.handlerResponse(ctx, "error staff Delete", http.StatusBadRequest, err.Error())
 		return
 	}
 
-	h.handlerResponse(ctx, "delete staff response", http.StatusOK, resp.Msg)
+	h.handlerResponse(ctx, "delete staff response", http.StatusOK, resp)
 }

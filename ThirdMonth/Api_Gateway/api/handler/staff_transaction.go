@@ -4,8 +4,9 @@ import (
 	"net/http"
 	"strconv"
 
+	sale_service "api-gateway-service/genproto/sale_service"
+
 	"github.com/gin-gonic/gin"
-	sale_service "gitlab.com/market3723841/api-gateway-service/genproto/sale-service"
 )
 
 // CreateStaffTransaction godoc
@@ -15,8 +16,8 @@ import (
 // @Tags         staff-transactions
 // @Accept       json
 // @Produce      json
-// @Param        staff_transaction     body  sale_service.StaffTrCreateReq  true  "data of the staff transaction"
-// @Success      201  {object}  sale_service.StaffTrCreateResp
+// @Param        staff_transaction     body  sale_service.CreateStaffTransactionRequest true  "data of the staff transaction"
+// @Success      201  {object}  sale_service.IdResponse
 // @Failure      400  {object}  Response{data=string}
 // @Failure      404  {object}  Response{data=string}
 // @Failure      500  {object}  Response{data=string}
@@ -28,13 +29,14 @@ func (h *Handler) CreateStaffTransaction(ctx *gin.Context) {
 		return
 	}
 
-	resp, err := h.services.StaffTransactionService().Create(ctx, &sale_service.StaffTrCreateReq{
-		SaleId:    staffTr.SaleId,
-		StaffId:   staffTr.StaffId,
-		Typ:       staffTr.Typ,
-		SourceTyp: staffTr.SourceTyp,
-		Amount:    staffTr.Amount,
-		AboutText: staffTr.AboutText,
+	resp, err := h.services.StaffTransactionService().Create(ctx, &sale_service.CreateStaffTransactionRequest{
+		Id:         staffTr.Id,
+		SaleId:     staffTr.SaleId,
+		StaffId:    staffTr.StaffId,
+		Type:       staffTr.Type,
+		SourceType: staffTr.SourceType,
+		Amount:     staffTr.Amount,
+		AboutText:  staffTr.AboutText,
 	})
 
 	if err != nil {
@@ -63,7 +65,7 @@ func (h *Handler) CreateStaffTransaction(ctx *gin.Context) {
 // @Failure      400  {object}  Response{data=string}
 // @Failure      404  {object}  Response{data=string}
 // @Failure      500  {object}  Response{data=string}
-func (h *Handler) GetListStaffTransaction(ctx *gin.Context) {
+func (h *Handler) GetAllStaffTransaction(ctx *gin.Context) {
 	page, err := strconv.Atoi(ctx.DefaultQuery("page", "1"))
 	if err != nil {
 		h.handlerResponse(ctx, "error get page", http.StatusBadRequest, err.Error())
@@ -76,30 +78,23 @@ func (h *Handler) GetListStaffTransaction(ctx *gin.Context) {
 		return
 	}
 
-	amountFrom, err := strconv.ParseFloat(ctx.Query("amount_from"), 64)
+	amount, err := strconv.ParseFloat(ctx.Query("amount"), 64)
 	if err != nil {
 		h.handlerResponse(ctx, "error get amount_from", http.StatusBadRequest, err.Error())
 		return
 	}
 
-	amountTo, err := strconv.ParseFloat(ctx.Query("amount_to"), 64)
-	if err != nil {
-		h.handlerResponse(ctx, "error get amount_to", http.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp, err := h.services.StaffTransactionService().GetList(ctx.Request.Context(), &sale_service.StaffTrGetListReq{
-		Page:       int64(page),
-		Limit:      int64(limit),
-		SaleId:     ctx.Query("sale_id"),
-		Typ:        ctx.Query("type"),
-		StaffId:    ctx.Query("staff_id"),
-		AmountFrom: float32(amountFrom),
-		AmountTo:   float32(amountTo),
+	resp, err := h.services.StaffTransactionService().GetAll(ctx.Request.Context(), &sale_service.GetAllStaffTransactionRequest{
+		Offset:  int32(page),
+		Limit:   int32(limit),
+		Type:    ctx.Query("type"),
+		SaleId:  ctx.Query("sale_id"),
+		StaffId: ctx.Query("staff_id"),
+		Amount:  float32(amount),
 	})
 
 	if err != nil {
-		h.handlerResponse(ctx, "error GetListStaffTransaction", http.StatusBadRequest, err.Error())
+		h.handlerResponse(ctx, "error GetAllStaffTransaction", http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -121,7 +116,7 @@ func (h *Handler) GetListStaffTransaction(ctx *gin.Context) {
 func (h *Handler) GetStaffTransaction(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	resp, err := h.services.StaffTransactionService().GetById(ctx.Request.Context(), &sale_service.StaffTrIdReq{Id: id})
+	resp, err := h.services.StaffTransactionService().Get(ctx.Request.Context(), &sale_service.IdRequest{Id: id})
 	if err != nil {
 		h.handlerResponse(ctx, "error staff transaction GetById", http.StatusBadRequest, err.Error())
 		return
@@ -138,8 +133,8 @@ func (h *Handler) GetStaffTransaction(ctx *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        id       path    string     true    "Transaction ID to update"
-// @Param        staff_transaction   body    sale_service.StaffTrUpdateReq  true    "Updated data for the sale"
-// @Success      200  {object}  sale_service.StaffTrUpdateResp
+// @Param        staff_transaction   body    sale_service.UpdateStaffTransactionRequest  true    "Updated data for the sale"
+// @Success      200  {object}  sale_service.UpdateStaffTransactionRequest
 // @Failure      400  {object}  Response{data=string}
 // @Failure      404  {object}  Response{data=string}
 // @Failure      500  {object}  Response{data=string}
@@ -152,14 +147,14 @@ func (h *Handler) UpdateStaffTransaction(ctx *gin.Context) {
 		return
 	}
 
-	resp, err := h.services.StaffTransactionService().Update(ctx.Request.Context(), &sale_service.StaffTrUpdateReq{
-		Id:        staffTr.Id,
-		SaleId:    staffTr.SaleId,
-		StaffId:   staffTr.StaffId,
-		Typ:       staffTr.Typ,
-		SourceTyp: staffTr.SourceTyp,
-		Amount:    staffTr.Amount,
-		AboutText: staffTr.AboutText,
+	resp, err := h.services.StaffTransactionService().Update(ctx.Request.Context(), &sale_service.UpdateStaffTransactionRequest{
+		Id:         staffTr.Id,
+		SaleId:     staffTr.SaleId,
+		StaffId:    staffTr.StaffId,
+		Type:       staffTr.Type,
+		SourceType: staffTr.SourceType,
+		Amount:     staffTr.Amount,
+		AboutText:  staffTr.AboutText,
 	})
 
 	if err != nil {
@@ -167,7 +162,7 @@ func (h *Handler) UpdateStaffTransaction(ctx *gin.Context) {
 		return
 	}
 
-	h.handlerResponse(ctx, "update staff transaction response", http.StatusOK, resp.Msg)
+	h.handlerResponse(ctx, "update staff transaction response", http.StatusOK, resp)
 }
 
 // DeleteStaffTransaction godoc
@@ -178,18 +173,18 @@ func (h *Handler) UpdateStaffTransaction(ctx *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        id   path    string     true    "Transaction ID to retrieve"
-// @Success      200  {object}  sale_service.StaffTrDeleteResp
+// @Success      200  {object}  sale_service.IdRequest
 // @Failure      400  {object}  Response{data=string}
 // @Failure      404  {object}  Response{data=string}
 // @Failure      500  {object}  Response{data=string}
 func (h *Handler) DeleteStaffTransaction(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	resp, err := h.services.StaffTransactionService().Delete(ctx.Request.Context(), &sale_service.StaffTrIdReq{Id: id})
+	resp, err := h.services.StaffTransactionService().Delete(ctx.Request.Context(), &sale_service.IdRequest{Id: id})
 	if err != nil {
 		h.handlerResponse(ctx, "error staff transaction Delete", http.StatusBadRequest, err.Error())
 		return
 	}
 
-	h.handlerResponse(ctx, "delete staff transaction response", http.StatusOK, resp.Msg)
+	h.handlerResponse(ctx, "delete staff transaction response", http.StatusOK, resp)
 }

@@ -1,4 +1,4 @@
-module gitlab.com/market3723841/api-gateway-service
+module api-gateway-service
 
 go 1.21.0
 

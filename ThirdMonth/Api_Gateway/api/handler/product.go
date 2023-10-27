@@ -4,8 +4,9 @@ import (
 	"net/http"
 	"strconv"
 
+	product_service "api-gateway-service/genproto/product_service"
+
 	"github.com/gin-gonic/gin"
-	product_service "gitlab.com/market3723841/api-gateway-service/genproto/protuct-service"
 )
 
 // CreateProduct godoc
@@ -15,8 +16,8 @@ import (
 // @Tags         products
 // @Accept       json
 // @Produce      json
-// @Param        product     body  product_service.ProductCreateReq  true  "data of the product"
-// @Success      201  {object}  product_service.ProductCreateResp
+// @Param        product     body  product_service.CreateProductRequest true  "data of the product"
+// @Success      201  {object}  product_service.IdResponse
 // @Failure      400  {object}  Response{data=string}
 // @Failure      404  {object}  Response{data=string}
 // @Failure      500  {object}  Response{data=string}
@@ -29,7 +30,7 @@ func (h *Handler) CreateProduct(ctx *gin.Context) {
 		return
 	}
 
-	resp, err := h.services.ProductService().Create(ctx, &product_service.ProductCreateReq{
+	resp, err := h.services.ProductService().Create(ctx, &product_service.CreateProductRequest{
 		Name:       product.Name,
 		Price:      product.Price,
 		Barcode:    product.Barcode,
@@ -45,9 +46,9 @@ func (h *Handler) CreateProduct(ctx *gin.Context) {
 	h.handlerResponse(ctx, "create product response", http.StatusOK, resp)
 }
 
-// ListProducts godoc
+// GetAllProducts godoc
 // @Router       /v1/products [get]
-// @Summary      List products
+// @Summary      GetAll products
 // @Description  get products
 // @Tags         products
 // @Accept       json
@@ -60,7 +61,7 @@ func (h *Handler) CreateProduct(ctx *gin.Context) {
 // @Failure      400  {object}  Response{data=string}
 // @Failure      404  {object}  Response{data=string}
 // @Failure      500  {object}  Response{data=string}
-func (h *Handler) GetListProduct(ctx *gin.Context) {
+func (h *Handler) GetAllProduct(ctx *gin.Context) {
 	page, err := strconv.Atoi(ctx.DefaultQuery("page", "1"))
 	if err != nil {
 		h.handlerResponse(ctx, "error get page", http.StatusBadRequest, err.Error())
@@ -73,19 +74,18 @@ func (h *Handler) GetListProduct(ctx *gin.Context) {
 		return
 	}
 
-	resp, err := h.services.ProductService().GetList(ctx.Request.Context(), &product_service.ProductGetListReq{
-		Page:    int64(page),
-		Limit:   int64(limit),
-		Name:    ctx.Query("name"),
-		Barcode: ctx.Query("barcode"),
+	resp, err := h.services.ProductService().GetAll(ctx.Request.Context(), &product_service.GetAllProductRequest{
+		Offset: int32(page),
+		Limit:  int32(limit),
+		Search: ctx.Query("search"),
 	})
 
 	if err != nil {
-		h.handlerResponse(ctx, "error GetListProduct", http.StatusBadRequest, err.Error())
+		h.handlerResponse(ctx, "error GetAllProduct", http.StatusBadRequest, err.Error())
 		return
 	}
 
-	h.handlerResponse(ctx, "get list product response", http.StatusOK, resp)
+	h.handlerResponse(ctx, "get All product response", http.StatusOK, resp)
 }
 
 // GetProduct godoc
@@ -103,7 +103,7 @@ func (h *Handler) GetListProduct(ctx *gin.Context) {
 func (h *Handler) GetProduct(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	resp, err := h.services.ProductService().GetById(ctx.Request.Context(), &product_service.ProductIdReq{Id: id})
+	resp, err := h.services.ProductService().Get(ctx.Request.Context(), &product_service.IdRequest{Id: id})
 	if err != nil {
 		h.handlerResponse(ctx, "error product GetById", http.StatusBadRequest, err.Error())
 		return
@@ -120,8 +120,8 @@ func (h *Handler) GetProduct(ctx *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        id       path    string     true    "Product ID to update"
-// @Param        product   body    product_service.ProductUpdateReq  true    "Updated data for the product"
-// @Success      200  {object}  product_service.ProductUpdateResp
+// @Param        product   body    product_service.UpdateProductRequest  true    "Updated data for the product"
+// @Success      200  {object}  Response{data=string}
 // @Failure      400  {object}  Response{data=string}
 // @Failure      404  {object}  Response{data=string}
 // @Failure      500  {object}  Response{data=string}
@@ -134,7 +134,7 @@ func (h *Handler) UpdateProduct(ctx *gin.Context) {
 		return
 	}
 
-	resp, err := h.services.ProductService().Update(ctx.Request.Context(), &product_service.ProductUpdateReq{
+	resp, err := h.services.ProductService().Update(ctx.Request.Context(), &product_service.UpdateProductRequest{
 		Id:         product.Id,
 		Name:       product.Name,
 		Price:      product.Price,
@@ -147,7 +147,7 @@ func (h *Handler) UpdateProduct(ctx *gin.Context) {
 		return
 	}
 
-	h.handlerResponse(ctx, "update product response", http.StatusOK, resp.Msg)
+	h.handlerResponse(ctx, "update product response", http.StatusOK, resp)
 }
 
 // DeleteProduct godoc
@@ -158,18 +158,18 @@ func (h *Handler) UpdateProduct(ctx *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        id   path    string     true    "Product ID to retrieve"
-// @Success      200  {object}  product_service.ProductDeleteResp
+// @Success      200  {object}  product_service.IdResponse
 // @Failure      400  {object}  Response{data=string}
 // @Failure      404  {object}  Response{data=string}
 // @Failure      500  {object}  Response{data=string}
 func (h *Handler) DeleteProduct(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	resp, err := h.services.ProductService().Delete(ctx.Request.Context(), &product_service.ProductIdReq{Id: id})
+	resp, err := h.services.ProductService().Delete(ctx.Request.Context(), &product_service.IdRequest{Id: id})
 	if err != nil {
 		h.handlerResponse(ctx, "error product Delete", http.StatusBadRequest, err.Error())
 		return
 	}
 
-	h.handlerResponse(ctx, "delete product response", http.StatusOK, resp.Msg)
+	h.handlerResponse(ctx, "delete product response", http.StatusOK, resp)
 }

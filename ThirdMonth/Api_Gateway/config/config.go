@@ -75,16 +75,16 @@ func Load() Config {
 	config.DefaultSaleId = cast.ToString(getOrReturnDefaultValue("SALE_ID", ""))
 
 	config.ProductServiceHost = cast.ToString(getOrReturnDefaultValue("PRODUCT_SERVICE_HOST", "localhost"))
-	config.ProductGRPCPort = cast.ToString(getOrReturnDefaultValue("PRODUCT_GRPC_PORT", ":9101"))
+	config.ProductGRPCPort = cast.ToString(getOrReturnDefaultValue("PRODUCT_GRPC_PORT", ":50052"))
 
 	config.BranchServiceHost = cast.ToString(getOrReturnDefaultValue("BRANCH_SERVICE_HOST", "localhost"))
-	config.BranchGRPCPort = cast.ToString(getOrReturnDefaultValue("BRANCH_GRPC_PORT", ":9102"))
+	config.BranchGRPCPort = cast.ToString(getOrReturnDefaultValue("BRANCH_GRPC_PORT", ":50051"))
 
 	config.StaffServiceHost = cast.ToString(getOrReturnDefaultValue("STAFF_SERVICE_HOST", "localhost"))
-	config.StaffGRPCPort = cast.ToString(getOrReturnDefaultValue("STAFF_GRPC_PORT", ":9103"))
+	config.StaffGRPCPort = cast.ToString(getOrReturnDefaultValue("STAFF_GRPC_PORT", ":50053"))
 
 	config.SaleServiceHost = cast.ToString(getOrReturnDefaultValue("SALE_SERVICE_HOST", "localhost"))
-	config.SaleGRPCPort = cast.ToString(getOrReturnDefaultValue("SALE_GRPC_PORT", ":9104"))
+	config.SaleGRPCPort = cast.ToString(getOrReturnDefaultValue("SALE_GRPC_PORT", ":5054"))
 
 	config.PostgresMaxConnections = cast.ToInt32(getOrReturnDefaultValue("POSTGRES_MAX_CONNECTIONS", 30))
 

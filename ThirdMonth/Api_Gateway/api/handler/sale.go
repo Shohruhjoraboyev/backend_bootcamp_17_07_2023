@@ -4,8 +4,9 @@ import (
 	"net/http"
 	"strconv"
 
+	sale_service "api-gateway-service/genproto/sale_service"
+
 	"github.com/gin-gonic/gin"
-	sale_service "gitlab.com/market3723841/api-gateway-service/genproto/sale-service"
 )
 
 // CreateSale godoc
@@ -15,8 +16,8 @@ import (
 // @Tags         sales
 // @Accept       json
 // @Produce      json
-// @Param        sale     body  sale_service.SaleCreateReq  true  "data of the sale"
-// @Success      201  {object}  sale_service.SaleCreateResp
+// @Param        sale     body  sale_service.CreateSaleRequest  true  "data of the sale"
+// @Success      201  {object}  sale_service.IdResponse
 // @Failure      400  {object}  Response{data=string}
 // @Failure      404  {object}  Response{data=string}
 // @Failure      500  {object}  Response{data=string}
@@ -29,14 +30,14 @@ func (h *Handler) CreateSale(ctx *gin.Context) {
 		return
 	}
 
-	resp, err := h.services.SaleService().Create(ctx, &sale_service.SaleCreateReq{
-		BranchId:        sale.BranchId,
-		ShopAssistantId: sale.ShopAssistantId,
-		CashierId:       sale.CashierId,
-		Price:           sale.Price,
-		PaymentType:     sale.PaymentType,
-		Status:          sale.Status,
-		ClientName:      sale.ClientName,
+	resp, err := h.services.SaleService().Create(ctx, &sale_service.CreateSaleRequest{
+		Id:               sale.Branch_Id,
+		Branch_Id:        sale.Branch_Id,
+		ShopAssistant_Id: sale.ShopAssistant_Id,
+		CashierId:        sale.CashierId,
+		Price:            sale.Price,
+		PaymentType:      sale.PaymentType,
+		ClientName:       sale.ClientName,
 	})
 
 	if err != nil {
@@ -47,9 +48,9 @@ func (h *Handler) CreateSale(ctx *gin.Context) {
 	h.handlerResponse(ctx, "create sale response", http.StatusOK, resp)
 }
 
-// ListSales godoc
+// GetAllSales godoc
 // @Router       /v1/sales [get]
-// @Summary      List sales
+// @Summary      GetAll sales
 // @Description  get sales
 // @Tags         sales
 // @Accept       json
@@ -64,13 +65,11 @@ func (h *Handler) CreateSale(ctx *gin.Context) {
 // @Param        status     query     string false "search by status"
 // @Param        created_at_from     query     string false "search by created_at_from"
 // @Param        created_at_to     query     string false "search by created_at_to"
-// @Param        price_from     query     string false "search by price_from"
-// @Param        price_to     query     string false "search by price_to"
 // @Success      200  {array}   sale_service.Sale
 // @Failure      400  {object}  Response{data=string}
 // @Failure      404  {object}  Response{data=string}
 // @Failure      500  {object}  Response{data=string}
-func (h *Handler) GetListSale(ctx *gin.Context) {
+func (h *Handler) GetAllSale(ctx *gin.Context) {
 	page, err := strconv.Atoi(ctx.DefaultQuery("page", "1"))
 	if err != nil {
 		h.handlerResponse(ctx, "error get page", http.StatusBadRequest, err.Error())
@@ -83,31 +82,16 @@ func (h *Handler) GetListSale(ctx *gin.Context) {
 		return
 	}
 
-	priceFrom, err := strconv.ParseFloat(ctx.DefaultQuery("price_from", "0"), 64)
-	if err != nil {
-		h.handlerResponse(ctx, "error get price from", http.StatusBadRequest, err.Error())
-		return
-	}
-
-	priceTo, err := strconv.ParseFloat(ctx.DefaultQuery("price_to", "999999999"), 64)
-	if err != nil {
-		h.handlerResponse(ctx, "error get price to", http.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp, err := h.services.SaleService().GetList(ctx.Request.Context(), &sale_service.SaleGetListReq{
-		Page:            int64(page),
-		Limit:           int64(limit),
-		BranchId:        ctx.Query("branch_id"),
-		ClientName:      ctx.Query("client_name"),
-		PaymentType:     ctx.Query("payment_type"),
-		ShopAssistantId: ctx.Query("shop_assistant_id"),
-		CashierId:       ctx.Query("cashier_id"),
-		Status:          ctx.Query("status"),
-		CreatedAtFrom:   ctx.DefaultQuery("created_at_from", "2000-01-01"),
-		CreatedAtTo:     ctx.DefaultQuery("created_at_to", "2095-12-12"),
-		PriceFrom:       float32(priceFrom),
-		PriceTo:         float32(priceTo),
+	resp, err := h.services.SaleService().GetAll(ctx.Request.Context(), &sale_service.GetAllSaleRequest{
+		Offset:           int32(page),
+		Limit:            int32(limit),
+		Search:           ctx.Query("search"),
+		Branch_Id:        ctx.Query("branch_id"),
+		PaymentType:      ctx.Query("payment_type"),
+		ShopAssistant_Id: ctx.Query("shop_assistant_id"),
+		CashierId:        ctx.Query("cashier_id"),
+		CreatedAtFrom:    ctx.DefaultQuery("created_at_from", "2000-01-01"),
+		CreatedAtTo:      ctx.DefaultQuery("created_at_to", "2095-12-12"),
 	})
 
 	if err != nil {
@@ -133,7 +117,7 @@ func (h *Handler) GetListSale(ctx *gin.Context) {
 func (h *Handler) GetSale(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	resp, err := h.services.SaleService().GetById(ctx.Request.Context(), &sale_service.SaleIdReq{Id: id})
+	resp, err := h.services.SaleService().Get(ctx.Request.Context(), &sale_service.IdRequest{Id: id})
 	if err != nil {
 		h.handlerResponse(ctx, "error sale GetById", http.StatusBadRequest, err.Error())
 		return
@@ -150,8 +134,8 @@ func (h *Handler) GetSale(ctx *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        id       path    string     true    "Sale ID to update"
-// @Param        sale   body    sale_service.SaleUpdateReq  true    "Updated data for the sale"
-// @Success      200  {object}  sale_service.SaleUpdateResp
+// @Param        sale   body    sale_service.UpdateSaleRequest true    "Updated data for the sale"
+// @Success      200  {object}  Response{data=string}
 // @Failure      400  {object}  Response{data=string}
 // @Failure      404  {object}  Response{data=string}
 // @Failure      500  {object}  Response{data=string}
@@ -164,15 +148,15 @@ func (h *Handler) UpdateSale(ctx *gin.Context) {
 		return
 	}
 
-	resp, err := h.services.SaleService().Update(ctx.Request.Context(), &sale_service.SaleUpdateReq{
-		Id:              sale.Id,
-		BranchId:        sale.BranchId,
-		ShopAssistantId: sale.ShopAssistantId,
-		CashierId:       sale.CashierId,
-		Price:           sale.Price,
-		PaymentType:     sale.PaymentType,
-		Status:          sale.Status,
-		ClientName:      sale.ClientName,
+	resp, err := h.services.SaleService().Update(ctx.Request.Context(), &sale_service.UpdateSaleRequest{
+		Id:               sale.Id,
+		Branch_Id:        sale.Branch_Id,
+		ShopAssistant_Id: sale.ShopAssistant_Id,
+		CashierId:        sale.CashierId,
+		Price:            sale.Price,
+		PaymentType:      sale.PaymentType,
+		Status:           sale.Status,
+		ClientName:       sale.ClientName,
 	})
 
 	if err != nil {
@@ -180,7 +164,7 @@ func (h *Handler) UpdateSale(ctx *gin.Context) {
 		return
 	}
 
-	h.handlerResponse(ctx, "update sale response", http.StatusOK, resp.Msg)
+	h.handlerResponse(ctx, "update sale response", http.StatusOK, resp)
 }
 
 // DeleteSale godoc
@@ -191,18 +175,18 @@ func (h *Handler) UpdateSale(ctx *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        id   path    string     true    "Sale ID to retrieve"
-// @Success      200  {object}  sale_service.SaleDeleteResp
+// @Success      200  {object}  sale_service.IdResponse
 // @Failure      400  {object}  Response{data=string}
 // @Failure      404  {object}  Response{data=string}
 // @Failure      500  {object}  Response{data=string}
 func (h *Handler) DeleteSale(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	resp, err := h.services.SaleService().Delete(ctx.Request.Context(), &sale_service.SaleIdReq{Id: id})
+	resp, err := h.services.SaleService().Delete(ctx.Request.Context(), &sale_service.IdRequest{Id: id})
 	if err != nil {
 		h.handlerResponse(ctx, "error sale Delete", http.StatusBadRequest, err.Error())
 		return
 	}
 
-	h.handlerResponse(ctx, "delete sale response", http.StatusOK, resp.Msg)
+	h.handlerResponse(ctx, "delete sale response", http.StatusOK, resp)
 }

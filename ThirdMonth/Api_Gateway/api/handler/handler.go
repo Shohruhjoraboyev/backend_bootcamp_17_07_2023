@@ -1,10 +1,11 @@
 package handler
 
 import (
+	"api-gateway-service/config"
+	"api-gateway-service/pkg/logger"
+	"api-gateway-service/services"
+
 	"github.com/gin-gonic/gin"
-	"gitlab.com/market3723841/api-gateway-service/config"
-	"gitlab.com/market3723841/api-gateway-service/pkg/logger"
-	"gitlab.com/market3723841/api-gateway-service/services"
 )
 
 type Handler struct {

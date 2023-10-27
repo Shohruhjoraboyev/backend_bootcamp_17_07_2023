@@ -4,8 +4,9 @@ import (
 	"net/http"
 	"strconv"
 
+	branch_service "api-gateway-service/genproto/branch_service"
+
 	"github.com/gin-gonic/gin"
-	branch_service "gitlab.com/market3723841/api-gateway-service/genproto/branch-service"
 )
 
 // CreateBranch godoc
@@ -29,7 +30,7 @@ func (h *Handler) CreateBranch(ctx *gin.Context) {
 		return
 	}
 
-	resp, err := h.services.BranchService().Create(ctx, &branch_service.BranchCreateReq{
+	resp, err := h.services.BranchService().Create(ctx, &branch_service.CreateBranchRequest{
 		Name:      branch.Name,
 		Address:   branch.Address,
 		FoundedAt: branch.FoundedAt,
@@ -71,9 +72,9 @@ func (h *Handler) GetListBranch(ctx *gin.Context) {
 		return
 	}
 
-	resp, err := h.services.BranchService().GetList(ctx.Request.Context(), &branch_service.BranchGetListReq{
-		Page:   int64(page),
-		Limit:  int64(limit),
+	resp, err := h.services.BranchService().GetAll(ctx.Request.Context(), &branch_service.GetAllBranchRequest{
+		Offset: int32(page),
+		Limit:  int32(limit),
 		Search: ctx.Query("search"),
 	})
 
@@ -100,7 +101,7 @@ func (h *Handler) GetListBranch(ctx *gin.Context) {
 func (h *Handler) GetBranch(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	resp, err := h.services.BranchService().GetById(ctx.Request.Context(), &branch_service.BranchIdReq{Id: id})
+	resp, err := h.services.BranchService().Get(ctx.Request.Context(), &branch_service.IdRequest{Id: id})
 	if err != nil {
 		h.handlerResponse(ctx, "error branch GetById", http.StatusBadRequest, err.Error())
 		return
@@ -131,7 +132,7 @@ func (h *Handler) UpdateBranch(ctx *gin.Context) {
 		return
 	}
 
-	resp, err := h.services.BranchService().Update(ctx.Request.Context(), &branch_service.BranchUpdateReq{
+	resp, err := h.services.BranchService().Update(ctx.Request.Context(), &branch_service.UpdateBranchRequest{
 		Id:        branch.Id,
 		Name:      branch.Name,
 		Address:   branch.Address,
@@ -143,7 +144,7 @@ func (h *Handler) UpdateBranch(ctx *gin.Context) {
 		return
 	}
 
-	h.handlerResponse(ctx, "update branch response", http.StatusOK, resp.Msg)
+	h.handlerResponse(ctx, "update branch response", http.StatusOK, resp)
 }
 
 // DeleteBranch godoc
@@ -161,11 +162,11 @@ func (h *Handler) UpdateBranch(ctx *gin.Context) {
 func (h *Handler) DeleteBranch(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	resp, err := h.services.BranchService().Delete(ctx.Request.Context(), &branch_service.BranchIdReq{Id: id})
+	resp, err := h.services.BranchService().Delete(ctx.Request.Context(), &branch_service.IdRequest{Id: id})
 	if err != nil {
 		h.handlerResponse(ctx, "error branch Delete", http.StatusBadRequest, err.Error())
 		return
 	}
 
-	h.handlerResponse(ctx, "delete branch response", http.StatusOK, resp.Msg)
+	h.handlerResponse(ctx, "delete branch response", http.StatusOK, resp)
 }

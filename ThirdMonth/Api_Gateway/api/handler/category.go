@@ -4,8 +4,9 @@ import (
 	"net/http"
 	"strconv"
 
+	product_service "api-gateway-service/genproto/product_service"
+
 	"github.com/gin-gonic/gin"
-	product_service "gitlab.com/market3723841/api-gateway-service/genproto/protuct-service"
 )
 
 // CreateCategory godoc
@@ -15,13 +16,13 @@ import (
 // @Tags         categories
 // @Accept       json
 // @Produce      json
-// @Param        category     body  product_service.CategoryCreateReq  true  "data of the category"
-// @Success      201  {object}  product_service.CategoryCreateResp
+// @Param        category     body  product_service.CreateCategoriesRequest  true  "data of the category"
+// @Success      201  {object}  product_service.IdResponse
 // @Failure      400  {object}  Response{data=string}
 // @Failure      404  {object}  Response{data=string}
 // @Failure      500  {object}  Response{data=string}
 func (h *Handler) CreateCategory(ctx *gin.Context) {
-	var category = product_service.Category{}
+	var category = product_service.Categories{}
 
 	err := ctx.ShouldBindJSON(&category)
 	if err != nil {
@@ -29,7 +30,7 @@ func (h *Handler) CreateCategory(ctx *gin.Context) {
 		return
 	}
 
-	resp, err := h.services.CategoryService().Create(ctx, &product_service.CategoryCreateReq{
+	resp, err := h.services.CategoryService().Create(ctx, &product_service.CreateCategoriesRequest{
 		Name:     category.Name,
 		ParentId: category.ParentId,
 	})
@@ -43,9 +44,9 @@ func (h *Handler) CreateCategory(ctx *gin.Context) {
 	h.handlerResponse(ctx, "create category response", http.StatusOK, resp)
 }
 
-// ListCategories godoc
+// GetAllCategories godoc
 // @Router       /v1/categories [get]
-// @Summary      List categories
+// @Summary      GetAll categories
 // @Description  get categories
 // @Tags         categories
 // @Accept       json
@@ -53,7 +54,7 @@ func (h *Handler) CreateCategory(ctx *gin.Context) {
 // @Param        limit    query     int  false  "limit for response"  Default(10)
 // @Param		 page     query     int  false  "page for response"   Default(1)
 // @Param        name     query     string false "search by name"
-// @Success      200  {array}   product_service.Category
+// @Success      200  {array}   product_service.Categories
 // @Failure      400  {object}  Response{data=string}
 // @Failure      404  {object}  Response{data=string}
 // @Failure      500  {object}  Response{data=string}
@@ -70,18 +71,18 @@ func (h *Handler) GetListCategory(ctx *gin.Context) {
 		return
 	}
 
-	resp, err := h.services.CategoryService().GetList(ctx.Request.Context(), &product_service.CategoryGetListReq{
-		Page:  int64(page),
-		Limit: int64(limit),
-		Name:  ctx.Query("name"),
+	resp, err := h.services.CategoryService().GetAll(ctx.Request.Context(), &product_service.GetAllCategoriesRequest{
+		Offset: int32(page),
+		Limit:  int32(limit),
+		Search: ctx.Query("name"),
 	})
 
 	if err != nil {
-		h.handlerResponse(ctx, "error GetListCategory", http.StatusBadRequest, err.Error())
+		h.handlerResponse(ctx, "error GetAllCategory", http.StatusBadRequest, err.Error())
 		return
 	}
 
-	h.handlerResponse(ctx, "get list category response", http.StatusOK, resp)
+	h.handlerResponse(ctx, "get All category response", http.StatusOK, resp)
 }
 
 // GetCategory godoc
@@ -92,14 +93,14 @@ func (h *Handler) GetListCategory(ctx *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        id   path    string     true    "Category ID to retrieve"
-// @Success      200  {object}  product_service.Category
+// @Success      200  {object}  product_service.Categories
 // @Failure      400  {object}  Response{data=string}
 // @Failure      404  {object}  Response{data=string}
 // @Failure      500  {object}  Response{data=string}
 func (h *Handler) GetCategory(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	resp, err := h.services.CategoryService().GetById(ctx.Request.Context(), &product_service.CategoryIdReq{Id: id})
+	resp, err := h.services.CategoryService().Get(ctx.Request.Context(), &product_service.IdRequest{Id: id})
 	if err != nil {
 		h.handlerResponse(ctx, "error category GetById", http.StatusBadRequest, err.Error())
 		return
@@ -116,13 +117,13 @@ func (h *Handler) GetCategory(ctx *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        id       path    string     true    "Category ID to update"
-// @Param        category   body    product_service.CategoryUpdateReq  true    "Updated data for the category"
-// @Success      200  {object}  product_service.CategoryUpdateResp
+// @Param        category   body    product_service.UpdateCategoriesRequest true    "Updated data for the category"
+// @Success      200  {object}  product_service.IdResponse
 // @Failure      400  {object}  Response{data=string}
 // @Failure      404  {object}  Response{data=string}
 // @Failure      500  {object}  Response{data=string}
 func (h *Handler) UpdateCategory(ctx *gin.Context) {
-	var category = product_service.Category{}
+	var category = product_service.Categories{}
 	category.Id = ctx.Param("id")
 	err := ctx.ShouldBindJSON(&category)
 	if err != nil {
@@ -130,7 +131,7 @@ func (h *Handler) UpdateCategory(ctx *gin.Context) {
 		return
 	}
 
-	resp, err := h.services.CategoryService().Update(ctx.Request.Context(), &product_service.CategoryUpdateReq{
+	resp, err := h.services.CategoryService().Update(ctx.Request.Context(), &product_service.UpdateCategoriesRequest{
 		Id:       category.Id,
 		Name:     category.Name,
 		ParentId: category.ParentId,
@@ -141,7 +142,7 @@ func (h *Handler) UpdateCategory(ctx *gin.Context) {
 		return
 	}
 
-	h.handlerResponse(ctx, "update category response", http.StatusOK, resp.Msg)
+	h.handlerResponse(ctx, "update category response", http.StatusOK, resp)
 }
 
 // DeleteCategory godoc
@@ -152,18 +153,18 @@ func (h *Handler) UpdateCategory(ctx *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        id   path    string     true    "Category ID to retrieve"
-// @Success      200  {object}  product_service.CategoryDeleteResp
+// @Success      200  {object}  product_service.IdResponse
 // @Failure      400  {object}  Response{data=string}
 // @Failure      404  {object}  Response{data=string}
 // @Failure      500  {object}  Response{data=string}
 func (h *Handler) DeleteCategory(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	resp, err := h.services.CategoryService().Delete(ctx.Request.Context(), &product_service.CategoryIdReq{Id: id})
+	resp, err := h.services.CategoryService().Delete(ctx.Request.Context(), &product_service.IdRequest{Id: id})
 	if err != nil {
 		h.handlerResponse(ctx, "error category Delete", http.StatusBadRequest, err.Error())
 		return
 	}
 
-	h.handlerResponse(ctx, "delete category response", http.StatusOK, resp.Msg)
+	h.handlerResponse(ctx, "delete category response", http.StatusOK, resp)
 }

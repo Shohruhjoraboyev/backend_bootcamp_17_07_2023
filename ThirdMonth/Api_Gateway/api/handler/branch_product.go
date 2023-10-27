@@ -4,8 +4,9 @@ import (
 	"net/http"
 	"strconv"
 
+	branch_service "api-gateway-service/genproto/branch_service"
+
 	"github.com/gin-gonic/gin"
-	branch_service "gitlab.com/market3723841/api-gateway-service/genproto/branch-service"
 )
 
 // CreateBranchProduct godoc
@@ -29,7 +30,7 @@ func (h *Handler) CreateBranchProduct(ctx *gin.Context) {
 		return
 	}
 
-	resp, err := h.services.BranchProductService().Create(ctx, &branch_service.BranchProductCreateReq{
+	resp, err := h.services.BranchProductService().Create(ctx, &branch_service.CreateBranchProductRequest{
 		ProductId: branchPr.ProductId,
 		BranchId:  branchPr.BranchId,
 		Count:     branchPr.Count,
@@ -71,14 +72,14 @@ func (h *Handler) GetListBranchProduct(ctx *gin.Context) {
 		return
 	}
 
-	resp, err := h.services.BranchProductService().GetList(ctx.Request.Context(), &branch_service.BranchProductGetListReq{
-		Page:   int64(page),
-		Limit:  int64(limit),
+	resp, err := h.services.BranchProductService().GetAll(ctx.Request.Context(), &branch_service.GetAllBranchProductRequest{
+		Offset: int32(page),
+		Limit:  int32(limit),
 		Search: ctx.Query("branch_id"),
 	})
 
 	if err != nil {
-		h.handlerResponse(ctx, "error GetListBranchProduct", http.StatusBadRequest, err.Error())
+		h.handlerResponse(ctx, "error GetAllBranchProduct", http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -100,7 +101,7 @@ func (h *Handler) GetListBranchProduct(ctx *gin.Context) {
 func (h *Handler) GetBranchProduct(ctx *gin.Context) {
 	id := ctx.Param("product_id")
 
-	resp, err := h.services.BranchProductService().GetById(ctx.Request.Context(), &branch_service.BranchProductIdReq{ProductId: id})
+	resp, err := h.services.BranchProductService().Get(ctx.Request.Context(), &branch_service.IdRequest{Id: id})
 	if err != nil {
 		h.handlerResponse(ctx, "error branch product GetById", http.StatusBadRequest, err.Error())
 		return
@@ -131,10 +132,10 @@ func (h *Handler) UpdateBranchProduct(ctx *gin.Context) {
 		return
 	}
 
-	resp, err := h.services.BranchProductService().Update(ctx.Request.Context(), &branch_service.BranchProductUpdateReq{
+	resp, err := h.services.BranchProductService().Update(ctx.Request.Context(), &branch_service.UpdateBranchProductRequest{
 		ProductId: branchPr.ProductId,
 		BranchId:  branchPr.BranchId,
-		Count:     int64(branchPr.Count),
+		Count:     int32(branchPr.Count),
 	})
 
 	if err != nil {
@@ -142,7 +143,7 @@ func (h *Handler) UpdateBranchProduct(ctx *gin.Context) {
 		return
 	}
 
-	h.handlerResponse(ctx, "update branch response", http.StatusOK, resp.Msg)
+	h.handlerResponse(ctx, "update branch response", http.StatusOK, resp)
 }
 
 // DeleteBranchProduct godoc
@@ -160,11 +161,11 @@ func (h *Handler) UpdateBranchProduct(ctx *gin.Context) {
 func (h *Handler) DeleteBranchProduct(ctx *gin.Context) {
 	id := ctx.Param("product_id")
 
-	resp, err := h.services.BranchProductService().Delete(ctx.Request.Context(), &branch_service.BranchProductIdReq{ProductId: id})
+	resp, err := h.services.BranchProductService().Delete(ctx.Request.Context(), &branch_service.IdRequest{Id: id})
 	if err != nil {
 		h.handlerResponse(ctx, "error branch product Delete", http.StatusBadRequest, err.Error())
 		return
 	}
 
-	h.handlerResponse(ctx, "delete branch product response", http.StatusOK, resp.Msg)
+	h.handlerResponse(ctx, "delete branch product response", http.StatusOK, resp)
 }
