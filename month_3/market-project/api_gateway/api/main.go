@@ -8,15 +8,6 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
-	// @Summary 登录
-	// @Description 登录
-	// @Produce json
-	// @Param body body controllers.LoginParams true "body参数"
-	// @Success 200 {string} string "ok" "返回用户信息"
-	// @Failure 400 {string} string "err_code：10002 参数错误； err_code：10003 校验错误"
-	// @Failure 401 {string} string "err_code：10001 登录失败"
-	// @Failure 500 {string} string "err_code：20001 服务错误；err_code：20002 接口错误；err_code：20003 无数据错误；err_code：20004 数据库异常；err_code：20005 缓存异常"
-	// @Router /user/person/login [post]
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
@@ -52,38 +43,14 @@ func New(opt *RouterOptions) *gin.Engine {
 		Services: opt.Services,
 	})
 
-	router.GET("/config", handlerV1.GetConfig)
-
 	apiV1 := router.Group("/v1")
-	apiV1.GET("/ping", handlerV1.Ping)
 
-	// profession
-	apiV1.POST("/profession", handlerV1.CreateProfession)
-	apiV1.GET("/profession", handlerV1.GetAllProfession)
-	apiV1.GET("/profession/:profession_id", handlerV1.GetProfession)
-	apiV1.PUT("/profession/:profession_id", handlerV1.UpdateProfession)
-	apiV1.DELETE("/profession/:profession_id", handlerV1.DeleteProfession)
-
-	// attribute
-	apiV1.POST("/attribute", handlerV1.CreateAttribute)
-	apiV1.GET("/attribute/:attribute_id", handlerV1.GetAttribute)
-	apiV1.GET("/attribute", handlerV1.GetAllAttributes)
-	apiV1.PUT("/attribute/:attribute_id", handlerV1.UpdateAttribute)
-	apiV1.DELETE("/attribute/:attribute_id", handlerV1.DeleteAttribute)
-
-	// company
-	apiV1.POST("/company", handlerV1.CreateCompany)
-	apiV1.GET("/company", handlerV1.GetAllCompanies)
-	apiV1.GET("/company/:company_id", handlerV1.GetCompany)
-	apiV1.PUT("/company/:company_id", handlerV1.UpdateCompany)
-	apiV1.DELETE("/company/:company_id", handlerV1.DeleteCompany)
-
-	// position
-	apiV1.POST("/position", handlerV1.CreatePosition)
-	apiV1.GET("/position", handlerV1.GetAllPositions)
-	apiV1.GET("/position/:position_id", handlerV1.GetPosition)
-	apiV1.PUT("/position/:position_id", handlerV1.UpdatePosition)
-	apiV1.DELETE("/position/:position_id", handlerV1.DeletePosition)
+	// user
+	apiV1.POST("/branch/create", handlerV1.CreateBranch)
+	apiV1.GET("/branch/list", handlerV1.GetAllBranch)
+	apiV1.GET("/branch/get/:branch_id", handlerV1.GetBranch)
+	apiV1.PUT("/branch/update/:branch_id", handlerV1.UpdateBranch)
+	apiV1.DELETE("/branch/delete/:branch_id", handlerV1.DeleteBranch)
 
 	// swagger
 	url := ginSwagger.URL("swagger/doc.json") // The url pointing to API definition

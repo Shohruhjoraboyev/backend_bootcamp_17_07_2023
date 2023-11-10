@@ -10,8 +10,8 @@ import (
 type Config struct {
 	Environment string // develop, staging, production
 
-	PositionServiceHost string
-	PositionServicePort int
+	BranchServiceHost string
+	BranchServicePort int
 
 	LogLevel string
 	HttpPort string
@@ -30,9 +30,11 @@ func Load() Config {
 	config.LogLevel = cast.ToString(getOrReturnDefault("LOG_LEVEL", "debug"))
 	config.HttpPort = cast.ToString(getOrReturnDefault("HTTP_PORT", ":8080"))
 
-	config.PositionServiceHost = cast.ToString(getOrReturnDefault("POSITION_SERVICE_HOST", "localhost"))
-	config.PositionServicePort = cast.ToInt(getOrReturnDefault("POSITION_SERVICE_PORT", 9102))
+	config.BranchServiceHost = cast.ToString(getOrReturnDefault("BRANCH_SERVICE_HOST", "localhost"))
+	config.BranchServicePort = cast.ToInt(getOrReturnDefault("BRANCH_SERVICE_PORT", 50051))
 
+	// config.ProfessionServiceHost = cast.ToString(getOrReturnDefault("Profession_SERVICE_HOST", "localhost"))
+	// config.ProfessionServicePort = cast.ToInt(getOrReturnDefault("Profession_SERVICE_PORT", 9103))
 	return config
 }
 

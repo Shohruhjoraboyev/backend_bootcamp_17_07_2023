@@ -11,4 +11,3 @@ type ResponseModel struct {
 type Status struct {
 	Status string `json:"status"`
 }
-

@@ -10,7 +10,7 @@ CREATE TABLE "branches" (
 
 CREATE TABLE IF NOT EXISTS "branch_products" (
     "id" uuid PRIMARY KEY,
-    "product_id" uuid NOT NULL REFERENCES "products"("id"),
+    "product_id" uuid NOT NULL,
     "branch_id" uuid NOT NULL REFERENCES "branches"("id"),
     "quantity" INT NOT NULL DEFAULT 0,
     "created_at" timestamptz NOT NULL DEFAULT (now()),
